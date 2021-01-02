@@ -5,7 +5,7 @@
     </a-layout-sider>
     <a-layout :style="layoutStyle">
       <a-layout-content :style="{ margin: 0, height: '100%' }">
-        <router-view/>
+        <router-view></router-view>
       </a-layout-content>
     </a-layout>
   </a-layout>

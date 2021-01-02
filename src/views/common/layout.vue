@@ -3,28 +3,17 @@
     <a-layout style="min-height: 100%" v-if="!loading" class="layout-wrapper">
       <a-layout-header class="header-wrapper" :style="{ position: 'fixed', zIndex: 99, width: '100%' }">
         <a-icon class="header-icon" type="codepen"/>
-        <span class="header-title">浙商资产服务商招募管理系统</span>
+        <span class="header-title">浙商资产服务商招募管理系统-运营后台</span>
         <a-menu theme="dark" mode="horizontal" :default-selected-keys="[selectedKey]"
-                :style="{ lineHeight: '64px',display:'inline-block',verticalAlign: 'top',height:'64px' }">
-          <a-menu-item key="a">
-            <router-link to="/">我的</router-link>
-          </a-menu-item>
-          <a-menu-item key="b">
-            <router-link to="/center">服务项目招商中心</router-link>
-          </a-menu-item>
-        </a-menu>
+                :style="{ lineHeight: '64px',display:'inline-block',verticalAlign: 'top',height:'64px' }" />
         <div class="header-info">
           <a-dropdown :trigger="['click']" placement="bottomRight" size="large"
                       :getPopupContainer="e=>e.parentElement" >
             <a-menu slot="overlay" >
               <a-menu-item key="1">
-                <div @click="handleModifyPhone"><a-icon type="user" />修改绑定手机号</div>
+                <div @click="handleModifyPhone"><a-icon type="user" />修改登录密码</div>
               </a-menu-item>
               <a-menu-item key="2">
-                <div @click="handleSetPwd" v-if="isSetPassword===0"><a-icon type="user" />设置登录密码</div>
-                <div @click="handleModifyPwd" v-if="isSetPassword===1"><a-icon type="user" />修改登录密码</div>
-              </a-menu-item>
-              <a-menu-item key="3">
                 <router-link to="/login"><a-icon type="user" />退出登录</router-link>
               </a-menu-item>
             </a-menu>
@@ -32,7 +21,7 @@
           </a-dropdown>
         </div>
       </a-layout-header>
-      <router-view/>
+      <router-view></router-view>
     </a-layout>
     <a-spin v-if="loading" class="spin-wrapper" size="large" tip="数据加载中，请稍后..." />
     <ModifyPhoneModal ref="modifyPhone"></ModifyPhoneModal>
