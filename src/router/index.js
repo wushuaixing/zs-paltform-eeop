@@ -55,11 +55,11 @@ const routes = [
 					      name:'investment/item-list',
 					      component:()=>import("@/views/main/investment/index"),
 					    },
-					    // {
-					    //   path: 'list/detail/:id',
-					    //   name:'investment/item-detail',
-					    //   component:()=>import("@/views/main/investment/item-detail"),
-					    // },
+					    {
+					      path: 'list/detail/:id',
+					      name:'investment/item-detail',
+					      component:()=>import("@/views/main/investment/item-detail"),
+					    },
 					  ]
 					},
 					// 服务跟踪
