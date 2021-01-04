@@ -11,7 +11,7 @@
                       :getPopupContainer="e=>e.parentElement" >
             <a-menu slot="overlay" >
               <a-menu-item key="1">
-                <div @click="handleModifyPhone"><a-icon type="user" />修改登录密码</div>
+                <div @click="handleModifyPwd"><a-icon type="user" />修改登录密码</div>
               </a-menu-item>
               <a-menu-item key="2">
                 <router-link to="/login"><a-icon type="user" />退出登录</router-link>
@@ -24,16 +24,12 @@
       <router-view></router-view>
     </a-layout>
     <a-spin v-if="loading" class="spin-wrapper" size="large" tip="数据加载中，请稍后..." />
-    <ModifyPhoneModal ref="modifyPhone"></ModifyPhoneModal>
     <ModifyPwdModal ref="modifyPwd"></ModifyPwdModal>
-    <SetPwdModal ref="setPwd"></SetPwdModal>
   </div>
 </template>
 <script>
   import { getInfo} from "@/plugin/api/base";
-  import ModifyPhoneModal from "./personal/modify-phone"
   import ModifyPwdModal from "./personal/modify-password"
-  import SetPwdModal from "./personal/set-password"
   export default {
     data() {
       return {
@@ -44,21 +40,22 @@
     },
     components: {
       ModifyPwdModal,
-      ModifyPhoneModal,
-      SetPwdModal
     },
     methods:{
-      handleModifyPhone(){
-        this.$refs.modifyPhone.showModal()
-      },
       handleModifyPwd(){
         this.$refs.modifyPwd.showModal()
       },
-      handleSetPwd(){
-        this.$refs.setPwd.showModal()
-      }
     },
     created() {
+      const _this = this;
+      this.$confirm({
+        title:"为了您的账号和安全,请及时修改密码",
+        centered:true,
+        iconType:"exclamation-circle",
+        onOk(){
+          _this.$refs.modifyPwd.showModal()
+        }
+      })
       const { pathname } = window.location;
       if(/center/.test(pathname))this.selectedKey = 'b';
       if(!this.$store.state.isLogin){
@@ -79,9 +76,6 @@
       username(){
         return this.$store.getters.getInfo.username;
       },
-      isSetPassword(){
-        return this.$store.getters.getInfo.isSetPassword;
-      }
     }
   };
 </script>
@@ -119,6 +113,10 @@
       }
     }
   }
+}
+.ant-modal-confirm-btns{
+  margin-right:50%;
+  transform: translateX(50%);
 }
 .spin-wrapper{
   width: 100%;

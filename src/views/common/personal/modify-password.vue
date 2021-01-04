@@ -4,7 +4,9 @@
       <a-modal
         :bodyStyle="{ display: 'flex', justifyContent: 'center' }"
         :centered="true"
+        :maskClosable="false"
         :getContainer="() => $refs.container"
+        width="600px"
         :maskStyle="{ background: 'rgba(0, 0, 0, 0.5)' }"
         v-model="visible"
         title="修改登录密码"
@@ -16,14 +18,14 @@
           :label-col="labelCol"
           :wrapper-col="wrapperCol"
         >
-          <a-form-model-item label="原密码" prop="oldPassword">
+          <a-form-model-item class="old-pwd" label="原密码" prop="oldPassword">
             <a-input
               type="password"
               placeholder="请输入原密码"
               v-model="form.oldPassword"
             />
           </a-form-model-item>
-          <a-form-model-item label="新密码" prop="newPassword">
+          <a-form-model-item class="new-pwd" label="新密码" prop="newPassword">
             <div slot="help" :class="passwordCheck[0] ? 'help act' : 'help'">
               • 长度6-20位
             </div>
@@ -40,7 +42,7 @@
               v-model="form.newPassword"
             />
           </a-form-model-item>
-          <a-form-model-item label="确认密码" prop="confirmPwd">
+          <a-form-model-item class="confirm-pwd" label="确认密码" prop="confirmPwd">
             <a-input
               placeholder="请再次输入登录密码"
               type="password"
@@ -114,9 +116,6 @@ export default {
       this.visible = false;
     },
     check() {
-      // if (this.form.newPassword === "") {
-      //   this.$refs.ruleForm.resetFields();
-      // }
       //长度6-20位校验
       const lengthCheck = (value) => !(value.length < 6 || value.length > 20);
       //校验是否有数字
@@ -164,13 +163,13 @@ export default {
 .save-btn {
   width: 60px;
   height: 32px;
-  background: #cccccc;
+  background: #008CB0;
   border-radius: 2px;
+  border: none;
   font-size: 14px;
   font-weight: 400;
-  color: #ffffff;
+  color: #FFFFFF;
   line-height: 20px;
-  border: none;
 }
 .cancel-btn {
   width: 60px;
@@ -198,6 +197,34 @@ export default {
     font-weight: 400;
     color: #52c41a;
     line-height: 17px;
+  }
+}
+</style>
+<style lang="scss">
+.personal-main{
+  .ant-modal-title{
+    font-size: 16px;
+    font-weight: 600;
+    color: #262626;
+  }
+  .ant-modal-body{
+    padding: 0;
+    .ant-form-item{
+      margin-top: 24px;
+      padding: 0;
+      input{
+        width: 388px;
+        height: 32px;
+        &::placeholder{
+          font-size: 14px;
+          font-weight: 400;
+          color: #BFBFBF;
+        }
+      }
+    }
+  }
+  .ant-modal-footer {
+    text-align: center;
   }
 }
 </style>

@@ -4,7 +4,7 @@
       <div class="register-content">
         <div class="video-wrapper">111</div>
         <div class="login-wrapper" ref="loginContainer">
-          <div class="login-title">服务商招募管理系统</div>
+          <div class="login-title">服务商招募管理系统运营后台</div>
           <a-form-model
             layout="inline"
             :model="params"
@@ -14,103 +14,65 @@
             class="login-form-wrapper"
             autoComplete="off"
           >
-            <a-tabs
-              v-model="params.loginType"
-              class="login-tab-theme"
-              @change="handleTabChange"
-              size="large"
-            >
-              <a-tab-pane :key="0" tab="快捷登录"> </a-tab-pane>
-              <a-tab-pane :key="1" tab="密码登录"> </a-tab-pane>
-            </a-tabs>
             <div style="height: 196px">
-              <a-form-model-item prop="phone">
+              <a-form-model-item prop="number">
                 <a-input
-                  v-model="params.phone"
-                  placeholder="请输入您的手机号码"
+                  v-model.trim="params.number"
+                  placeholder="请输入您的工号"
                   v-bind="styleProps"
-                  :maxLength="11"
+                  :maxLength="8"
                 >
                   <a-icon slot="prefix" type="user" style="color: #bfbfbf" />
                 </a-input>
               </a-form-model-item>
-              <a-form-model-item prop="phoneCode" v-if="params.loginType === 0">
+              <a-form-model-item prop="password">
                 <a-input
-                  v-model="params.phoneCode"
-                  placeholder="请输入短信验证码"
+                  v-model.trim="params.password"
+                  type="password"
                   v-bind="styleProps"
-                  :maxLength="6"
-                  autoComplete="new-password"
                   @pressEnter="handleSubmit"
+                  placeholder="请输入登录密码"
+                  autoComplete="new-password"
                 >
                   <a-icon slot="prefix" type="lock" style="color: #bfbfbf" />
-                  <template slot="suffix">
-                    <a-button
-                      type="link"
-                      @click="handleCode"
-                      :style="code.disabled && { color: '#999' }"
-                      >{{ code.text }}</a-button
-                    >
+                </a-input>
+              </a-form-model-item>
+              <a-form-model-item prop="pictureCode" v-if="imgCode.status">
+                <a-input
+                  v-model.trim="params.pictureCode"
+                  placeholder="请输入图形验证码"
+                  v-bind="styleProps"
+                  :maxLength="4"
+                  @pressEnter="handleSubmit"
+                >
+                  <a-icon
+                    slot="prefix"
+                    type="safety"
+                    style="color: #bfbfbf"
+                  />
+                  <template slot="suffix" @click="toGetImageCode">
+                    <a-spin :spinning="imgCode.loading">
+                      <div
+                        style="height: 34px; overflow: hidden; width: 110px"
+                        @click="toGetImageCode"
+                      >
+                        <img
+                          :src="imgCode.url"
+                          alt=""
+                          style="
+                            height: 39px;
+                            width: 117px;
+                            margin: -3px 0 0 -4px;
+                          "
+                        />
+                      </div>
+                    </a-spin>
                   </template>
                 </a-input>
               </a-form-model-item>
-              <template v-if="params.loginType === 1">
-                <a-form-model-item prop="password">
-                  <a-input
-                    v-model="params.password"
-                    type="password"
-                    v-bind="styleProps"
-                    @pressEnter="handleSubmit"
-                    placeholder="请输入登录密码"
-                    autoComplete="new-password"
-                  >
-                    <a-icon slot="prefix" type="lock" style="color: #bfbfbf" />
-                  </a-input>
-                </a-form-model-item>
-                <a-form-model-item prop="pictureCode" v-if="imgCode.status">
-                  <a-input
-                    v-model="params.pictureCode"
-                    placeholder="请输入图形验证码"
-                    v-bind="styleProps"
-                    :maxLength="4"
-                    @pressEnter="handleSubmit"
-                  >
-                    <a-icon
-                      slot="prefix"
-                      type="safety"
-                      style="color: #bfbfbf"
-                    />
-                    <template slot="suffix" @click="toGetImageCode">
-                      <a-spin :spinning="imgCode.loading">
-                        <div
-                          style="height: 34px; overflow: hidden; width: 110px"
-                          @click="toGetImageCode"
-                        >
-                          <img
-                            :src="imgCode.url"
-                            alt=""
-                            style="
-                              height: 39px;
-                              width: 117px;
-                              margin: -3px 0 0 -4px;
-                            "
-                          />
-                        </div>
-                      </a-spin>
-                    </template>
-                  </a-input>
-                </a-form-model-item>
-              </template>
             </div>
           </a-form-model>
-          <a-button type="primary" block @click="handleSubmit" size="large"
-            >登 录</a-button
-          >
-          <div style="text-align: right; margin-top: 24px">
-            <router-link to="/register" style="text-decoration: underline"
-              >注册成为浙商资产服务商</router-link
-            >
-          </div>
+          <a-button class="login-btn" type="primary" block @click="handleSubmit" size="large">登 录</a-button>
         </div>
       </div>
     </div>
@@ -125,25 +87,19 @@ export default {
   name: "RegisterView",
   nameComment: "注册页面",
   data() {
-    //自定义手机号校验规则
-    const phoneCheck = (rule, value, callback) => {
-      const reg = /^(13[0-9]|14[01456879]|15[0-3,5-9]|16[2567]|17[0-8]|18[0-9]|19[0-3,5-9])\d{8}$/;
+    //自定义工号校验规则
+    const numberCheck = (rule, value, callback) => {
+      const reg = /^[0-9]{8}$/;
       if (!reg.test(value)) {
-        callback("请输入正确的手机号码");
+        callback("请输入8位数字的工号");
       }
       callback();
     };
     return {
       params: {
-        loginType: 0,
-        phone: "",
+        number: "",
         password: "",
-        phoneCode: "",
         pictureCode: "",
-      },
-      code: {
-        text: "获取验证码",
-        disabled: false,
       },
       imgCode: {
         status: false,
@@ -158,22 +114,19 @@ export default {
         },
       },
       rules: {
-        phone: [
+        number: [
           {
             required: true,
-            message: "请输入正确的手机号码",
-            trigger: "change",
-            validator: phoneCheck,
+            message: "请输入8位数字的工号",
+            trigger: "blur",
+            validator: numberCheck,
           },
         ],
         password: [
-          { required: true, message: "请输入密码", trigger: "change" },
-        ],
-        phoneCode: [
-          { required: true, message: "请输入短信验证码", trigger: "change" },
+          { required: true, message: "请输入密码", trigger: "blur" },
         ],
         pictureCode: [
-          { required: true, message: "请输入图形验证码", trigger: "change" },
+          { required: true, message: "请输入图形验证码", trigger: "blur" },
         ],
       },
     };
@@ -182,12 +135,6 @@ export default {
     this.form = this.$refs.ruleForm;
   },
   methods: {
-    handleTabChange(val) {
-      this.form.clearValidate();
-      this.$nextTick(() => {
-        this.params.loginType = val;
-      });
-    },
     // 获取图片验证码
     toGetImageCode() {
       if (this.imgCode.loading) return;
@@ -262,36 +209,6 @@ export default {
         }
       });
     },
-    // 获取手机验证码
-    handleCode() {
-      this.$refs.ruleForm.validateField("phone", (errorMessage) => {
-        if (!errorMessage) {
-          if (this.code.disabled) return;
-          let countdown = 60;
-          this.code.disabled = true;
-          api.loginCode({ phone: this.params.phone }).then((res) => {
-            if (res.code === 20000) {
-              this.$message.success("验证码发送成功");
-              this.code.text = `重新发送（${countdown}s）`;
-              this.interval = setInterval(() => {
-                countdown -= 1;
-                this.code.text = `重新发送（${countdown}s）`;
-                if (countdown === 0) {
-                  this.code = {
-                    disabled: false,
-                    text: "获取验证码",
-                  };
-                  clearInterval(this.interval);
-                }
-              }, 1000);
-            } else {
-              this.$message.error("验证码发送失败");
-              this.code.disabled = false;
-            }
-          });
-        }
-      });
-    },
   },
   beforeDestroy() {
     if (this.interval) clearInterval(this.interval);
@@ -333,11 +250,13 @@ export default {
       background: #ffffff;
     }
     &-title {
-      line-height: 52px;
+      line-height: 36px;
       font-size: 28px;
       color: $common-base-active;
       text-align: center;
-      margin-bottom: 10px;
+      width: 255px;
+      margin: 0 auto;
+      margin-bottom: 70px;
     }
   }
 }
@@ -369,6 +288,9 @@ export default {
   input,
   button {
     border-radius: 2px !important;
+  }
+  .login-btn{
+    // margin-top: 70px;
   }
 }
 .register-content{
