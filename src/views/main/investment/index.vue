@@ -2,7 +2,7 @@
   <div>
     <Breadcrumb :source="navData" icon="environment">
       <template slot="suffix">
-        <button>
+        <button @click="showModal">
           <a-icon type="snippets"/>
           项目上传
         </button>
@@ -10,11 +10,11 @@
     </Breadcrumb>
     <div class="content">
       <!--收索框-->
-      <a-row type="flex">
+      <a-row class="search_box" type="flex">
         <a-col :span="12">
-          <a-input placeholder="请输入债务人的名称"/>
+          <a-input style="width: 90%" placeholder="请输入债务人的名称"/>
         </a-col>
-        <a-col :span="10">
+        <a-col :span="10" >
           <span>报名截止日期:</span>
           <a-date-picker
               v-model="startValue"
@@ -42,6 +42,31 @@
           <span style="color: #0A91B4" @click="click(row)">查看详情</span>
         </template>
       </a-table>
+    </div>
+   <!--弹框对话框-->
+    <div>
+      <a-modal  :centered="true" v-model="visible" title="发布新项目" @ok="handleOk">
+        <div class="pop-up">
+          <span>招商服务项目信息</span>
+          <a-upload
+              name="file"
+              action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+              :headers="headers"
+              @change="handleChange"
+              :beforeUpload="beforeUpload"
+              accept="application/pdf,.doc,.docx,application/msword"
+          >
+            <a-button> <a-icon type="upload" /> 点的上传 </a-button>
+          </a-upload>
+          <a>导入模板下载</a>
+        </div>
+        <div class="caution">
+          <span>*支持导入单笔及多笔招商服务项目；</span><br>
+          <span>请保证招商服务项目信息满足模板要求；</span><br>
+          <span>文件最大支持16M；</span><br>
+          <span>支持拓展名.xls或.xlsx的文件</span>
+        </div>
+      </a-modal>
     </div>
   </div>
 </template>
@@ -137,6 +162,11 @@ export default {
       columns,
       startValue: null,
       endValue: null,
+      visible: false,
+      headers: {
+        authorization: 'authorization-text',
+        token:'',
+      },
     };
   },
   components: {
@@ -155,18 +185,63 @@ export default {
       console.log(a, b, c)
     },
     click(v){
-      this.$router.push('/investment/list/detail/' + 12321)
+      this.$router.push({name: 'investment/item-detail', query: {id: 12321321}})
       console.log(v)
-    }
+    },
+    showModal() {
+      this.visible = true;
+    },
+    handleOk(e) {
+      console.log(e);
+      this.visible = false;
+    },
+    beforeUpload(file,fileList){
+      console.log(file,fileList)
+      // const  format1 = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+      // const  format2 = "application/vnd.ms-excel";
+      // if(file.type === format1 || file.type ===  format2){
+      //   this.$message.success("上传成功");
+      // }else {
+      //   this.$message.error("格式不正确");
+      // }
+    },
+    //上传文件
+    handleChange(info) {
+      if (info.file.status !== 'uploading') {
+        console.log(info.file, info.fileList);
+      }
+      if (info.file.status === 'done') {
+        this.$message.success(`${info.file.name} file uploaded successfully`);
+      } else if (info.file.status === 'error') {
+        this.$message.error(`${info.file.name} file upload failed.`);
+      }
+    },
   }
 };
 </script>
 
 <style lang="scss" scoped>
-
+.search_box{
+  margin: 20px 0;
+}
 .content {
   padding: 20px;
   background-color: #fff;
+}
+
+.pop-up{
+  display: flex;
+  align-items: center;
+  button{
+    margin: 0 10px;
+  }
+}
+.caution{
+  width: 260px;
+  margin-top: 20px;
+  margin-left: 50%;
+  transform: translateX(-50%);
+  color: #999999;
 }
 
 </style>
