@@ -28,7 +28,7 @@
               资产包收购时间：<span>{{ detailInfo.capitalPurchaseTime }}</span>
             </a-col>
             <a-col :span="8">
-              担保方式：<span>{{ detailInfo.security }}</span>
+              担保方式：<span>{{ detailInfo.security|guarantyType}}</span>
             </a-col>
           </a-row>
           <a-row type="flex">
@@ -39,18 +39,17 @@
           </a-row>
           <a-row type="flex">
             <a-col :span="8">
-              债权本金：<span>{{ detailInfo.debtCaptial }}</span>
+              债权本金：<span>{{ detailInfo.debtCaptial|amountTh }}万元</span>
             </a-col>
             <a-col :span="8">
-              债权利息：<span>{{ detailInfo.debtInterest }}</span>
+              债权利息：<span>{{ detailInfo.debtInterest|amountTh }}万元</span>
             </a-col>
           </a-row>
           <div class="guarantee">
             <p>抵押物类型：</p>
             <div>
               <p>
-                1.
-                住宅，浙江省杭州市西湖区，xxx位于浙江省杭州市西湖区紫金名门1幢203的面积为207㎡的住宅一套
+                1.住宅，浙江省杭州市西湖区，xxx位于浙江省杭州市西湖区紫金名门1幢203的面积为207㎡的住宅一套
               </p>
             </div>
           </div>
@@ -84,7 +83,7 @@
             <a-col :span="8">
               目标回款金额下限：<span>{{
                 detailInfo.targetAmountLowerLimit
-              }}</span>
+              }}万元</span>
             </a-col>
           </a-row>
         </div>
@@ -148,7 +147,7 @@
         <!--报名服务商列表-->
         <div>
           <h3 class="title2">报名服务商列表</h3>
-          <a-table v-bind="tableSource.applyServeTable">
+          <a-table v-bind="tableSource.applyServeTable" @change="applyServeTableChange">
             <!-- <a slot="name" slot-scope="text">{{ text }}</a> -->
             <template slot="name" slot-scope="name">{{ name }}</template>
             <template slot="phone" slot-scope="phone">{{ phone }}</template>
@@ -165,15 +164,15 @@
         <!--服务商提交方案列表-->
         <div>
           <h3 class="title2">服务商提交方案列表</h3>
-          <a-radio-group v-model="size" style="margin-bottom: 16px">
-            <a-radio-button value="small"> 有效方案1 </a-radio-button>
-            <a-radio-button value="default"> 末通过系统筛选2 </a-radio-button>
+          <a-radio-group @change="changType" v-model="params.caseType" style="margin-bottom: 16px">
+            <a-radio-button :value="1"> 有效方案1 </a-radio-button>
+            <a-radio-button :value="2"> 末通过系统筛选2 </a-radio-button>
           </a-radio-group>
-          <a-table v-bind="tableSource.submitPlanTable">
+          <a-table v-bind="tableSource.submitPlanTable" @change="submitPlanTableChange">
             <template slot="gmtCreate" slot-scope="gmtCreate">{{gmtCreate}}</template>
             <template slot="name" slot-scope="name">{{name}}</template>
             <template slot="phone" slot-scope="phone">{{phone}}</template>
-            <template slot="identity" slot-scope="identity">{{identity}}</template>
+            <template slot="identity" slot-scope="identity">{{identity|identityType}}</template>
             <template slot="orgOfficeName" slot-scope="orgOfficeName">{{orgOfficeName}}</template>
             <template slot="serviceTime" slot-scope="serviceTime">{{serviceTime}}</template>
             <template slot="aimBackPrice" slot-scope="aimBackPrice">{{aimBackPrice}}</template>
@@ -189,6 +188,7 @@
 </template>
 
 <script>
+import {projectDetail,signService,serviceCaseSubmit} from "@/plugin/api/investment-center"
 //报名服务商表数据
 const columns = [
   {
@@ -324,8 +324,18 @@ export default {
   name: "ItemDetail",
   data() {
     return {
-      size: "small",
       navData,
+      params:{
+        caseType: 1,
+        debtor: "",
+        endDate: "",
+        id: "",
+        page: 1,
+        size: 10,
+        sortField: 0,
+        sortOrder: "",
+        startDate: ""
+      },
       detailInfo: {
         alreadyCollectionStatus: "",
         amcProjectCollaterals: [
@@ -422,7 +432,7 @@ export default {
           ],
           pagination: {
             total: 40,
-            pageSizeOptions: ["5", "10", "15", "20"],
+            pageSizeOptions: ["10", "20", "30", "40"],
             showSizeChanger: true,
             showQuickJumper: true,
             showTotal: (val) => `共${val}条信息`,
@@ -517,7 +527,7 @@ export default {
           ],
           pagination: {
             total: 40,
-            pageSizeOptions: ["5", "10", "15", "20"],
+            pageSizeOptions: ["10", "20", "30", "40"],
             showSizeChanger: true,
             showQuickJumper: true,
             showTotal: (val) => `共${val}条信息`,
@@ -526,13 +536,76 @@ export default {
       },
     };
   },
+  methods: {
+    //获取报名服务商列表
+    getSignServiceList(){
+      signService(this.params).then(res=>{
+        console.log(res)
+        if(res.code === 20000){
+          this.tableSource.applyServeTable.pagination.total = res.data.total
+          this.tableSource.applyServeTable.dataSource = res.data.list;
+        }else{
+          this.$message.error("获取报名服务商列表失败,请重新加载")
+        }
+      })
+    },
+    //获取服务商提交方案列表
+    getServiceCaseSubmitList(){
+      serviceCaseSubmit(this.params).then(res=>{
+        console.log(res)
+        if(res.code === 20000){
+          this.tableSource.submitPlanTable.pagination.total = res.data.total;
+          this.tableSource.submitPlanTable.dataSource = res.data.list;
+        }else{
+          this.$message.error("获取服务商提交方案列表失败,请重新加载")
+        }
+      })
+    },
+    //有效方案&未通过系统筛选切换
+    changType(){
+      this.getServiceCaseSubmitList();
+    },
+    //报名服务商列表分页,排序操作
+    applyServeTableChange(pagination, filters, sorter){
+      this.params.page = pagination.current;
+      this.params.size = pagination.pageSize;
+      this.params.sortField = sorter.field;
+      this.params.sortOrder = sorter.order
+        ? sorter.order === "ascend"
+          ? "ASC"
+          : "DESC"
+        : "";
+      this.getSignServiceList();
+    },
+    //服务商提交方案列表分页,排序操作
+    submitPlanTableChange(pagination, filters, sorter){
+      this.params.page = pagination.current;
+      this.params.size = pagination.pageSize;
+      this.params.sortField = sorter.field;
+      this.params.sortOrder = sorter.order
+        ? sorter.order === "ascend"
+          ? "ASC"
+          : "DESC"
+        : "";
+      this.getServiceCaseSubmitList();
+    }
+  },
   components: {
     Breadcrumb,
   },
   created() {
-    console.log(this.$route.query);
+    this.params.id = this.$route.query.id;
+    projectDetail(this.params.id).then(res=>{
+      console.log(res)
+      if(res.code === 20000){
+        this.detailInfo = res.data
+      }else{
+        console.log('error...');
+      }
+    })
+    this.getSignServiceList();
+    this.getServiceCaseSubmitList();
   },
-  methods: {},
 };
 </script>
 

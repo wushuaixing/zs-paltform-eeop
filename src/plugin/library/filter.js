@@ -21,4 +21,7 @@ Vue.filter('guarantyType', (val)=>{
 	return  val === 1 ? '担保' : '担保+抵押'
 })
 
+Vue.filter('identityType', (val)=>{
+	return  val === 1 ? '律师' : '机构'
+})
 export default Vue

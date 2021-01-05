@@ -17,8 +17,7 @@ const request = axios.create({
 /* 请求拦截前的处理 */
 const requestMethods = {
 	onFulfilled: (config) => {
-		// const token = window.localStorage.token !== undefined ? window.localStorage.token : null;
-		const  token = 'eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMTEiLCJzdWIiOiIxMTExMTExMSIsImlzcyI6ImFkbWluIiwiaWF0IjoxNjA5ODE2Mzc2LCJleHAiOjE2MDk5MDI3NzZ9.dBPfEW3yjXhOF2BKVWEWZuT5WkTVFZwZf4KCNy1jEZg'
+		const token = window.localStorage.token !== undefined ? window.localStorage.token : null;
 
 		config.headers = Object.assign({},config.headers,token ? {token} : {});
 		return config;
