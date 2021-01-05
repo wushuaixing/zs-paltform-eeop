@@ -4,8 +4,8 @@
       <div class="item-wrapper item-border">
         <div class="item-title item-format ">服务商注册情况</div>
         <div class="item-content item-format">
-          <span class="total">累计注册服务商 {{echarts.myProjectsNum}} 名</span>
-          <span class="total">昨日新增注册 {{echarts.myProjectsNum}} 名</span>
+          <span class="total">累计注册服务商 {{echarts.totalRegUserNum}} 名</span>
+          <span class="total">昨日新增注册 {{echarts.lastDayRegUserNum}} 名</span>
           <div class="data-display">
             <!-- 饼图显示 -->
             <div class="chart">
@@ -13,19 +13,19 @@
             </div>
             <div class="schemeProcess">
               <a-badge color="#c23531" text="仅注册" />
-              <span style="margin-left: 45px">{{echarts.myProjectCaseUnSubmit}}</span>
+              <span style="margin-left: 45px">{{echarts.onlyRegUserNum}}</span>
               <br />
               <a-badge text="已认证资质" color="#2f4554"/>
-              <span style="margin-left: 18px">{{echarts.myProjectCaseSubmitted}}</span>
+              <span style="margin-left: 18px">{{echarts.confirmQuaUserNum}}</span>
               <br />
               <a-badge text="已提交要素表" color="#61a0a8" />
-              <span style="margin-left: 4px">{{echarts.myProjectsReview}}</span>
+              <span style="margin-left: 4px">{{echarts.submitEleUserNum}}</span>
               <br />
               <a-badge text="已入库" color="#d48265"/>
-              <span style="margin-left: 45px">{{echarts.myProjectsAimed}}</span>
+              <span style="margin-left: 45px">{{echarts.storageUserNum}}</span>
               <br />
               <a-badge text="审核未通过" color="#91c7ae"/>
-              <span style="margin-left: 18px">{{echarts.myProjectsInvalid}}</span>
+              <span style="margin-left: 18px">{{echarts.notPassAuditUserNum}}</span>
               <br />
             </div>
           </div>
@@ -33,17 +33,6 @@
       </div>
       <div class="item-wrapper">
         <div class="item-project item-format">项目招商情况</div>
-        <!-- 未添加项目 -->
-        <!-- <div class="empty" v-if="false">
-          <a-empty description>
-            <slot name="description">您还没有已开始的项目，去<router-link to="/center">服务商项目招商中心</router-link>添加第一个项目</slot>
-          </a-empty>
-        </div> -->
-        <!-- <div class="item-content item-format" >
-          <div class="total">我的项目总数：{{echarts.myProjectsNum}}</div> -->
-          <!-- <div class="data-display">
-          </div> -->
-        <!-- </div> -->
       </div> 
     </div>
     <div class="workbench-item workbench-right">
@@ -64,9 +53,9 @@
 
 <script>
 /*eslint-disable*/
-import { getEchartsInvestMennt } from "@/plugin/api/echarts";
-import { getTODoList } from "@/plugin/api/calendar";
-import { MATTER_TYPE } from "./toDoList";
+import { getEchartsInvestMent } from "@/plugin/api/echarts";
+// import { getTODoList } from "@/plugin/api/calendar";
+// import { MATTER_TYPE } from "./toDoList";
 import echarts from "echarts";
 export default {
   name: "Workbench",
@@ -77,10 +66,10 @@ export default {
     return {
       // 后台图表的数据
       echarts: {},
-      // 待办事项的数据
-      list: [],
+      // // 待办事项的数据
+      // list: [],
       // 提醒类型
-      MATTER_TYPE,
+      // MATTER_TYPE,
     };
   },
   computed: {
@@ -92,16 +81,16 @@ export default {
   },
   methods: {
     // 待办事项
-    async getList() {
-      const res = await getTODoList();
-      console.log(res);
-      if (res.code !== 20000) return 
-        this.list = res.data
-    },
+    // async getList() {
+    //   const res = await getTODoList();
+    //   console.log(res);
+    //   if (res.code !== 20000) return 
+    //     this.list = res.data
+    // },
     //echarts饼图项目招商
     async initECharts () {
       let myChart = echarts.init(document.getElementById("main"));
-      const res = await getEchartsInvestMennt();
+      const res = await getEchartsInvestMent();
       if (res.code !== 20000) return this.$message.error('获取图表数据失败');
       console.log(res);
       this.echarts = res.data;
@@ -130,31 +119,25 @@ export default {
                 show: false
             },
             data: [
-                { value: this.echarts.myProjectCaseUnSubmit, name: '方案待提交'},
-              { value: this.echarts.myProjectCaseSubmitted, name: '方案已提交'},
-              { value: this.echarts.myProjectsReview, name:'方案审批中'},
-              { value: this.echarts.myProjectsAimed, name: '中标'},
-              { value: this.echarts.myProjectsInvalid, name: '失效'},
-              { value: this.echarts.myProjectAbandon, name:'放弃'},
+              { value: this.echarts.onlyRegUserNum, name: '仅注册'},
+              { value: this.echarts.confirmQuaUserNum, name: '已认证资质'},
+              { value: this.echarts.submitEleUserNum, name:'已提交要素表'},
+              { value: this.echarts.storageUserNum, name: '已入库'},
+              { value: this.echarts.notPassAuditUserNum, name: '审核未通过'}
             ]
           }
         ]
       }
-    // myChart.setOption(option,{
-    //   notMerge: false,
-    //   lazyUpdate: false,
-    //   silent: false
-    // });
      myChart.setOption(option,true);
     },
-    // 根据详情路由跳转
-    onTarget (path,id) {
-      this.$router.push({path,query:id})
-    }
+    // // 根据详情路由跳转
+    // onTarget (path,id) {
+    //   this.$router.push({path,query:id})
+    // }
   },
   created () {
     // this.getCalendarData()
-    this.getList()
+    // this.getList()
   },
   mounted() {
     this.initECharts()
@@ -222,18 +205,6 @@ $leftWidth: 550px;
     }
 
   }
-    ul {
-      margin: 0;
-      padding: 0;
-    }
-    .through {
-      li {
-        list-style: none;
-        border-bottom: 1px solid #E9E9E9;
-        margin-left: 20px;
-        padding: 10px 0;
-      }
-    }
     .data-display {
       display: flex;
       justify-content: space-around;
