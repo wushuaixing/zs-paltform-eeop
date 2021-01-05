@@ -20,6 +20,11 @@
 				<span>联系方式：<i>{{info.phone||'-'}}</i></span>
 			</div>
 		</div>
+		<div class="info-audit info-detail" v-if="audit">
+			<span>入库时间：<i>{{'2020-12-21'}}</i></span>
+			<a-divider type="vertical" />
+			<span>审核人：<i>{{'✖✖✖✖✖✖'}}</i></span>
+		</div>
 	</div>
 </template>
 
@@ -34,6 +39,10 @@
 			info:{
 				type:Object,
 				default:()=>({})
+			},
+			audit:{
+				type: Boolean,
+				default:true,
 			}
 		},
 		computed:{
@@ -51,6 +60,7 @@
 .user-info-wrapper{
 	margin-bottom: 15px;
 	display: flex;
+	position: relative;
 	.info-icon{
 		width: 80px;
 		height: 80px;
@@ -75,6 +85,12 @@
 				color: $text-title;
 			}
 		}
+	}
+	.info-audit{
+		position: absolute;
+		right: 0;
+		top: 0;
+		z-index: 2;
 	}
 }
 </style>
