@@ -31,10 +31,13 @@
         </a-col>
       </a-row>
       <!--展示招商项目表格-->
-      <a-table  @change="changes" v-bind="tableSource">2
+      <a-table  @change="changes" v-bind="tableSource" rowKey=id >
         <a slot="name" slot-scope="text">{{ text }}</a>
+        <template slot="security" slot-scope="text,row">
+          <span>{{row.security|guarantyType}}</span>
+        </template>
         <template slot="action" slot-scope="text,row">
-          <span  style="color: #0A91B4;cursor:pointer;" @click="click(row)">查看详情</span>
+          <span class="table-view"  @click="viewDetails(row)">查看详情</span>
         </template>
       </a-table>
     </div>
@@ -71,6 +74,7 @@
 
 <script>
 import Breadcrumb from '@/components/bread-crumb';
+import { projectFind } from "@/plugin/api/investment-center";
 //提交代码
 const columns = [
   {
@@ -91,7 +95,9 @@ const columns = [
   },
   {
     title: '担保方式',
-    dataIndex: 'address',
+    dataIndex: 'security',
+    key: 'security',
+    scopedSlots: {customRender: 'security'},
     width: 200,
   },
   {
@@ -102,7 +108,7 @@ const columns = [
   },
   {
     title: '报名截止日期',
-    dataIndex: 'address2',
+    dataIndex: 'deadline',
     sorter: true,//排序
     width: 200,
   },
@@ -118,24 +124,26 @@ const columns = [
   },
   {
     title: '操作',
-    dataIndex: 'action',
+    dataIndex: 'id',
     key: 'action',
     scopedSlots: {customRender: 'action'},
     width: 200,
   },
 ];
-const data = [
-  {
-    key: '1',
-    debtor: '浙江鲲田实业有限公司',
-    debtCaptial: '6666666',
-    debtInterest: 32,
-    numsSignIn:6,
-    numsSubmit:10,
-    examine: '查看详情',
-    address: 'New York No. 1 Lake Park, New York No. 1 Lake Park',
-  },
-];
+// const data = [
+//   {
+//     id:12345,
+//     debtor: '浙江鲲田实业有限公司',
+//     debtCaptial: '6666666',
+//     debtInterest: 32,
+//     numsSignIn:6,
+//     numsSubmit:10,
+//     deadline:'2021-01-26',
+//     examine: '查看详情',
+//     security:1,//担保方式
+//     gmtCreate:"2021-01-05"
+//   }
+// ];
 const navData = [
   {id: 1, title: "招商管理", path: "/investment/list"},
   {id: 2, title: "招商项目管理", path: "/investment/list"},
@@ -153,9 +161,9 @@ export default {
       visible: false,
       tableSource:{
         columns,
-        dataSource:[...data],
+        dataSource:[],
         pagination: {
-          total: 40,
+          total: 0,
           pageSizeOptions: ['5', '10', '15', '20'],
           showSizeChanger: true,
           showQuickJumper: true,
@@ -166,7 +174,17 @@ export default {
         authorization: 'authorization-text',
         token: '',
       },
-
+      findAll:{
+        caseType: 0,
+        debtor: "",
+        endDate: "",
+        id: "",
+        page: 0,
+        size: 0,
+        sortField: 0,
+        sortOrder: "",
+        startDate: ""
+      }
     };
   },
   components: {
@@ -183,13 +201,20 @@ export default {
   methods: {
     inquire(){
       console.log(this.debtorInquiry)
+      this.findAll.caseType = 1
+      projectFind(this.findAll).then((res)=>{
+        this.tableSource.dataSource = res.data.list;
+        this.tableSource.pagination.total = res.data.total;
+        console.log(res)
+      })
+
     },
     changes(a, b, c) {
       console.log(a, b, c)
     },
-    click(v) {
-      this.$router.push({name: 'investment/item-detail', query: {id: 12321321}})
-      console.log(v)
+    viewDetails(v) {
+      this.$router.push({name: 'investment/item-detail', query: {id: v.id}})
+      console.log(v.id)
     },
     showModal() {
       this.visible = true;
@@ -257,5 +282,9 @@ export default {
   margin-left: 50%;
   transform: translateX(-50%);
   color: #999999;
+}
+.table-view{
+  color: #0A91B4;
+  cursor:pointer;
 }
 </style>
