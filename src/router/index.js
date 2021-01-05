@@ -56,7 +56,7 @@ const routes = [
 					      component:()=>import("@/views/main/investment/index"),
 					    },
 					    {
-					      path: 'list/detail/:id',
+					      path: 'detail',
 					      name:'investment/item-detail',
 					      component:()=>import("@/views/main/investment/item-detail"),
 					    },
