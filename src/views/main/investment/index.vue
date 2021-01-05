@@ -19,11 +19,13 @@
           <a-date-picker
               v-model="debtorInquiry.startValue"
               valueFormat="YYYY-MM-D"
+              placeholder="搜索范围起始日期"
           />
           <span style="margin: 0 6px">至</span>
           <a-date-picker
               v-model="debtorInquiry.endValue"
               format="YYYY-MM-DD"
+              placeholder="搜索范围截止日期"
           />
         </a-col>
         <a-col :span="2">
@@ -199,15 +201,18 @@ export default {
     // },
   },
   methods: {
-    inquire(){
-      console.log(this.debtorInquiry)
-      this.findAll.caseType = 1
-      projectFind(this.findAll).then((res)=>{
+    //请求封装
+    requestInquire(params){
+      projectFind(params).then((res)=>{
         this.tableSource.dataSource = res.data.list;
         this.tableSource.pagination.total = res.data.total;
         console.log(res)
       })
+    },
+    inquire(){
 
+      this.requestInquire()
+      console.log(this.debtorInquiry)
     },
     changes(a, b, c) {
       console.log(a, b, c)
