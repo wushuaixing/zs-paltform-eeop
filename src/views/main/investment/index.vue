@@ -2,7 +2,7 @@
   <div>
     <Breadcrumb :source="navData" icon="environment">
       <template slot="suffix">
-        <button @click="showModal">
+        <button @click="showModal" class="upProject">
           <a-icon type="snippets"/>
           项目上传
         </button>
@@ -12,40 +12,35 @@
       <!--收索框-->
       <a-row class="search_box" type="flex">
         <a-col :span="12">
-          <a-input style="width: 90%" placeholder="请输入债务人的名称"/>
+          <a-input  v-model="debtorInquiry.debtorName" addon-before="债务人名称" style="width: 90%" placeholder="请输入债务人的名称"/>
         </a-col>
-        <a-col :span="10" >
-          <span>报名截止日期:</span>
+        <a-col :span="10">
+          <span>报名截止日期：</span>
           <a-date-picker
-              v-model="startValue"
-              format="YYYY-MM-DD HH:mm:ss"
+              v-model="debtorInquiry.startValue"
+              valueFormat="YYYY-MM-D"
           />
-          <span>至</span>
+          <span style="margin: 0 6px">至</span>
           <a-date-picker
-              v-model="endValue"
-              format="YYYY-MM-DD HH:mm:ss"
+              v-model="debtorInquiry.endValue"
+              format="YYYY-MM-DD"
           />
         </a-col>
         <a-col :span="2">
-          <a-button>查询</a-button>
+          <a-button @click="inquire" type="primary">查询</a-button>
         </a-col>
       </a-row>
-      <!--展示招商项目管理-->
-      <a-table :pagination="{
-         total:40,
-         pageSizeOptions:['5','10','15','20'],
-         showSizeChanger:true,
-         showQuickJumper:true
-     }" @change="changes" :columns="columns" :data-source="data">
+      <!--展示招商项目表格-->
+      <a-table  @change="changes" v-bind="tableSource">2
         <a slot="name" slot-scope="text">{{ text }}</a>
         <template slot="action" slot-scope="text,row">
-          <span style="color: #0A91B4" @click="click(row)">查看详情</span>
+          <span  style="color: #0A91B4;cursor:pointer;" @click="click(row)">查看详情</span>
         </template>
       </a-table>
     </div>
-   <!--弹框对话框-->
+    <!--弹框对话框-->
     <div>
-      <a-modal  :centered="true" v-model="visible" title="发布新项目" @ok="handleOk">
+      <a-modal :centered="true" v-model="visible" title="发布新项目" @ok="handleOk">
         <div class="pop-up">
           <span>招商服务项目信息</span>
           <a-upload
@@ -56,7 +51,10 @@
               :beforeUpload="beforeUpload"
               accept="application/pdf,.doc,.docx,application/msword"
           >
-            <a-button> <a-icon type="upload" /> 点的上传 </a-button>
+            <a-button>
+              <a-icon type="upload"/>
+              点的上传
+            </a-button>
           </a-upload>
           <a>导入模板下载</a>
         </div>
@@ -77,18 +75,18 @@ import Breadcrumb from '@/components/bread-crumb';
 const columns = [
   {
     title: '债务人名字',
-    dataIndex: 'name',
+    dataIndex: 'debtor',
     key: 'name',
     width: 200,
   },
   {
     title: '债权人(万元)',
-    dataIndex: 'age',
+    dataIndex: 'debtCaptial',
     width: 200,
   },
   {
     title: '债权利息(万元)',
-    dataIndex: 'set',
+    dataIndex: 'debtInterest',
     width: 200,
   },
   {
@@ -98,7 +96,7 @@ const columns = [
   },
   {
     title: '项目发布日期',
-    dataIndex: 'address1',
+    dataIndex: 'gmtCreate',
     sorter: true,//排序
     width: 200,
   },
@@ -110,81 +108,86 @@ const columns = [
   },
   {
     title: '当前报名人数',
-    dataIndex: 'address3',
+    dataIndex: 'numsSignIn',
     width: 200,
   },
   {
     title: '当前方案提交人数',
-    dataIndex: 'address4',
+    dataIndex: 'numsSubmit',
     width: 200,
   },
   {
     title: '操作',
     dataIndex: 'action',
-    key:'action',
-    scopedSlots:{customRender: 'action'},
+    key: 'action',
+    scopedSlots: {customRender: 'action'},
     width: 200,
   },
 ];
 const data = [
   {
     key: '1',
-    name: '浙江鲲田实业有限公司',
-    set: '6666666',
-    age: 32,
-    examine:'查看详情',
+    debtor: '浙江鲲田实业有限公司',
+    debtCaptial: '6666666',
+    debtInterest: 32,
+    numsSignIn:6,
+    numsSubmit:10,
+    examine: '查看详情',
     address: 'New York No. 1 Lake Park, New York No. 1 Lake Park',
   },
-  {
-    key: '2',
-    name: '浙江混天1111',
-    age: 42,
-    address: 'London No. 2 Lake Park, London No. 2 Lake Park',
-  },
-  {
-    key: '3',
-    name: '浙江混天222',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park, Sidney No. 1 Lake Park',
-
-  },
 ];
-
+const navData = [
+  {id: 1, title: "招商管理", path: "/investment/list"},
+  {id: 2, title: "招商项目管理", path: "/investment/list"},
+];
 export default {
   name: "Investment",
   data() {
     return {
-      navData: [
-        {id: 1, title: "招商管理", path: "/investment/list"},
-        {id: 2, title: "招商项目管理", path: "/investment/list"},
-      ],
-      data,
-      columns,
-      startValue: null,
-      endValue: null,
+      navData,
+      debtorInquiry:{
+        debtorName:null,
+        startValue: null,
+        endValue: null,
+      },
       visible: false,
+      tableSource:{
+        columns,
+        dataSource:[...data],
+        pagination: {
+          total: 40,
+          pageSizeOptions: ['5', '10', '15', '20'],
+          showSizeChanger: true,
+          showQuickJumper: true,
+          showTotal:(val)=>`共${val}多少条`
+        },
+      },
       headers: {
         authorization: 'authorization-text',
-        token:'',
+        token: '',
       },
+
     };
   },
   components: {
     Breadcrumb
   },
   watch: {
-    startValue(val) {
-      console.log('startValue', val);
-    },
-    endValue(val) {
-      console.log('endValue', val);
-    },
+    // startValue(val) {
+    //   console.log('startValue', val);
+    // },
+    // endValue(val) {
+    //   console.log('endValue', val);
+    // },
   },
   methods: {
+    inquire(){
+      console.log(this.debtorInquiry)
+    },
     changes(a, b, c) {
       console.log(a, b, c)
     },
-    click(v){
+    click(v) {
       this.$router.push({name: 'investment/item-detail', query: {id: 12321321}})
       console.log(v)
     },
@@ -195,8 +198,8 @@ export default {
       console.log(e);
       this.visible = false;
     },
-    beforeUpload(file,fileList){
-      console.log(file,fileList)
+    beforeUpload(file, fileList) {
+      console.log(file, fileList)
       // const  format1 = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
       // const  format2 = "application/vnd.ms-excel";
       // if(file.type === format1 || file.type ===  format2){
@@ -208,40 +211,51 @@ export default {
     //上传文件
     handleChange(info) {
       if (info.file.status !== 'uploading') {
-        console.log(info.file, info.fileList);
+        // console.log(info.file, info.fileList);
+        console.log(info.file)
       }
-      if (info.file.status === 'done') {
-        this.$message.success(`${info.file.name} file uploaded successfully`);
-      } else if (info.file.status === 'error') {
-        this.$message.error(`${info.file.name} file upload failed.`);
-      }
+      // if (info.file.status === 'done') {
+      //   this.$message.success(`${info.file.name} file uploaded successfully`);
+      // } else if (info.file.status === 'error') {
+      //   this.$message.error(`${info.file.name} file upload failed.`);
+      // }
     },
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.search_box{
+.upProject {
+  width: 120px;
+  height: 30px;
+  background-color: #fff;
+  border: #999999 1px solid;
+  border-radius: 6px;
+}
+
+.search_box {
   margin: 20px 0;
 }
+
 .content {
   padding: 20px;
   background-color: #fff;
 }
 
-.pop-up{
+.pop-up {
   display: flex;
   align-items: center;
-  button{
+
+  button {
     margin: 0 10px;
   }
 }
-.caution{
+
+.caution {
   width: 260px;
   margin-top: 20px;
   margin-left: 50%;
   transform: translateX(-50%);
   color: #999999;
 }
-
 </style>
