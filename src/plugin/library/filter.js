@@ -17,4 +17,8 @@ Vue.filter('amountTh', (val)=>{
 })
 
 
+Vue.filter('guarantyType', (val)=>{
+	return  val === 1 ? '担保' : '担保+抵押'
+})
+
 export default Vue
