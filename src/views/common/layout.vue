@@ -14,7 +14,7 @@
                 <div @click="handleModifyPwd"><a-icon type="user" />修改登录密码</div>
               </a-menu-item>
               <a-menu-item key="2">
-                <router-link to="/login"><a-icon type="user" />退出登录</router-link>
+                <div @click="backLogin"><a-icon type="user" />退出登录</div>
               </a-menu-item>
             </a-menu>
             <a-button type="link" icon="down" style="color:#fff;">Hi，{{username}}</a-button>
@@ -29,7 +29,8 @@
 </template>
 <script>
   import { getInfo} from "@/plugin/api/base";
-  import ModifyPwdModal from "./personal/modify-password"
+  import ModifyPwdModal from "./personal/modify-password";
+  import {logout} from "@/plugin/api/login"
   export default {
     data() {
       return {
@@ -45,17 +46,29 @@
       handleModifyPwd(){
         this.$refs.modifyPwd.showModal()
       },
+      backLogin(){
+        logout().then(res=>{
+          if(res.code === 20000 ){
+            this.$router.push('/login')
+          }else{
+            return false;
+          }
+        })
+      }
     },
     created() {
-      const _this = this;
-      this.$confirm({
-        title:"为了您的账号和安全,请及时修改密码",
-        centered:true,
-        iconType:"exclamation-circle",
-        onOk(){
-          _this.$refs.modifyPwd.showModal()
-        }
-      })
+      if(this.passwordChanged === 0){
+        const _this = this;
+        this.$confirm({
+          title:"为了您的账号和安全,请及时修改密码",
+          centered:true,
+          iconType:"exclamation-circle",
+          onOk(){
+            _this.$refs.modifyPwd.showModal()
+          }
+        })
+      }
+
       const { pathname } = window.location;
       if(/center/.test(pathname))this.selectedKey = 'b';
       if(!this.$store.state.isLogin){
@@ -76,6 +89,9 @@
       username(){
         return this.$store.getters.getInfo.username;
       },
+      passwordChanged(){
+        return this.$store.getters.getInfo.passwordChanged
+      }
     }
   };
 </script>

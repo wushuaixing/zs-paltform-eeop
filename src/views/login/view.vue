@@ -15,9 +15,9 @@
             autoComplete="off"
           >
             <div style="height: 196px">
-              <a-form-model-item prop="number">
+              <a-form-model-item prop="username">
                 <a-input
-                  v-model.trim="params.number"
+                  v-model.trim="params.username"
                   placeholder="请输入您的工号"
                   v-bind="styleProps"
                   :maxLength="8"
@@ -70,9 +70,9 @@
                   </template>
                 </a-input>
               </a-form-model-item>
+              <a-button class="login-btn" type="primary" block @click="handleSubmit" size="large">登 录</a-button>
             </div>
           </a-form-model>
-          <a-button class="login-btn" type="primary" block @click="handleSubmit" size="large">登 录</a-button>
         </div>
       </div>
     </div>
@@ -97,7 +97,7 @@ export default {
     };
     return {
       params: {
-        number: "",
+        username: "",
         password: "",
         pictureCode: "",
       },
@@ -114,7 +114,7 @@ export default {
         },
       },
       rules: {
-        number: [
+        username: [
           {
             required: true,
             message: "请输入8位数字的工号",
@@ -139,9 +139,8 @@ export default {
     toGetImageCode() {
       if (this.imgCode.loading) return;
       this.imgCode.loading = true;
-      const phone = this.params.phone;
       api
-        .getCaptcha({ phone })
+        .getCaptcha(this.params.username)
         .then((res) => {
           if (res.code === 20000) {
             this.imgCode.url = res.data.captcha;
@@ -154,9 +153,11 @@ export default {
         });
     },
     toLogin() {
-      const phone = this.params.phone;
+      // api.login(encryptInfo(this.params)).then(res=>{
+      //   console.log(res)
+      // })
       api
-        .accountStatus({ phone })
+        .accountStatus(this.params.username)
         .then((res) => {
           console.log(res);
           if (res.code === 20000) {
@@ -184,7 +185,6 @@ export default {
             this.toGetImageCode();
             if (res.data && res.data.count >= 5) return this.$message.error(`账号或密码错误,您还可以尝试${10 - res.data.count}次`);
             if (res.code === 30001) return this.$message.error("账号或密码错误");
-            if (res.code === 30003) return this.$message.error("验证码错误");
             if (res.code === 30006) return this.$warning({
               title:"账号冻结提示",
               content:"账号或密码输入错误次数过多，请在1小时后尝试",
@@ -193,7 +193,7 @@ export default {
               okText:"我知道了",
               getContainer:()=>this.$refs.loginContainer
             });
-            if (res.code === 30009) return this.$message.error("手机号未注册,请先进行注册");
+            if (res.code === 30009) return this.$message.error("账号不存在,请先进行注册");
             if (res.code === 30010) return this.$message.error("图片验证码错误");
           }
         });
@@ -290,7 +290,7 @@ export default {
     border-radius: 2px !important;
   }
   .login-btn{
-    // margin-top: 70px;
+    margin-top: 46px;
   }
 }
 .register-content{

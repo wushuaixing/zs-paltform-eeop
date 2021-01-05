@@ -58,13 +58,14 @@
 </template>
 
 <script>
-import { editPassword } from "@/plugin/api/personal";
+import { updatePassword } from "@/plugin/api/personal";
 import { encryptEditPwd } from "@/plugin/tools/encrypt";
 export default {
   data() {
     return {
       visible: false,
       form: {
+        editType:this.passwordChanged,
         newPassword: "",
         oldPassword: "",
         confirmPwd: "",
@@ -108,6 +109,11 @@ export default {
       wrapperCol: { span: 14 },
     };
   },
+  computed:{
+    passwordChanged(){
+        return this.$store.getters.getInfo.passwordChanged
+      }
+  },
   methods: {
     showModal() {
       this.visible = true;
@@ -135,9 +141,9 @@ export default {
       if (this.passwordCheck.every((item) => item === true)) {
         this.$refs.ruleForm.validate((checkStatus) => {
           if (checkStatus) {
-            editPassword(
+            updatePassword(
               encryptEditPwd({
-                editType: 1,
+                editType: this.editType,
                 oldPassword: this.form.oldPassword,
                 newPassword: this.form.newPassword,
               })
