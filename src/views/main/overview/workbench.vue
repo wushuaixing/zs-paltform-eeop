@@ -1,53 +1,32 @@
 <template>
   <div class="workbench-wrapper">
     <div class="workbench-item workbench-left">
-      <div class="item-wrapper">
-        <div class="item-title item-format">我的待办</div>
-          <ul class="through">
-            <li  v-for="(item, index) in list" :key="index">
-              <a-badge :status="MATTER_TYPE[item.code].text" />
-              <span class="thing">{{ MATTER_TYPE[item.code].name}}</span>
-              <span class="message">{{item.message}}</span>
-                <a-button type="link" @click="onTarget(MATTER_TYPE[item.code].path, item.projectId)" >立即前往</a-button>
-            </li>
-          </ul>
-        </div>
-    </div>
-    <div class="workbench-item workbench-right">
       <div class="item-wrapper item-border">
         <div class="item-title item-format ">服务商注册情况</div>
-        <div class="empty" v-if="isShowEcharts">
-          <a-empty description>
-            <slot name="description">您还没有已开始的项目，去<router-link to="/center">服务商项目招商中心</router-link>添加第一个项目</slot>
-          </a-empty>
-        </div>
-        <div class="item-content item-format" v-else>
-          <div class="total">我的项目总数：{{echarts.myProjectsNum}}</div>
+        <div class="item-content item-format">
+          <span class="total">累计注册服务商 {{echarts.myProjectsNum}} 名</span>
+          <span class="total">昨日新增注册 {{echarts.myProjectsNum}} 名</span>
           <div class="data-display">
             <!-- 饼图显示 -->
             <div class="chart">
-              <!-- <div id="main"></div> -->
+              <div id="main"></div>
             </div>
             <div class="schemeProcess">
-              <a-badge color="#c23531" text="方案待提交" />
-              <span>{{echarts.myProjectCaseUnSubmit}}</span>
+              <a-badge color="#c23531" text="仅注册" />
+              <span style="margin-left: 45px">{{echarts.myProjectCaseUnSubmit}}</span>
               <br />
-              <a-badge text="方案已提交" color="#2f4554"/>
-              <span>{{echarts.myProjectCaseSubmitted}}</span>
+              <a-badge text="已认证资质" color="#2f4554"/>
+              <span style="margin-left: 18px">{{echarts.myProjectCaseSubmitted}}</span>
               <br />
-              <a-badge text="方案审批中" color="#61a0a8" />
-              <span>{{echarts.myProjectsReview}}</span>
+              <a-badge text="已提交要素表" color="#61a0a8" />
+              <span style="margin-left: 4px">{{echarts.myProjectsReview}}</span>
               <br />
-            </div>
-            <div class="schemeStatus">
-              <a-badge text="中标" color="#d48265"/>
-              <span>{{echarts.myProjectsAimed}}</span>
+              <a-badge text="已入库" color="#d48265"/>
+              <span style="margin-left: 45px">{{echarts.myProjectsAimed}}</span>
               <br />
-              <a-badge text="失效" color="#91c7ae"/>
-              <span>{{echarts.myProjectsInvalid}}</span>
+              <a-badge text="审核未通过" color="#91c7ae"/>
+              <span style="margin-left: 18px">{{echarts.myProjectsInvalid}}</span>
               <br />
-              <a-badge text="放弃" color="#749f83"/>
-              <span>{{echarts.myProjectAbandon}}</span>
             </div>
           </div>
         </div>
@@ -55,41 +34,29 @@
       <div class="item-wrapper">
         <div class="item-project item-format">项目招商情况</div>
         <!-- 未添加项目 -->
-        <div class="empty" v-if="false">
+        <!-- <div class="empty" v-if="false">
           <a-empty description>
             <slot name="description">您还没有已开始的项目，去<router-link to="/center">服务商项目招商中心</router-link>添加第一个项目</slot>
           </a-empty>
-        </div>
-        <div class="item-content item-format" >
-          <div class="total">我的项目总数：{{echarts.myProjectsNum}}</div>
-          <div class="data-display">
-            <!-- 饼图显示 -->
-            <div class="chart">
-              <div id="main"></div>
-            </div>
-            <div class="schemeProcess">
-              <a-badge color="#c23531" text="方案待提交" />
-              <span>{{echarts.myProjectCaseUnSubmit}}</span>
-              <br />
-              <a-badge text="方案已提交" color="#2f4554"/>
-              <span>{{echarts.myProjectCaseSubmitted}}</span>
-              <br />
-              <a-badge text="方案审批中" color="#61a0a8" />
-              <span>{{echarts.myProjectsReview}}</span>
-              <br />
-            </div>
-            <div class="schemeStatus">
-              <a-badge text="中标" color="#d48265"/>
-              <span>{{echarts.myProjectsAimed}}</span>
-              <br />
-              <a-badge text="失效" color="#91c7ae"/>
-              <span>{{echarts.myProjectsInvalid}}</span>
-              <br />
-              <a-badge text="放弃" color="#749f83"/>
-              <span>{{echarts.myProjectAbandon}}</span>
-            </div>
-          </div>
-        </div>
+        </div> -->
+        <!-- <div class="item-content item-format" >
+          <div class="total">我的项目总数：{{echarts.myProjectsNum}}</div> -->
+          <!-- <div class="data-display">
+          </div> -->
+        <!-- </div> -->
+      </div> 
+    </div>
+    <div class="workbench-item workbench-right">
+      <div class="item-wrapper">
+        <div class="item-title item-format"></div>
+          <!-- <ul class="through">
+            <li  v-for="(item, index) in list" :key="index">
+              <a-badge :status="MATTER_TYPE[item.code].text" />
+              <span class="thing">{{ MATTER_TYPE[item.code].name}}</span>
+              <span class="message">{{item.message}}</span>
+                <a-button type="link" @click="onTarget(MATTER_TYPE[item.code].path, item.projectId)" >立即前往</a-button>
+            </li>
+          </ul> -->
       </div>
     </div>
   </div>
@@ -198,7 +165,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-$leftWidth: 850px;
+$leftWidth: 550px;
 .workbench-wrapper {
   height: 100%;
   padding: 16px;
@@ -248,7 +215,7 @@ $leftWidth: 850px;
       line-height: 16px;
     }
     &-content {
-      min-height: 380px;
+      min-height: 280px;
     }
     &-thing {
       min-height: 432px;
@@ -269,18 +236,19 @@ $leftWidth: 850px;
     }
     .data-display {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      justify-content: space-around;
+      // align-items: center;
       width: 100%;
       height: 262px;
+      margin-top: 20px;
       .ant-badge {
         margin: 10px 10px;
       }
     }
     .chart {
       position: relative;
-      width: 150px;
-      height: 150px;
+      width: 250px;
+      height: 250px;
       border-radius: 50%;
     }
     .schemeProcess,.schemeStatus {
@@ -295,75 +263,15 @@ $leftWidth: 850px;
       }
     }
     .total {
-      padding: 0 14px;
-      margin-top: 10px;
-      height: 16px;
-      font-size: 14px;
+      font-size: 16px;
+      padding: 0 20px;
+      // margin-top: 20px;
+      margin-left: 10px;
       font-family: PingFangSC-Medium, PingFang SC;
       font-weight: 600;
       color: #333333;
       line-height: 16px;
     }
-    .empty {
-      margin-top: 50px;
-      text-align: center;
-    }
-    // 日历样式
-    .events {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-    .events .ant-badge-status {
-      overflow: hidden;
-      white-space: nowrap;
-      width: 100%;
-      text-overflow: ellipsis;
-      font-size: 12px;
-    }
-    .notes-month {
-      text-align: center;
-      font-size: 28px;
-    }
-    .notes-month section {
-      font-size: 28px;
-    }
-    /deep/.ant-badge-status-text {
-      height: 17px;
-      font-size: 12px;
-      font-family: PingFangSC-Regular, PingFang SC;
-      font-weight: 400;
-      color: #999999;
-      line-height: 17px;
-    }
-    // 日历头样式
-    /deep/.ant-fullcalendar-header {
-      text-align: center;
-      margin-bottom: 5px;
-    }
-    /deep/.ant-fullcalendar-column-header-inner {
-      font-weight: 800;
-      text-align: center;
-    }
-    /deep/.ant-fullcalendar-date {
-      border-top: 4px solid #e8e8e8;
-    }
-    /deep/.ant-fullcalendar-today .ant-fullcalendar-date {
-      border-top: 6px solid #008cb0 !important;
-      opacity: 0.8;
-    }
-    /deep/.ant-badge-status-text {
-      height: 12px;
-      font-size: 12px;
-      font-family: PingFangSC-Regular, PingFang SC;
-      font-weight: 400;
-      color: #666666;
-      line-height: 12px;
-    }
-  }
-  // 隐藏月和年选择按钮
-  /deep/.ant-radio-group {
-    display: none;
   }
   span {
     font-weight: 400;
@@ -377,19 +285,10 @@ $leftWidth: 850px;
   }
   #main{
     position: absolute;
-    top: 0px;
-    left: 0px;
-    width: 150px;
-    height: 150px;
-  }
-  // 提醒类型样式
-  .thing {
-    color: #333333;
-    line-height: 22px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    font-family: PingFangSC-Medium, PingFang SC;
-    font-size: 14px;
+    top: -10px;
+    left: 10px;
+    width: 250px;
+    height: 250px;
   }
   /deep/.ant-btn {
     padding: unset;
