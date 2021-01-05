@@ -1,60 +1,62 @@
 <template>
-  <div>
+  <div class="frame-wrapper">
     <Breadcrumb :source="navData" icon="environment">
       <template slot="suffix">
-        <button @click="showModal" class="upProject">
-          <a-icon type="snippets"/>
-          项目上传
-        </button>
+        <a-button @click="showModal" >
+          <a-icon type="snippets"/>项目上传
+        </a-button>
       </template>
     </Breadcrumb>
     <div class="content">
       <!--收索框-->
-      <a-row class="search_box" type="flex">
-        <a-col :span="12">
-          <a-input  v-model="debtorInquiry.debtorName" addon-before="债务人名称" style="width: 90%" placeholder="请输入债务人的名称"/>
+      <a-row class="search_box" type="flex" >
+        <a-col :span="11">
+          <a-input  v-model="findAll.debtor"  style="width: 90%" placeholder="请输入债务人的名称" class="custom-prefix-6">
+            <template slot="prefix" >
+              <div class="query-item-prefix">债务人名称</div>
+            </template>
+          </a-input>
         </a-col>
         <a-col :span="10">
           <span>报名截止日期：</span>
           <a-date-picker
-              v-model="debtorInquiry.startValue"
+              v-model="findAll.startDate"
               valueFormat="YYYY-MM-D"
               placeholder="搜索范围起始日期"
           />
           <span style="margin: 0 6px">至</span>
           <a-date-picker
-              v-model="debtorInquiry.endValue"
-              format="YYYY-MM-DD"
+              v-model="findAll.endDate"
+              valueFormat="YYYY-MM-D"
               placeholder="搜索范围截止日期"
           />
         </a-col>
-        <a-col :span="2">
+        <a-col :span="3" style="text-align: right" >
+          <a-button class="reset-but" @click="reset" type="primary">重置</a-button>
           <a-button @click="inquire" type="primary">查询</a-button>
         </a-col>
       </a-row>
       <!--展示招商项目表格-->
-      <a-table  @change="changes" v-bind="tableSource" rowKey=id >
+      <a-table  @change="tableHanges" v-bind="tableSource" rowKey=id >
         <a slot="name" slot-scope="text">{{ text }}</a>
-        <template slot="security" slot-scope="text,row">
-          <span>{{row.security|guarantyType}}</span>
-        </template>
+        <template slot="security" slot-scope="text,row">{{row.security|guarantyType}}</template>
+        <template slot="debtCaptial" slot-scope="text,row">{{row.debtCaptial|amountTh}}</template>
+        <template slot="debtInterest" slot-scope="text,row">{{row.debtInterest|amountTh}}</template>
         <template slot="action" slot-scope="text,row">
           <span class="table-view"  @click="viewDetails(row)">查看详情</span>
         </template>
       </a-table>
     </div>
-    <!--弹框对话框-->
+    <!--弹框对话框文件上传https://www.mocky.io/v2/5cc8019d300000980a055e76-->
     <div>
       <a-modal :centered="true" v-model="visible" title="发布新项目" @ok="handleOk">
         <div class="pop-up">
           <span>招商服务项目信息</span>
           <a-upload
               name="file"
-              action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+              action="/proxy-api/operator/project/importExcel"
               :headers="headers"
               @change="handleChange"
-              :beforeUpload="beforeUpload"
-              accept="application/pdf,.doc,.docx,application/msword"
           >
             <a-button>
               <a-icon type="upload"/>
@@ -88,11 +90,15 @@ const columns = [
   {
     title: '债权人(万元)',
     dataIndex: 'debtCaptial',
+    key: 'debtCaptial',
+    scopedSlots: {customRender: 'debtCaptial'},
     width: 200,
   },
   {
     title: '债权利息(万元)',
     dataIndex: 'debtInterest',
+    key: 'debtInterest',
+    scopedSlots: {customRender: 'debtInterest'},
     width: 200,
   },
   {
@@ -166,7 +172,7 @@ export default {
         dataSource:[],
         pagination: {
           total: 0,
-          pageSizeOptions: ['5', '10', '15', '20'],
+          pageSizeOptions: [ '10', '20', '30',],
           showSizeChanger: true,
           showQuickJumper: true,
           showTotal:(val)=>`共${val}多少条`
@@ -174,15 +180,15 @@ export default {
       },
       headers: {
         authorization: 'authorization-text',
-        token: '',
+        token: window.localStorage.token,
       },
       findAll:{
-        caseType: 0,
+        caseType: 1,
         debtor: "",
         endDate: "",
         id: "",
-        page: 0,
-        size: 0,
+        page: 1,
+        size: 10,
         sortField: 0,
         sortOrder: "",
         startDate: ""
@@ -200,22 +206,37 @@ export default {
     //   console.log('endValue', val);
     // },
   },
+  created() {
+    this.requestInquire()
+  },
   methods: {
     //请求封装
-    requestInquire(params){
-      projectFind(params).then((res)=>{
+    requestInquire(){
+      projectFind(this.findAll).then((res)=>{
+        console.log(res)
+        if(res.code !== 20000 ) return this.$message.error('出问题了')
         this.tableSource.dataSource = res.data.list;
         this.tableSource.pagination.total = res.data.total;
-        console.log(res)
       })
     },
     inquire(){
-
       this.requestInquire()
-      console.log(this.debtorInquiry)
+      console.log(this.findAll)
     },
-    changes(a, b, c) {
-      console.log(a, b, c)
+    reset(){
+      this.findAll.debtor = "";
+      this.findAll.endDate = "";
+      this.findAll.startDate = "";
+      this.requestInquire()
+    },
+    tableHanges(pagination, filters, sorter,) {
+      // console.log(pagination, filters, sorter,)
+      //排序
+      this.findAll.sortField = sorter.field === 'deadline' ? 1 : 2;
+      this.findAll.sortOrder = sorter.order ? sorter.order === "ascend" ? "ASC" : "DESC" : "";
+      this.findAll.page = pagination.current;
+      this.findAll.size = pagination.pageSize;
+      this.requestInquire()
     },
     viewDetails(v) {
       this.$router.push({name: 'investment/item-detail', query: {id: v.id}})
@@ -228,21 +249,10 @@ export default {
       console.log(e);
       this.visible = false;
     },
-    beforeUpload(file, fileList) {
-      console.log(file, fileList)
-      // const  format1 = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-      // const  format2 = "application/vnd.ms-excel";
-      // if(file.type === format1 || file.type ===  format2){
-      //   this.$message.success("上传成功");
-      // }else {
-      //   this.$message.error("格式不正确");
-      // }
-    },
     //上传文件
     handleChange(info) {
       if (info.file.status !== 'uploading') {
-        // console.log(info.file, info.fileList);
-        console.log(info.file)
+        console.log(info.file.response)
       }
       // if (info.file.status === 'done') {
       //   this.$message.success(`${info.file.name} file uploaded successfully`);
@@ -255,6 +265,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.frame-wrapper{
+  padding: 16px;
+}
 .upProject {
   width: 120px;
   height: 30px;
@@ -262,25 +275,20 @@ export default {
   border: #999999 1px solid;
   border-radius: 6px;
 }
-
 .search_box {
   margin: 20px 0;
 }
-
 .content {
   padding: 20px;
   background-color: #fff;
 }
-
 .pop-up {
   display: flex;
   align-items: center;
-
   button {
     margin: 0 10px;
   }
 }
-
 .caution {
   width: 260px;
   margin-top: 20px;
@@ -291,5 +299,11 @@ export default {
 .table-view{
   color: #0A91B4;
   cursor:pointer;
+}
+.reset-but{
+  margin-right: 16px;
+  background-color: #fff;
+  color: #666666;
+  border: 1px solid #dddddd;
 }
 </style>
