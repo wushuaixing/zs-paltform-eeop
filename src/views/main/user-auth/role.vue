@@ -5,7 +5,7 @@
 			<div class="frame-query">
 				<a-form-model layout="inline" @submit="handleSubmit" @submit.native.prevent>
 					<a-form-model-item>
-						<a-input v-model="query.username" placeholder="请输入联络人姓名" class="custom-prefix-5">
+						<a-input v-model="query.username" placeholder="请输入联络人姓名" class="custom-prefix-6">
 							<template slot="prefix" >
 								<div class="query-item-prefix">联络人姓名</div>
 							</template>
@@ -35,23 +35,20 @@
 				</a-form-model>
 			</div>
 			<div class="frame-content">
-				<div class="frame-content-tab">
-					<a-tabs @change="handleTabChange">
-						<a-tab-pane key="1" tab="进行中"></a-tab-pane>
-						<a-tab-pane key="2" tab="已中标"></a-tab-pane>
-						<a-tab-pane key="3" tab="已放弃"></a-tab-pane>
-						<a-tab-pane key="4" tab="已失效"></a-tab-pane>
-					</a-tabs>
-				</div>
-				<div class="frame-content-table">
-					<a-table :columns="columns" :data-source="dataSource" size="middle" :pagination="pagination" @change="handleTableChange">
-						<template slot="auction">
-							<a-button type="link" size="small" icon="file-text" :style="{paddingLeft: 0}">详情</a-button>
-							<a-divider type="vertical" />
-							<a-button type="link" size="small" icon="form" >标签及审核结果添加</a-button>
-						</template>
-					</a-table>
-				</div>
+				<a-tabs @change="handleTabChange">
+					<a-tab-pane key="1" tab="进行中"></a-tab-pane>
+					<a-tab-pane key="2" tab="已中标"></a-tab-pane>
+					<a-tab-pane key="3" tab="已放弃"></a-tab-pane>
+					<a-tab-pane key="4" tab="已失效"></a-tab-pane>
+				</a-tabs>
+				<div style="height: 4px"></div>
+				<a-table :columns="columns" :data-source="dataSource" size="middle" :pagination="pagination" @change="handleTableChange">
+					<template slot="auction">
+						<a-button type="link" size="small" icon="file-text" :style="{paddingLeft: 0}">详情</a-button>
+						<a-divider type="vertical" />
+						<a-button type="link" size="small" icon="form" >标签及审核结果添加</a-button>
+					</template>
+				</a-table>
 			</div>
 		</div>
 	</div>
