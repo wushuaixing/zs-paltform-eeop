@@ -114,7 +114,7 @@
 		data() {
 			return {
 				navData:[
-					{id:1,title:'内部权限管理',path:'/auth/section'},
+					{id:1,title:'内部权限管理',path:'/auth/role'},
 					{id:2,title:'部门管理',path:'/provider/section'},
 				],
 				columns:columns1,
