@@ -19,10 +19,13 @@
     padding: 16px;
     &-content{
       background-color: #ffffff;
-      padding: 20px;
+      padding: 24px;
     }
     .frame-query{
       padding-bottom: 4px;
+      .ant-form-item{
+        margin-bottom: 4px;
+      }
     }
     .frame-hr{
       width: 100%;
@@ -32,6 +35,32 @@
     .frame-content{
       padding-top: 4px;
     }
+    .frame-content-table{
+      .ant-table-body{
+        tr > th, tr > td {
+          border-bottom: none;
+          &:first-child{
+            padding-left: 16px;
+          }
+          &:last-child{
+            padding-right: 16px;
+          }
+        }
+
+      }
+      .ant-table-thead > tr > th{
+        background-color: #F5F5F5;
+        //background: #FAFAFA;
+      }
+      .ant-table-tbody > tr:nth-child(2n){
+        background: #FAFAFA;
+      }
+      .frame-table-bold{
+        font-weight: bold;
+        color: #333333;
+      }
+
+    }
   }
   .query-item-prefix{
     height: 100%;
@@ -40,7 +69,7 @@
     padding-right: 10px;
     border-right: 1px solid #ddd;
   }
-  @for $i from 5 to 8 {
+  @for $i from 5 to 12 {
     .custom-prefix-#{$i} {
       .query-item-prefix{
         width: 30+$i*10px;
@@ -50,4 +79,61 @@
       }
     }
   }
+}
+input::placeholder {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  color: #BFBFBF !important;
+}
+button:focus{
+  outline:none
+}
+.dot-badge {
+  .ant-badge-dot{
+    width: 8px;
+    height: 8px;
+    right: -3px!important;
+  }
+}
+.dot-badge-only{
+  width: 6px;
+  height: 6px;
+  margin: 0 5px 0 -10px;
+  .ant-badge-dot{
+    top: 1px;
+    left: -2px;
+  }
+}
+
+
+// 定制化 tabs
+.custom-card-container {
+  overflow: hidden;
+}
+.custom-card-container .ant-tabs-nav-container{
+  border-bottom: 1px solid $common-base-active;
+}
+.custom-card-container > .ant-tabs-card > .ant-tabs-content {
+  margin-top: -16px;
+}
+
+.custom-card-container > .ant-tabs-card > .ant-tabs-content > .ant-tabs-tabpane {
+  background: #fff;
+  padding: 16px;
+}
+
+.custom-card-container > .ant-tabs-card > .ant-tabs-bar {
+  border-color: #fff;
+}
+
+.custom-card-container > .ant-tabs-card > .ant-tabs-bar .ant-tabs-tab {
+  border-color: transparent;
+  background: transparent;
+}
+
+.custom-card-container > .ant-tabs-card > .ant-tabs-bar .ant-tabs-tab-active {
+  border-color: #fff;
+  color: #ffffff;
+  background: $common-base-active;
+  border-radius: 0;
 }
