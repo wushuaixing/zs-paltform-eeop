@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import Layout from '@/views/common/layout';
 import Login from '@/views/login/view';
 import RouterSpace from '@/components/router-space';
+// import RouterSpaceFrame from '@/views/main/service-provider';
 
 Vue.use(VueRouter);
 const routes = [
@@ -37,9 +38,19 @@ const routes = [
 								component:()=>import("@/views/main/service-provider/to-review"),
 							},
 							{
+								path: 'review/detail',
+								name:'service-provider/to-review/detail',
+								component:()=>import("@/views/main/service-provider/to-review/detail"),
+							},
+							{
 								path: 'storage',
 								name:'service-provider/be-storage',
 								component:()=>import("@/views/main/service-provider/be-storage"),
+							},
+							{
+								path: 'storage/detail',
+								name:'service-provider/be-storage/detail',
+								component:()=>import("@/views/main/service-provider/be-storage/detail"),
 							},
 						]
 					},
