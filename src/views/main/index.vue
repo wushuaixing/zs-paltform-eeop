@@ -4,7 +4,7 @@
       <Menu @change="toggleCollapsed"/>
     </a-layout-sider>
     <a-layout :style="layoutStyle">
-      <a-layout-content :style="{ margin: 0, height: '100%' }">
+      <a-layout-content :style="{ margin: 0, height: '100%' }" class="common-frame-wrapper">
         <router-view></router-view>
       </a-layout-content>
     </a-layout>
@@ -45,3 +45,7 @@ export default {
   }
 };
 </script>
+<style lang="scss">
+
+
+</style>

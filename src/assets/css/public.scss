@@ -13,3 +13,40 @@
 .text-dangerous{
   color: $common-dangerous;
 }
+
+.common-frame-wrapper{
+  .frame-wrapper{
+    padding: 16px;
+    &-content{
+      background-color: #ffffff;
+    }
+    .frame-query{
+      padding: 20px 20px 0 20px;
+    }
+    .frame-hr{
+      width: 100%;
+      height: 16px;
+      background-color: #f2f3f5;
+    }
+    .frame-content{
+      padding: 4px 20px;
+    }
+  }
+  .query-item-prefix{
+    height: 100%;
+    width: auto;
+    text-align:center;
+    padding-right: 10px;
+    border-right: 1px solid #ddd;
+  }
+  @for $i from 5 to 8 {
+    .custom-prefix-#{$i} {
+      .query-item-prefix{
+        width: 30+$i*10px;
+      }
+      input{
+        padding-left: 50+$i*10px!important;
+      }
+    }
+  }
+}
