@@ -1,5 +1,5 @@
 <template>
-  <div class="investment-block">
+  <div class="investment-detail-block">
     <Breadcrumb :source="navData" icon="environment" />
     <div class="detail-wrapper">
       <h2>基本信息</h2>
@@ -578,7 +578,7 @@ export default {
         console.log(res);
         if(res.code === 20000){
           this.tableSource.submitPlanTable.pagination.total = res.data.total;
-          this.tableSource.submitPlanTable.dataSource = res.data.list;
+          // this.tableSource.submitPlanTable.dataSource = res.data.list;
         }else{
           this.$message.error("获取服务商提交方案列表失败,请重新加载")
         }
@@ -677,7 +677,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.investment-block{
+.investment-detail-block{
   padding: 16px;
   .detail-wrapper {
     padding: 16px;
