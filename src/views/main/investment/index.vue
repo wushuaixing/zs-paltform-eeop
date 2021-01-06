@@ -199,14 +199,6 @@ export default {
   components: {
     Breadcrumb
   },
-  watch: {
-    // startValue(val) {
-    //   console.log('startValue', val);
-    // },
-    // endValue(val) {
-    //   console.log('endValue', val);
-    // },
-  },
   created() {
     this.requestInquire()
   },

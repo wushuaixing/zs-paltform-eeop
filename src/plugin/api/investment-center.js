@@ -4,6 +4,7 @@ export const amcProjectListApi = params => request.post('/service/amcProject',pa
 
 export const signUpApi = id => request.post(`/service/amcProject/checkin/${id}`);
 
+//招商项目管理列表接口
 export const projectFind = params => request.post('/operator/project/findAll',params);
 
 // 详情页-获取项目基本信息接口

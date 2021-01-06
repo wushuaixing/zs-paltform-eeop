@@ -208,7 +208,7 @@
 </template>
 
 <script>
-import {projectDetail,signService,serviceCaseSubmit} from "@/plugin/api/investment-center"
+import {projectDetail,signService,serviceCaseSubmit} from "@/plugin/api/investment-center";
 import {collateralTypeData} from "./source"
 import {getArea} from "@/plugin/tools"
 //报名服务商表数据
