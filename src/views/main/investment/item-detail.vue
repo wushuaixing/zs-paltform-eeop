@@ -67,27 +67,23 @@
         </div>
         <!--项目招商信息-->
         <div>
-          <h3 class="title2">项目招商信息 <a-icon type="form" style="padding:5px;cursor: pointer;" /></h3>
+          <h3 @click="showModal" class="title2">项目招商信息 <a-icon type="form" /></h3>
           <a-row type="flex">
             <a-col :span="8">
               报名截止日期：<span>{{ detailInfo.deadline }}</span>
-              <a-date-picker v-model="editInfo.signDeadline" class="editIpt" format="YYYY-MM-DD" :disabled-date="disabledDate" />
             </a-col>
             <a-col :span="8">
               方案提交截止日期：<span>{{ detailInfo.submitDeadline }}</span>
-              <a-date-picker v-model="editInfo.submitDeadline" class="editIpt" format="YYYY-MM-DD" :disabled-date="disabledDate" />
             </a-col>
           </a-row>
           <a-row type="flex">
             <a-col :span="8">
               期限上限：<span>{{ detailInfo.targetYearUpperLimit }}个月</span>
-               <a-input v-model="editInfo.dateLimit" class="editIpt" placeholder="Basic usage" />
             </a-col>
             <a-col :span="8">
               目标回款金额下限：<span>{{
                 detailInfo.targetAmountLowerLimit|amountTh
               }}万元</span>
-               <a-input v-model="editInfo.aimedPriceBack" class="editIpt" placeholder="Basic usage" />
             </a-col>
           </a-row>
         </div>
@@ -208,6 +204,30 @@
         </div>
       </div>
     </div>
+    <div>
+    <a-modal 
+      v-model="visible" 
+      title="修改项目招商信息" 
+      @ok="handleOk" 
+      :centered="true" 
+      :maskClosable="false"
+    >
+      <a-form-model :model="editInfo" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-form-model-item label="报名截止日期">
+          <a-input v-model="editInfo.signDeadline" />
+        </a-form-model-item>
+        <a-form-model-item label="方案提交截止日期">
+          <a-input v-model="editInfo.submitDeadline" />
+        </a-form-model-item>
+        <a-form-model-item label="期限上限">
+          <a-input v-model="editInfo.dateLimit" />
+        </a-form-model-item>
+        <a-form-model-item label="目标回款金额下限">
+          <a-input v-model="editInfo.aimedPriceBack" />
+        </a-form-model-item>
+      </a-form-model>
+    </a-modal>
+  </div>
   </div>
 </template>
 
@@ -351,6 +371,9 @@ export default {
   name: "ItemDetail",
   data() {
     return {
+      visible:false,
+      labelCol: { span: 4 },
+      wrapperCol: { span: 14 },
       navData,
       editInfo:{
         aimedPriceBack: "",
@@ -637,6 +660,12 @@ export default {
     disabledDate(current) {
       console.log(current)
     },
+    showModal(){
+      this.visible = true;
+    },
+    handleOk(){
+
+    }
   },
   filters:{
     guarantorsList: (arr = []) => {
