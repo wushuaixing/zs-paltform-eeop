@@ -78,7 +78,7 @@
           </a-row>
           <a-row type="flex">
             <a-col :span="8">
-              期限上限：<span>{{ detailInfo.targetYearUpperLimit }}</span>
+              期限上限：<span>{{ detailInfo.targetYearUpperLimit }}个月</span>
             </a-col>
             <a-col :span="8">
               目标回款金额下限：<span>{{
@@ -146,24 +146,26 @@
         <!--报名服务商列表-->
         <div>
           <h3 class="title2">报名服务商列表</h3>
-          <a-table v-bind="tableSource.applyServeTable" @change="applyServeTableChange">
-            <template slot="name" slot-scope="name">
-              <a-button type="link">{{ name }}</a-button>
-            </template>
-            <template slot="phone" slot-scope="phone">{{ phone }}</template>
-            <template slot="identity" slot-scope="identity">{{identity|identityType}}</template>
-            <template slot="orgOfficeName" slot-scope="orgOfficeName">
-              <a-button type="link">{{orgOfficeName}}</a-button>
-            </template>
-            <template slot="workingTime" slot-scope="workingTime">{{workingTime|workingTimeText}}</template>
-            <template slot="areasOfGoodCases" slot-scope="areasOfGoodCases">{{areasOfGoodCases}}</template>
-            <template slot="goodCases" slot-scope="goodCases">{{goodCases|goodCasesType}}</template>
-            <template slot="applyDate" slot-scope="applyDate">{{applyDate}}</template>
-            <template slot="gmtModify" slot-scope="gmtModify">{{gmtModify}}</template>
-            <template slot="caseFileStatus" slot-scope="caseFileStatus">
-              <div :style="{color:caseFileStatus===1?'#008CB0':''}">{{caseFileStatus|caseFileText}}</div>
-            </template>
-          </a-table>
+          <div class="table-block">
+            <a-table v-bind="tableSource.applyServeTable" @change="applyServeTableChange">
+              <template slot="name" slot-scope="name">
+                <a-button type="link">{{ name }}</a-button>
+              </template>
+              <template slot="phone" slot-scope="phone">{{ phone }}</template>
+              <template slot="identity" slot-scope="identity">{{identity|identityType}}</template>
+              <template slot="orgOfficeName" slot-scope="orgOfficeName">
+                <a-button type="link">{{orgOfficeName}}</a-button>
+              </template>
+              <template slot="workingTime" slot-scope="workingTime">{{workingTime|workingTimeText}}</template>
+              <template slot="areasOfGoodCases" slot-scope="areasOfGoodCases">{{areasOfGoodCases}}</template>
+              <template slot="goodCases" slot-scope="goodCases">{{goodCases|goodCasesType}}</template>
+              <template slot="applyDate" slot-scope="applyDate">{{applyDate}}</template>
+              <template slot="gmtModify" slot-scope="gmtModify">{{gmtModify}}</template>
+              <template slot="caseFileStatus" slot-scope="caseFileStatus">
+                <div :style="{color:caseFileStatus===1?'#008CB0':''}">{{caseFileStatus|caseFileText}}</div>
+              </template>
+            </a-table>
+          </div>
         </div>
         <!--服务商提交方案列表-->
         <div>
@@ -172,25 +174,33 @@
             <a-radio-button :value="1"> 有效方案1 </a-radio-button>
             <a-radio-button :value="2"> 末通过系统筛选2 </a-radio-button>
           </a-radio-group>
-          <a-table v-bind="tableSource.submitPlanTable" @change="submitPlanTableChange">
-            <template slot="gmtCreate" slot-scope="gmtCreate">{{gmtCreate}}</template>
-            <template slot="name" slot-scope="name">
-              <a-button type="link">{{ name }}</a-button>
-            </template>
-            <template slot="phone" slot-scope="phone">{{phone}}</template>
-            <template slot="identity" slot-scope="identity">{{identity|identityType}}</template>
-            <template slot="orgOfficeName" slot-scope="orgOfficeName">
-              <a-button type="link">{{orgOfficeName}}</a-button>
-            </template>
-            <template slot="serviceTime" slot-scope="serviceTime">{{serviceTime}}</template>
-            <template slot="aimBackPrice" slot-scope="aimBackPrice">{{aimBackPrice|amountTh}}</template>
-            <template slot="scheduleManagements" slot-scope="scheduleManagements">
-              <div >
-                <p v-for="(item,index) in scheduleManagements" :key="index">{{item.dateMonth}}个月内完成{{item.dateMatters}}</p>
-              </div>
-            </template>
-            <template slot="caseFileAddress" slot-scope="caseFileAddress">{{caseFileAddress}}</template>
-          </a-table>
+          <div class="table-block">
+            <a-table v-bind="tableSource.submitPlanTable" @change="submitPlanTableChange">
+              <template slot="gmtCreate" slot-scope="gmtCreate">{{gmtCreate}}</template>
+              <template slot="name" slot-scope="name">
+                <a-button type="link">{{ name }}</a-button>
+              </template>
+              <template slot="phone" slot-scope="phone">{{phone}}</template>
+              <template slot="identity" slot-scope="identity">{{identity|identityType}}</template>
+              <template slot="orgOfficeName" slot-scope="orgOfficeName">
+                <a-button type="link">{{orgOfficeName}}</a-button>
+              </template>
+              <template slot="serviceTime" slot-scope="serviceTime">
+                <div>{{serviceTime}}个月</div>
+                <div v-if="serviceTime>detailInfo.targetYearUpperLimit" class="tag">未达标</div>
+              </template>
+              <template slot="aimBackPrice" slot-scope="aimBackPrice">
+                <div>{{aimBackPrice|amountTh}}</div>
+                <div v-if="aimBackPrice<detailInfo.targetAmountLowerLimit" class="tag">未达标</div>
+              </template>
+              <template slot="scheduleManagements" slot-scope="scheduleManagements">
+                <div class="plan">
+                  <p v-for="(item,index) in scheduleManagements" :key="index">{{item.dateMonth}}个月内完成{{item.dateMatters}}</p>
+                </div>
+              </template>
+              <template slot="caseFileAddress" slot-scope="caseFileAddress">{{caseFileAddress}}</template>
+            </a-table>
+          </div>
         </div>
       </div>
     </div>
@@ -542,7 +552,7 @@ export default {
                   gmtModify: "",
                   id: 0,
                   isDelete: "",
-                }
+                },
               ],
               serviceTime: 0,
               serviceTimeInvalid: 0,
@@ -578,7 +588,7 @@ export default {
         console.log(res);
         if(res.code === 20000){
           this.tableSource.submitPlanTable.pagination.total = res.data.total;
-          // this.tableSource.submitPlanTable.dataSource = res.data.list;
+          this.tableSource.submitPlanTable.dataSource = res.data.list;
         }else{
           this.$message.error("获取服务商提交方案列表失败,请重新加载")
         }
@@ -715,9 +725,53 @@ export default {
       }
     }
   }
+  .plan{
+    max-height:50px;
+    overflow-Y:scroll;
+    overflow-X:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    p{
+      margin: 0;
+    }
+    &::-webkit-scrollbar{
+      width: 3px;
+    }
+    &::-webkit-scrollbar-thumb {
+      border-radius: 3px;
+      background: #d9d9d9;
+    }
+    &::-webkit-scrollbar-track {
+      display: none;
+    }
+  }
   .ant-radio-button-wrapper {
     margin: 10px;
-    border-radius: 6px;
+    border-radius: 2px;
+  }
+  .tag{
+    width: fit-content;
+    border-radius: 2px;
+    border: 1px dashed #FAAD14;
+    font-size: 12px;
+    color: #FAAD14;
+    padding: 0px 5px;
+  }
+}
+</style>
+<style lang="scss">
+.table-block{
+  table{
+    border-bottom: 1px #E8E8E8 solid;
+  }
+  tr{
+    height: 80px;
+    td{
+      border-bottom: none;
+    }
+  }
+  tr:nth-child(2n){
+    background: #FAFAFA;
   }
 }
 </style>
