@@ -2,7 +2,7 @@
   <div class="investment-detail-block">
     <Breadcrumb :source="navData" icon="environment" />
     <div class="detail-wrapper">
-      <h2>基本信息</h2>
+      <h2 class="title1">基本信息</h2>
       <div class="detail-conten">
         <!-- 债权基本信息-->
         <div>
@@ -67,23 +67,27 @@
         </div>
         <!--项目招商信息-->
         <div>
-          <h3 class="title2">项目招商信息</h3>
+          <h3 class="title2">项目招商信息 <a-icon type="form" style="padding:5px;cursor: pointer;" /></h3>
           <a-row type="flex">
             <a-col :span="8">
               报名截止日期：<span>{{ detailInfo.deadline }}</span>
+              <a-date-picker v-model="editInfo.signDeadline" class="editIpt" format="YYYY-MM-DD" :disabled-date="disabledDate" />
             </a-col>
             <a-col :span="8">
               方案提交截止日期：<span>{{ detailInfo.submitDeadline }}</span>
+              <a-date-picker v-model="editInfo.submitDeadline" class="editIpt" format="YYYY-MM-DD" :disabled-date="disabledDate" />
             </a-col>
           </a-row>
           <a-row type="flex">
             <a-col :span="8">
               期限上限：<span>{{ detailInfo.targetYearUpperLimit }}个月</span>
+               <a-input v-model="editInfo.dateLimit" class="editIpt" placeholder="Basic usage" />
             </a-col>
             <a-col :span="8">
               目标回款金额下限：<span>{{
                 detailInfo.targetAmountLowerLimit|amountTh
               }}万元</span>
+               <a-input v-model="editInfo.aimedPriceBack" class="editIpt" placeholder="Basic usage" />
             </a-col>
           </a-row>
         </div>
@@ -145,7 +149,7 @@
         </div>
         <!--报名服务商列表-->
         <div>
-          <h3 class="title2">报名服务商列表</h3>
+          <h3 class="title-table">报名服务商列表</h3>
           <div class="table-block">
             <a-table v-bind="tableSource.applyServeTable" @change="applyServeTableChange">
               <template slot="name" slot-scope="name">
@@ -169,7 +173,7 @@
         </div>
         <!--服务商提交方案列表-->
         <div>
-          <h3 class="title2">服务商提交方案列表</h3>
+          <h3 class="title-table">服务商提交方案列表</h3>
           <a-radio-group @change="changType" v-model="params.caseType" style="margin-bottom: 16px">
             <a-radio-button :value="1"> 有效方案1 </a-radio-button>
             <a-radio-button :value="2"> 末通过系统筛选2 </a-radio-button>
@@ -211,6 +215,8 @@
 import {projectDetail,signService,serviceCaseSubmit} from "@/plugin/api/investment-center"
 import {collateralTypeData} from "./source"
 import {getArea} from "@/plugin/tools"
+import Breadcrumb from "@/components/bread-crumb";
+// import moment from "ant-design-vue"
 //报名服务商表数据
 const columns = [
   {
@@ -341,12 +347,18 @@ const navData = [
   { id: 2, title: "招商项目管理", path: "/investment/list" },
   { id: 2, title: "招商项目详情", path: "" },
 ];
-import Breadcrumb from "@/components/bread-crumb";
 export default {
   name: "ItemDetail",
   data() {
     return {
       navData,
+      editInfo:{
+        aimedPriceBack: "",
+        dateLimit: "",
+        id: this.$route.query.id,
+        signDeadline: "",
+        submitDeadline: ""
+      },
       params:{
         caseType: 1,
         debtor: "",
@@ -621,7 +633,10 @@ export default {
           : "DESC"
         : "";
       this.getServiceCaseSubmitList();
-    }
+    },
+    disabledDate(current) {
+      console.log(current)
+    },
   },
   filters:{
     guarantorsList: (arr = []) => {
@@ -697,6 +712,14 @@ export default {
       .title2 {
         margin-top: 24px;
         font-weight: bold;
+        color: #333333;
+        font-size: 14px;
+      }
+      .title-table{
+        margin-top: 24px;
+        font-weight: bold;
+        color: #333333;
+        font-size: 16px;
       }
       .ant-row-flex {
         padding-left: 8px;
@@ -773,5 +796,14 @@ export default {
   tr:nth-child(2n){
     background: #FAFAFA;
   }
+}
+.title1{
+  font-size: 16px;
+  color: #333333;
+  font-weight: 600;
+}
+.editIpt{
+  width: 198px;
+  height: 32px;
 }
 </style>
