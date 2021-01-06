@@ -67,11 +67,9 @@ export default {
     };
   },
   computed: {
-    isShowEcharts(){
-      for (let key in this.echarts){
-        return this.echarts[key] !== 0 ? false : true;
-      }
-    }
+    // isShowEcharts(){
+    //   return Object.values(this.echarts).some(i=>i!==0)
+    // }
   },
   methods: {
     //echarts饼图项目招商
