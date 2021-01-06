@@ -26,4 +26,4 @@ export const collateralTypeData = {
         { label: '工业品、家电等', value: 19 },
         { label: '粮食物资', value: 20 },
     ],
-}
+};

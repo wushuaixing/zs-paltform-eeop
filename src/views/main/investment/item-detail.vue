@@ -563,7 +563,7 @@ export default {
     //获取报名服务商列表
     getSignServiceList(){
       signService(this.params).then(res=>{
-        console.log(res)
+        console.log(res);
         if(res.code === 20000){
           this.tableSource.applyServeTable.pagination.total = res.data.total
           this.tableSource.applyServeTable.dataSource = res.data.list;
@@ -575,7 +575,7 @@ export default {
     //获取服务商提交方案列表
     getServiceCaseSubmitList(){
       serviceCaseSubmit(this.params).then(res=>{
-        console.log(res)
+        console.log(res);
         if(res.code === 20000){
           this.tableSource.submitPlanTable.pagination.total = res.data.total;
           this.tableSource.submitPlanTable.dataSource = res.data.list;
@@ -623,7 +623,7 @@ export default {
         1:'一年以内',
         2:'1-3年',
         3:'3年以上'
-      }
+      };
       return workingTimeObj[val];
     },
     goodCasesType(val){
@@ -632,7 +632,7 @@ export default {
         2:'商业',
         3:'住宅',
         0:'其他'
-      }
+      };
       return goodCasesObj[val];
     },
     caseFileText(val){
@@ -646,7 +646,7 @@ export default {
         3:'已判决未执行',
         4:'已执行',
         5:'破产'
-      }
+      };
       return isLawsuitObj[val]
     },
     area:(params) => {
@@ -663,13 +663,13 @@ export default {
   created() {
     this.params.id = this.$route.query.id;
     projectDetail(this.params.id).then(res=>{
-      console.log(res)
+      console.log(res);
       if(res.code === 20000){
         this.detailInfo = res.data;
       }else{
         console.log('error...');
       }
-    })
+    });
     this.getSignServiceList();
     this.getServiceCaseSubmitList();
   },

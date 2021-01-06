@@ -16,8 +16,7 @@
         </a-col>
         <a-col :span="10">
           <span>报名截止日期：</span>
-          <a-date-picker
-              v-model="debtorInquiry.startValue"
+          <a-date-picker v-model="debtorInquiry.startValue"
               valueFormat="YYYY-MM-D"
           />
           <span style="margin: 0 6px">至</span>
@@ -200,8 +199,8 @@ export default {
   },
   methods: {
     inquire(){
-      console.log(this.debtorInquiry)
-      this.findAll.caseType = 1
+      console.log(this.debtorInquiry);
+      this.findAll.caseType = 1;
       projectFind(this.findAll).then((res)=>{
         this.tableSource.dataSource = res.data.list;
         this.tableSource.pagination.total = res.data.total;
@@ -213,7 +212,7 @@ export default {
       console.log(a, b, c)
     },
     viewDetails(v) {
-      this.$router.push({name: 'investment/item-detail', query: {id: v.id}})
+      this.$router.push({name: 'investment/item-detail', query: {id: v.id}});
       console.log(v.id)
     },
     showModal() {
