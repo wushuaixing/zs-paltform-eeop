@@ -7,7 +7,7 @@
             <img class="zs-logo-pic" src="../../assets/img/zs-logo.png" alt="">
           </div>
 					<div style="width: 853px; height: 480px;overflow: hidden;">
-						<video muted autoplay controls src="http://qlumgyse9.hd-bkt.clouddn.com/promotion-vedio.mp4"></video>
+						<video muted autoplay controls src="https://zsamc-public.zsamc.com/promotion-vedio.mp4"></video>
 					</div>
         </div>
         <div class="login-wrapper" ref="loginContainer">
@@ -230,11 +230,10 @@ export default {
   .register {
     &-container {
       width: 100%;
-      height: 600px;
-      background: #1a1939 url("../../assets/img/background.jpg") center
-        no-repeat;
+      height: 560px;
+      background: #1a1939 url("../../assets/img/background.jpg") center no-repeat;
       margin: auto;
-      padding-top: 60px;
+      padding-top: 40px;
     }
     &-content {
       width: 1306px;
