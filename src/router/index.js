@@ -35,7 +35,7 @@ const routes = [
 							{
 								path: 'review',
 								name:'service-provider/to-review',
-								component:()=>import("@/views/main/service-provider/to-review"),
+								component:()=>import("../views/main/service-provider/to-review"),
 							},
 							{
 								path: 'review/detail',
@@ -45,7 +45,7 @@ const routes = [
 							{
 								path: 'storage',
 								name:'service-provider/be-storage',
-								component:()=>import("@/views/main/service-provider/be-storage"),
+								component:()=>import("../views/main/service-provider/be-storage"),
 							},
 							{
 								path: 'storage/detail',
