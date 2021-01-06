@@ -18,7 +18,6 @@ const request = axios.create({
 const requestMethods = {
 	onFulfilled: (config) => {
 		const token = window.localStorage.token !== undefined ? window.localStorage.token : null;
-
 		config.headers = Object.assign({},config.headers,token ? {token} : {});
 		return config;
 		// 在请求发出之前做拦截工作

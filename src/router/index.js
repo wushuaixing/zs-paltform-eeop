@@ -65,6 +65,7 @@ const routes = [
 					      path: 'list',
 					      name:'investment/item-list',
 					      component:()=>import("@/views/main/investment/index"),
+							// component:()=>import("@/views/main/query-template")
 					    },
 					    {
 					      path: 'detail',
