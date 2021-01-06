@@ -25,6 +25,7 @@ module.exports = {
 
 		}
 	},
+	productionSourceMap:false,
 	devServer:{
 		proxy: {
 			'/proxy-api': {     //这里最好有一个 /
@@ -39,5 +40,4 @@ module.exports = {
 			}
 		}
 	}
-
-}
+};
