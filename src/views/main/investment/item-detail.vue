@@ -566,7 +566,7 @@ export default {
         console.log(res)
         if(res.code === 20000){
           this.tableSource.applyServeTable.pagination.total = res.data.total
-          // this.tableSource.applyServeTable.dataSource = res.data.list;
+          this.tableSource.applyServeTable.dataSource = res.data.list;
         }else{
           this.$message.error("获取报名服务商列表失败,请重新加载")
         }
@@ -578,7 +578,7 @@ export default {
         console.log(res)
         if(res.code === 20000){
           this.tableSource.submitPlanTable.pagination.total = res.data.total;
-          // this.tableSource.submitPlanTable.dataSource = res.data.list;
+          this.tableSource.submitPlanTable.dataSource = res.data.list;
         }else{
           this.$message.error("获取服务商提交方案列表失败,请重新加载")
         }

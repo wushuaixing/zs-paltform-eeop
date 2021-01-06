@@ -1,6 +1,8 @@
 <template>
 	<div class="frame-wrapper">
-		<Breadcrumb :source="navData" icon="environment"></Breadcrumb>
+		<Breadcrumb :source="navData" icon="environment">
+			<OpenAccount slot="suffix" />
+		</Breadcrumb>
 		<div class="frame-wrapper-content">
 			<div class="frame-query">
 				<a-form-model layout="inline" @submit="handleSubmit" @submit.native.prevent>
@@ -36,16 +38,20 @@
 			</div>
 			<div class="frame-content">
 				<a-tabs @change="handleTabChange">
-					<a-tab-pane key="1" tab="进行中"></a-tab-pane>
-					<a-tab-pane key="2" tab="已中标"></a-tab-pane>
-					<a-tab-pane key="3" tab="已放弃"></a-tab-pane>
-					<a-tab-pane key="4" tab="已失效"></a-tab-pane>
+					<a-tab-pane v-for="i in tabPane" :key="i.id" :tab="i.title"></a-tab-pane>
 				</a-tabs>
+				<div style="height: 4px"></div>
+				<div class="content-action">
+					<a-button>全部</a-button>
+					<a-button>只显示未读</a-button>
+					<a-button>全部标为已读</a-button>
+					<a-button icon="search">名单一键导出</a-button>
+				</div>
 				<div style="height: 4px"></div>
 				<a-table :columns="columns" :data-source="dataSource" size="middle" :pagination="pagination" @change="handleTableChange">
 					<template slot="auction">
 						<a-button type="link" size="small" icon="file-text" :style="{paddingLeft: 0}">详情</a-button>
-						<a-divider type="vertical" />
+						<a-icon type="line" :style="{transform: 'rotate(90deg)',margin:'0 -5px'}"/>
 						<a-button type="link" size="small" icon="form" >标签及审核结果添加</a-button>
 					</template>
 				</a-table>
@@ -56,6 +62,7 @@
 
 <script>
 	import Breadcrumb from '@/components/bread-crumb';
+	import OpenAccount from './service-provider/_common/account';
 	import { clearProto, disabledDate } from "@/plugin/tools";
 
 	const columns1 = [
@@ -110,12 +117,19 @@
 	];
 
 	export default {
-		name: 'role',
+		name: 'ToReview',
 		data() {
 			return {
 				navData:[
-					{id:1,title:'内部权限管理',path:'/auth/role'},
-					{id:2,title:'角色管理',path:'/provider/role'},
+					{id:1,title:'服务商管理',path:'/provider/review'},
+					{id:2,title:'待审查',path:'/provider/review'},
+				],
+				tabPane:[
+					{ id:'1', title:'已提交要素表' },
+					{ id:'2', title:'已认证资质' },
+					{ id:'3', title:'仅注册' },
+					{ id:'4', title:'开户确认中' },
+					{ id:'5', title:'审核未通过' },
 				],
 				columns:columns1,
 				dataSource:[{
@@ -140,6 +154,7 @@
 			};
 		},
 		components:{
+			OpenAccount,
 			Breadcrumb,
 		},
 		created() {
@@ -155,10 +170,18 @@
 			handleTableChange(ev){
 				console.log(ev);
 			},
-		}
+		},
+		computed:{
+		},
 	}
 </script>
 
-<style scoped lang="scss">
+<style scoped>
 
+	.content-action{
+		margin-bottom: 10px;
+	}
+	.content-action button{
+		margin-right: 15px;
+	}
 </style>

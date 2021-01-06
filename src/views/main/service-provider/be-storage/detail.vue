@@ -1,12 +1,12 @@
 <template>
 	<div>
-		<span>account</span>
+		<span>详情页</span>
 	</div>
 </template>
 
 <script>
 	export default {
-		name:'Section'
+
 	}
 </script>
 
