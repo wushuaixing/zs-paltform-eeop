@@ -47,7 +47,7 @@
         </template>
       </a-table>
     </div>
-    <!--弹框对话框文件上传https://www.mocky.io/v2/5cc8019d300000980a055e76-->
+    <!--弹框对话框文件上传-->
     <div>
       <a-modal :centered="true" v-model="visible" title="发布新项目" @ok="handleOk">
         <div class="pop-up">
