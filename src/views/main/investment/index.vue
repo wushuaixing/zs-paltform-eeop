@@ -161,11 +161,6 @@ export default {
   data() {
     return {
       navData,
-      debtorInquiry:{
-        debtorName:null,
-        startValue: null,
-        endValue: null,
-      },
       visible: false,
       tableSource:{
         columns,
