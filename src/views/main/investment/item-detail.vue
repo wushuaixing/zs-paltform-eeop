@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="investment-block">
     <Breadcrumb :source="navData" icon="environment" />
     <div class="detail-wrapper">
       <h2>基本信息</h2>
@@ -17,7 +17,7 @@
               }}</span>
             </a-col>
             <a-col :span="8">
-              当前诉讼状态：<span>{{ detailInfo.isLawsuit }}</span>
+              当前诉讼状态：<span>{{ detailInfo.isLawsuit|isLawsuitType }}</span>
             </a-col>
           </a-row>
           <a-row type="flex">
@@ -28,29 +28,28 @@
               资产包收购时间：<span>{{ detailInfo.capitalPurchaseTime }}</span>
             </a-col>
             <a-col :span="8">
-              担保方式：<span>{{ detailInfo.security }}</span>
+              担保方式：<span>{{ detailInfo.security|guarantyType}}</span>
             </a-col>
           </a-row>
           <a-row type="flex">
             <a-col :span="8">
               债务人名称：<span>{{ detailInfo.debtor }}</span>
             </a-col>
-            <a-col :span="8"> 保证人：<span>{{}}</span> </a-col>
+            <a-col :span="8"> 保证人：<span>{{detailInfo.amcProjectGuarantors|guarantorsList}}</span> </a-col>
           </a-row>
           <a-row type="flex">
             <a-col :span="8">
-              债权本金：<span>{{ detailInfo.debtCaptial }}</span>
+              债权本金：<span>{{ detailInfo.debtCaptial|amountTh }}万元</span>
             </a-col>
             <a-col :span="8">
-              债权利息：<span>{{ detailInfo.debtInterest }}</span>
+              债权利息：<span>{{ detailInfo.debtInterest|amountTh }}万元</span>
             </a-col>
           </a-row>
           <div class="guarantee">
             <p>抵押物类型：</p>
             <div>
-              <p>
-                1.
-                住宅，浙江省杭州市西湖区，xxx位于浙江省杭州市西湖区紫金名门1幢203的面积为207㎡的住宅一套
+              <p v-for="(i, index) in detailInfo.amcProjectCollaterals" :key="index">
+                {{index+1}}. {{i.collateralType|collateralType}}、{{i|area}}、{{i.collateralName}}
               </p>
             </div>
           </div>
@@ -83,8 +82,8 @@
             </a-col>
             <a-col :span="8">
               目标回款金额下限：<span>{{
-                detailInfo.targetAmountLowerLimit
-              }}</span>
+                detailInfo.targetAmountLowerLimit|amountTh
+              }}万元</span>
             </a-col>
           </a-row>
         </div>
@@ -106,7 +105,6 @@
             <a-col :span="8">
               代理律师姓名：<span>{{ detailInfo.proxyLawyerName }}</span>
             </a-col>
-            <a-col :span="8"> 目标汇款金额下限：<span>{{}}</span> </a-col>
           </a-row>
           <div class="creditor-condition">
             已请收情况：<span>{{ detailInfo.alreadyCollectionStatus }}</span>
@@ -148,37 +146,48 @@
         <!--报名服务商列表-->
         <div>
           <h3 class="title2">报名服务商列表</h3>
-          <a-table v-bind="tableSource.applyServeTable">
-            <!-- <a slot="name" slot-scope="text">{{ text }}</a> -->
-            <template slot="name" slot-scope="name">{{ name }}</template>
+          <a-table v-bind="tableSource.applyServeTable" @change="applyServeTableChange">
+            <template slot="name" slot-scope="name">
+              <a-button type="link">{{ name }}</a-button>
+            </template>
             <template slot="phone" slot-scope="phone">{{ phone }}</template>
-            <template slot="identity" slot-scope="identity">{{identity}}</template>
-            <template slot="orgOfficeName" slot-scope="orgOfficeName">{{orgOfficeName}}</template>
-            <template slot="workingTime" slot-scope="workingTime">{{workingTime}}</template>
+            <template slot="identity" slot-scope="identity">{{identity|identityType}}</template>
+            <template slot="orgOfficeName" slot-scope="orgOfficeName">
+              <a-button type="link">{{orgOfficeName}}</a-button>
+            </template>
+            <template slot="workingTime" slot-scope="workingTime">{{workingTime|workingTimeText}}</template>
             <template slot="areasOfGoodCases" slot-scope="areasOfGoodCases">{{areasOfGoodCases}}</template>
-            <template slot="goodCases" slot-scope="goodCases">{{goodCases}}</template>
+            <template slot="goodCases" slot-scope="goodCases">{{goodCases|goodCasesType}}</template>
             <template slot="applyDate" slot-scope="applyDate">{{applyDate}}</template>
             <template slot="gmtModify" slot-scope="gmtModify">{{gmtModify}}</template>
-            <template slot="caseFileStatus" slot-scope="caseFileStatus">{{caseFileStatus}}</template>
+            <template slot="caseFileStatus" slot-scope="caseFileStatus">
+              <div :style="{color:caseFileStatus===1?'#008CB0':''}">{{caseFileStatus|caseFileText}}</div>
+            </template>
           </a-table>
         </div>
         <!--服务商提交方案列表-->
         <div>
           <h3 class="title2">服务商提交方案列表</h3>
-          <a-radio-group v-model="size" style="margin-bottom: 16px">
-            <a-radio-button value="small"> 有效方案1 </a-radio-button>
-            <a-radio-button value="default"> 末通过系统筛选2 </a-radio-button>
+          <a-radio-group @change="changType" v-model="params.caseType" style="margin-bottom: 16px">
+            <a-radio-button :value="1"> 有效方案1 </a-radio-button>
+            <a-radio-button :value="2"> 末通过系统筛选2 </a-radio-button>
           </a-radio-group>
-          <a-table v-bind="tableSource.submitPlanTable">
+          <a-table v-bind="tableSource.submitPlanTable" @change="submitPlanTableChange">
             <template slot="gmtCreate" slot-scope="gmtCreate">{{gmtCreate}}</template>
-            <template slot="name" slot-scope="name">{{name}}</template>
+            <template slot="name" slot-scope="name">
+              <a-button type="link">{{ name }}</a-button>
+            </template>
             <template slot="phone" slot-scope="phone">{{phone}}</template>
-            <template slot="identity" slot-scope="identity">{{identity}}</template>
-            <template slot="orgOfficeName" slot-scope="orgOfficeName">{{orgOfficeName}}</template>
+            <template slot="identity" slot-scope="identity">{{identity|identityType}}</template>
+            <template slot="orgOfficeName" slot-scope="orgOfficeName">
+              <a-button type="link">{{orgOfficeName}}</a-button>
+            </template>
             <template slot="serviceTime" slot-scope="serviceTime">{{serviceTime}}</template>
-            <template slot="aimBackPrice" slot-scope="aimBackPrice">{{aimBackPrice}}</template>
+            <template slot="aimBackPrice" slot-scope="aimBackPrice">{{aimBackPrice|amountTh}}</template>
             <template slot="scheduleManagements" slot-scope="scheduleManagements">
-              <p v-for="(item,index) in scheduleManagements" :key="index">{{item.dateMonth}}个月内完成{{item.dateMatters}}</p>
+              <div >
+                <p v-for="(item,index) in scheduleManagements" :key="index">{{item.dateMonth}}个月内完成{{item.dateMatters}}</p>
+              </div>
             </template>
             <template slot="caseFileAddress" slot-scope="caseFileAddress">{{caseFileAddress}}</template>
           </a-table>
@@ -189,6 +198,9 @@
 </template>
 
 <script>
+import {projectDetail,signService,serviceCaseSubmit} from "@/plugin/api/investment-center"
+import {collateralTypeData} from "./source"
+import {getArea} from "@/plugin/tools"
 //报名服务商表数据
 const columns = [
   {
@@ -324,8 +336,18 @@ export default {
   name: "ItemDetail",
   data() {
     return {
-      size: "small",
       navData,
+      params:{
+        caseType: 1,
+        debtor: "",
+        endDate: "",
+        id: "",
+        page: 1,
+        size: 10,
+        sortField: 0,
+        sortOrder: "",
+        startDate: ""
+      },
       detailInfo: {
         alreadyCollectionStatus: "",
         amcProjectCollaterals: [
@@ -350,11 +372,22 @@ export default {
             gmtDeleted: "",
             gmtModify: "",
             guarantorCard: "",
-            guarantorName: "",
+            guarantorName: "张三",
             guarantorPhone: "",
             id: 0,
             isDeleted: "",
           },
+          {
+            amcProjectId: 0,
+            gmtCreate: "",
+            gmtDeleted: "",
+            gmtModify: "",
+            guarantorCard: "",
+            guarantorName: "李四",
+            guarantorPhone: "",
+            id: 0,
+            isDeleted: "",
+          }
         ],
         assetPackage: "",
         businessDepartmentRecoveryTime: 0,
@@ -374,7 +407,7 @@ export default {
         guarantorStatus: "",
         id: 0,
         isHaveProxyLawyer: 0,
-        isLawsuit: 0,
+        isLawsuit: 1,
         judicialProcess: "",
         mortgagorStatus: "",
         projectManager: "",
@@ -396,7 +429,7 @@ export default {
             {
               applyDate: "2021-01-05",
               areasOfGoodCases: "杭州市",
-              caseFileStatus: 0,
+              caseFileStatus: 1,
               gmtModify: "2020-12-31",
               goodCases: "1",
               id: 0,
@@ -404,7 +437,7 @@ export default {
               name: "蔡徐坤",
               orgOfficeName: "阿里",
               phone: "123456",
-              workingTime: 0,
+              workingTime: 1,
             },
             {
               applyDate: "2021-01-05",
@@ -422,7 +455,7 @@ export default {
           ],
           pagination: {
             total: 40,
-            pageSizeOptions: ["5", "10", "15", "20"],
+            pageSizeOptions: ["10", "20", "30", "40"],
             showSizeChanger: true,
             showQuickJumper: true,
             showTotal: (val) => `共${val}条信息`,
@@ -517,7 +550,7 @@ export default {
           ],
           pagination: {
             total: 40,
-            pageSizeOptions: ["5", "10", "15", "20"],
+            pageSizeOptions: ["10", "20", "30", "40"],
             showSizeChanger: true,
             showQuickJumper: true,
             showTotal: (val) => `共${val}条信息`,
@@ -526,55 +559,165 @@ export default {
       },
     };
   },
+  methods: {
+    //获取报名服务商列表
+    getSignServiceList(){
+      signService(this.params).then(res=>{
+        console.log(res);
+        if(res.code === 20000){
+          this.tableSource.applyServeTable.pagination.total = res.data.total
+          // this.tableSource.applyServeTable.dataSource = res.data.list;
+        }else{
+          this.$message.error("获取报名服务商列表失败,请重新加载")
+        }
+      })
+    },
+    //获取服务商提交方案列表
+    getServiceCaseSubmitList(){
+      serviceCaseSubmit(this.params).then(res=>{
+        console.log(res);
+        if(res.code === 20000){
+          this.tableSource.submitPlanTable.pagination.total = res.data.total;
+          // this.tableSource.submitPlanTable.dataSource = res.data.list;
+        }else{
+          this.$message.error("获取服务商提交方案列表失败,请重新加载")
+        }
+      })
+    },
+    //有效方案&未通过系统筛选切换
+    changType(){
+      this.getServiceCaseSubmitList();
+    },
+    //报名服务商列表分页,排序操作
+    applyServeTableChange(pagination, filters, sorter){
+      this.params.page = pagination.current;
+      this.params.size = pagination.pageSize;
+      this.params.sortField = sorter.field;
+      this.params.sortOrder = sorter.order
+        ? sorter.order === "ascend"
+          ? "ASC"
+          : "DESC"
+        : "";
+      this.getSignServiceList();
+    },
+    //服务商提交方案列表分页,排序操作
+    submitPlanTableChange(pagination, filters, sorter){
+      this.params.page = pagination.current;
+      this.params.size = pagination.pageSize;
+      this.params.sortField = sorter.field;
+      this.params.sortOrder = sorter.order
+        ? sorter.order === "ascend"
+          ? "ASC"
+          : "DESC"
+        : "";
+      this.getServiceCaseSubmitList();
+    }
+  },
+  filters:{
+    guarantorsList: (arr = []) => {
+      return arr.map((i) => i.guarantorName).join("、");
+    },
+    workingTimeText(val){
+      let workingTimeObj = {
+        0:'无',
+        1:'一年以内',
+        2:'1-3年',
+        3:'3年以上'
+      };
+      return workingTimeObj[val];
+    },
+    goodCasesType(val){
+      let goodCasesObj = {
+        1:'工业',
+        2:'商业',
+        3:'住宅',
+        0:'其他'
+      };
+      return goodCasesObj[val];
+    },
+    caseFileText(val){
+      return val === 0 ? "未提交" : "已提交";
+    },
+    isLawsuitType(val){
+      if(!val)return '-';
+      let isLawsuitObj = {
+        1:'未诉',
+        2:'已诉未判决',
+        3:'已判决未执行',
+        4:'已执行',
+        5:'破产'
+      };
+      return isLawsuitObj[val]
+    },
+    area:(params) => {
+      return getArea(params.provinceCode,params.cityCode,params.areaCode);
+    },
+    collateralType:(val)=>{
+      if(!val)return"-";
+      return collateralTypeData.list.find(i=>val === i.value).label;
+    }
+  },
   components: {
     Breadcrumb,
   },
   created() {
-    console.log(this.$route.query);
+    this.params.id = this.$route.query.id;
+    projectDetail(this.params.id).then(res=>{
+      console.log(res);
+      if(res.code === 20000){
+        this.detailInfo = res.data;
+      }else{
+        console.log('error...');
+      }
+    });
+    this.getSignServiceList();
+    this.getServiceCaseSubmitList();
   },
-  methods: {},
 };
 </script>
 
 <style scoped lang="scss">
-.detail-wrapper {
+.investment-block{
   padding: 16px;
-  background-color: #fff;
-  .detail-conten {
-    padding-left: 8px;
-    .title2 {
-      margin-top: 24px;
-      font-weight: bold;
-    }
-    .ant-row-flex {
+  .detail-wrapper {
+    padding: 16px;
+    background-color: #fff;
+    .detail-conten {
       padding-left: 8px;
-      margin-top: 24px;
-      .ant-col {
+      .title2 {
+        margin-top: 24px;
+        font-weight: bold;
+      }
+      .ant-row-flex {
+        padding-left: 8px;
+        margin-top: 24px;
+        .ant-col {
+          color: #666666;
+          font-size: 14px;
+          span {
+            color: #333333;
+          }
+        }
+      }
+      .creditor-condition {
+        padding-left: 8px;
+        margin-top: 24px;
         color: #666666;
         font-size: 14px;
         span {
           color: #333333;
         }
       }
-    }
-    .creditor-condition {
-      padding-left: 8px;
-      margin-top: 24px;
-      color: #666666;
-      font-size: 14px;
-      span {
-        color: #333333;
+      .guarantee {
+        display: flex;
+        padding-left: 8px;
+        margin-top: 24px;
       }
     }
-    .guarantee {
-      display: flex;
-      padding-left: 8px;
-      margin-top: 24px;
-    }
   }
-}
-.ant-radio-button-wrapper {
-  margin: 10px;
-  border-radius: 6px;
+  .ant-radio-button-wrapper {
+    margin: 10px;
+    border-radius: 6px;
+  }
 }
 </style>
