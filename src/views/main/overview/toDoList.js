@@ -65,4 +65,4 @@ export const MATTER_TYPE =
         text:'success',
         path: 'my-attestation/qualifies'
     }
-}
+};

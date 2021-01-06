@@ -4,7 +4,7 @@
 			<template slot="suffix" >
 				<a-button  size="small" icon="form" @click="addSection">添加部门</a-button>
 			</template>
-		</Breadcrumb>  
+		</Breadcrumb>
 		<div class="frame-wrapper-content">
 			<div class="frame-query">
 				<a-form-model layout="inline" @submit="handleSubmit" @submit.native.prevent>
@@ -16,7 +16,7 @@
 						</a-input>
 					</a-form-model-item>
 					<a-form-model-item>
-						<a-button type="primary" html-type="submit">查询</a-button>  
+						<a-button type="primary" html-type="submit">查询</a-button>
 					</a-form-model-item>
 					<a-form-model-item>
 						<a-button type="dashed" html-type="submit">重置</a-button>  
@@ -241,7 +241,7 @@
 			addHandleCancel(e) {
 			console.log(e);
 			console.log('Clicked cancel button');
-			this.addSectionVisible = false
+			this.addSectionVisible = false;
 			this.$refs.ruleForm.resetFields()
 			},
 		}

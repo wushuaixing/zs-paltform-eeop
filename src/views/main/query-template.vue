@@ -177,7 +177,6 @@
 </script>
 
 <style scoped>
-
 	.content-action{
 		margin-bottom: 10px;
 	}

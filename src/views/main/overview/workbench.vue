@@ -35,15 +35,15 @@
       </div>
       <div class="item-wrapper">
         <div class="progress">
-          <img src="../../../assets/image/编组 8.png" alt="项目建设中">
+          <img src="../../../assets/image/no-modules.png" alt="项目建设中">
         </div>
         <!-- <div class="item-project item-format">项目招商情况</div> -->
-      </div> 
+      </div>
     </div>
     <div class="workbench-item workbench-right">
       <div class="item-wrapper">
         <div class="unItem">
-          <img src="../../../assets/image/编组 8.png" alt="项目建设中">
+          <img src="../../../assets/image/no-modules.png" alt="项目建设中">
         </div>
         <!-- <div class="item-title item-format"></div> -->
       </div>
@@ -112,7 +112,7 @@ export default {
             ]
           }
         ]
-      }
+      };
      myChart.setOption(option,true);
     },
   },
@@ -164,14 +164,12 @@ $leftWidth: 550px;
       border-bottom: 1px solid #E9E9E9;
       line-height: 1.5;
       font-size: 16px;
-      font-family: PingFangSC-Medium, PingFang SC;
       font-weight: 600;
       color: #262626;
     }
     &-project {
       padding: 20px 24px;
       font-size: 16px;
-      font-family: PingFangSC-Medium, PingFang SC;
       font-weight: 600;
       color: #333333;
       line-height: 16px;
@@ -206,7 +204,6 @@ $leftWidth: 550px;
       span {
         height: 20px;
         font-size: 14px;
-        font-family: PingFangSC-Regular, PingFang SC;
         font-weight: 400;
         color: #333333;
         line-height: 20px;
@@ -217,7 +214,6 @@ $leftWidth: 550px;
       padding: 0 20px;
       // margin-top: 20px;
       margin-left: 10px;
-      font-family: PingFangSC-Medium, PingFang SC;
       font-weight: 600;
       color: #333333;
       line-height: 16px;
@@ -235,8 +231,8 @@ $leftWidth: 550px;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 500px;
     img {
+			vertical-align: middle;
      width: 200px;
      height: 200px;
     }
@@ -245,7 +241,7 @@ $leftWidth: 550px;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 800px;
+    height: 300px;
     img {
      width: 200px;
      height: 200px;
