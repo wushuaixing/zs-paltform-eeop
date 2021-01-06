@@ -1,4 +1,4 @@
-import {area} from "@/assets/area";
+import { getDownLoadToken } from "@/plugin/api/base";
 
 /**
  * 清空原型链内容
@@ -48,7 +48,7 @@ export const ranStr = (l = 4) => {
  * @param obj
  * @returns obj
  */
-export const removeObjectNullVal = (obj) => {
+export const clearObject = (obj) => {
 	const newObj = {};
 	Object.keys(obj).forEach((key) => {
 		const value = obj[key];
@@ -57,6 +57,30 @@ export const removeObjectNullVal = (obj) => {
 		}
 	});
 	return newObj;
+};
+
+/**
+ * 获取fileList - async
+ * @param str
+ */
+export const fileListRuleAsync = (str) => {
+	if (!str) return [];
+	if (!Array.isArray(JSON.parse(str))) return [];
+	return Promise.all(JSON.parse(str).map(async i => {
+		if (i.viewUrl) return i;
+		else {
+			return getDownLoadToken(i.hash || i.url).then(res => {
+				if (res.code === 20000) {
+					i.viewUrl = res.data;
+					i.url = res.data;
+					i.status = 'done';
+				}
+				return i;
+			});
+		}
+		// ...i,
+		// status: 'done',
+	}))
 };
 
 /**
@@ -75,28 +99,12 @@ export const fileListRule = (str)=>{
 };
 
 /**
- * 获取省市区组合名称
- * @param provinceCode
- * @param cityCode
- * @param areaCode
- * @returns string
+ * 省市区结构-反解析
+ * @param str
+ * @param single
  */
-export const getArea = (provinceCode, cityCode, areaCode) => {
-	let areaParams = [];
-	area.forEach((province) => {
-		if (parseInt(provinceCode) === province.id) {
-			areaParams.push(province.name)
-		}
-		province.children.forEach((city) => {
-			if (parseInt(cityCode) === city.id) {
-				areaParams.push(city.name)
-			}
-			city.children.forEach((area) => {
-				if (parseInt(areaCode) === area.id) {
-					areaParams.push(area.name)
-				}
-			})
-		})
-	});
-	return areaParams.join("");
+export const areaAnalysis = (str, single = true) => {
+	if (!str) return [];
+	const _str = (str || '').split(',').filter(i => i);
+	return single ? _str : _str.map(i => i.split('/').filter(i => i));
 };
