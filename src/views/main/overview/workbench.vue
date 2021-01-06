@@ -4,15 +4,17 @@
       <div class="item-wrapper item-border">
         <div class="item-title item-format ">服务商注册情况</div>
         <div class="item-content item-format">
-          <span class="total">累计注册服务商 {{echarts.totalRegUserNum}} 名</span>
-          <span class="total">昨日新增注册 {{echarts.lastDayRegUserNum}} 名</span>
+          <div class="number">
+            <span class="total">累计注册服务商 {{echarts.totalRegUserNum}} 名</span>
+            <span class="total">昨日新增注册 {{echarts.lastDayRegUserNum}} 名</span>
+          </div>
           <div class="data-display">
             <!-- 饼图显示 -->
             <div class="chart">
               <div id="main"></div>
             </div>
             <div class="schemeProcess">
-              <a-badge color="#c23531" text="仅注册" />
+              <a-badge text="仅注册" color="#c23531"/>
               <span style="margin-left: 45px">{{echarts.onlyRegUserNum}}</span>
               <br />
               <a-badge text="已认证资质" color="#2f4554"/>
@@ -32,20 +34,18 @@
         </div>
       </div>
       <div class="item-wrapper">
-        <div class="item-project item-format">项目招商情况</div>
+        <div class="progress">
+          <img src="../../../assets/image/编组 8.png" alt="项目建设中">
+        </div>
+        <!-- <div class="item-project item-format">项目招商情况</div> -->
       </div> 
     </div>
     <div class="workbench-item workbench-right">
       <div class="item-wrapper">
-        <div class="item-title item-format"></div>
-          <!-- <ul class="through">
-            <li  v-for="(item, index) in list" :key="index">
-              <a-badge :status="MATTER_TYPE[item.code].text" />
-              <span class="thing">{{ MATTER_TYPE[item.code].name}}</span>
-              <span class="message">{{item.message}}</span>
-                <a-button type="link" @click="onTarget(MATTER_TYPE[item.code].path, item.projectId)" >立即前往</a-button>
-            </li>
-          </ul> -->
+        <div class="unItem">
+          <img src="../../../assets/image/编组 8.png" alt="项目建设中">
+        </div>
+        <!-- <div class="item-title item-format"></div> -->
       </div>
     </div>
   </div>
@@ -54,8 +54,6 @@
 <script>
 /*eslint-disable*/
 import { getEchartsInvestMent } from "@/plugin/api/echarts";
-// import { getTODoList } from "@/plugin/api/calendar";
-// import { MATTER_TYPE } from "./toDoList";
 import echarts from "echarts";
 export default {
   name: "Workbench",
@@ -66,10 +64,6 @@ export default {
     return {
       // 后台图表的数据
       echarts: {},
-      // // 待办事项的数据
-      // list: [],
-      // 提醒类型
-      // MATTER_TYPE,
     };
   },
   computed: {
@@ -80,13 +74,6 @@ export default {
     }
   },
   methods: {
-    // 待办事项
-    // async getList() {
-    //   const res = await getTODoList();
-    //   console.log(res);
-    //   if (res.code !== 20000) return 
-    //     this.list = res.data
-    // },
     //echarts饼图项目招商
     async initECharts () {
       let myChart = echarts.init(document.getElementById("main"));
@@ -130,14 +117,8 @@ export default {
       }
      myChart.setOption(option,true);
     },
-    // // 根据详情路由跳转
-    // onTarget (path,id) {
-    //   this.$router.push({path,query:id})
-    // }
   },
   created () {
-    // this.getCalendarData()
-    // this.getList()
   },
   mounted() {
     this.initECharts()
@@ -244,15 +225,33 @@ $leftWidth: 550px;
       line-height: 16px;
     }
   }
+  .number {
+    margin-top: 45px;
+  }
   span {
     font-weight: 400;
     font-size: 16px;
     padding: 3px 0;
   }
-  .message {
-    font-size: 14px;
-    height: 20px;
-    line-height: 20px;
+  .progress {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 500px;
+    img {
+     width: 200px;
+     height: 200px;
+    }
+  }
+  .unItem {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 800px;
+    img {
+     width: 200px;
+     height: 200px;
+    }
   }
   #main{
     position: absolute;

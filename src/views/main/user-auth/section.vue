@@ -1,13 +1,17 @@
 <template>
 	<div class="frame-wrapper">
-		<Breadcrumb :source="navData" icon="environment"></Breadcrumb>  
+		<Breadcrumb :source="navData" icon="environment">
+			<template slot="suffix" >
+				<a-button  size="small" icon="form" @click="addSection">添加部门</a-button>
+			</template>
+		</Breadcrumb>  
 		<div class="frame-wrapper-content">
 			<div class="frame-query">
 				<a-form-model layout="inline" @submit="handleSubmit" @submit.native.prevent>
 					<a-form-model-item>
 						<a-input v-model="query.username" placeholder="请输入部门名称" class="custom-prefix-6">
 							<template slot="prefix" >
-								<div class="query-item-prefix">部门名称</div>
+								<a-button type="link" size="small" icon="form" >删除</a-button>
 							</template>
 						</a-input>
 					</a-form-model-item>
@@ -34,16 +38,38 @@
 				</a-table>
 			</div>
 		</div>
-	<!-- 编辑部门对话框 -->
-	<a-modal
-      title="Title"
-      :visible="editSectionVisible"
-      :confirm-loading="confirmLoading"
-      @ok="handleOk"
-      @cancel="handleCancel"
-    >
-      <p>{{ ModalText }}</p>
-    </a-modal>
+		<!-- 编辑部门对话框 -->
+		<a-modal
+			title="Title"
+			:visible="editSectionVisible"
+			:confirm-loading="confirmLoading"
+			@ok="editHandleOk"
+			@cancel="editHandleCancel"
+			>
+			<from>12345</from>
+		</a-modal>
+		<!-- 添加部门对话框 -->
+		<a-modal
+			title="添加部门"
+			:visible="addSectionVisible"
+			:confirm-loading="confirmLoading"
+			@ok="addHandleOk"
+			@cancel="addHandleCancel"
+			>
+			<div>
+				<a-form-model
+					ref="ruleForm"
+					:model="form"
+					:rules="rules"
+					:label-col="labelCol"
+					:wrapper-col="wrapperCol"
+				>
+					<a-form-model-item ref="name" label="部门名称" prop="name">
+					<a-input v-model="form.name"  />
+					</a-form-model-item>
+				</a-form-model>
+			</div>
+			</a-modal>
 	</div>
 
 </template>
@@ -52,6 +78,13 @@
 	import Breadcrumb from '@/components/bread-crumb';
 	import { clearProto, disabledDate } from "@/plugin/tools";
 	// import { colType } from '@/main/user-auth/source'
+	const checkName = (rule, value, callback) => {
+      const reg = /^[A-Za-z\u4e00-\u9fa5]*$/;
+      if (!reg.test(value)) {
+        callback("仅支持汉字和字母");
+      }
+      callback();
+    };
 	const columns1 = [
 	{
 		title: '创建日期',
@@ -97,7 +130,7 @@
 			return {
 				navData:[
 					{id:1,title:'内部权限管理',path:'/auth/role'},
-					{id:2,title:'部门管理',path:'/provider/section'},
+					{id:2,title:'部门管理',path:'/auth/section'},
 				],
 				columns:columns1,
 				query:{
@@ -118,10 +151,21 @@
 				disabledDate,
 				// table每一行的数据
 				data,
-				ModalText: 'Content of the modal',// 对话框文本
+				// ModalText: 'Content of the modal',// 对话框文本
 				editSectionVisible: false,// 对话框显示与隐藏
 				confirmLoading: false, // loading 效果
-			};
+				addSectionVisible: false, // 添加部门对话框
+				// 添加用户名
+				form: {
+					name: '',
+				},
+				rules: {
+					name: [
+					{ required: true, message: '请输入部门名称', trigger: 'blur' },
+					{ validator: checkName, trigger: 'blur' }
+					],
+				}
+			}
 		},
 		components:{
 			Breadcrumb,
@@ -143,12 +187,32 @@
 			handleTableChange(ev){
 				console.log(ev);
 			},
-			// 显示对话框
+			// 添加部门
+			addSection () {
+			this.addSectionVisible = true
+			},
+			// 确定添加部门
+			addHandleOk () {
+				this.ModalText = 'The modal will be closed after two seconds';
+				this.confirmLoading = true;
+				setTimeout(() => {
+					this.addSectionVisible = false;
+					this.confirmLoading = false;
+				}, 2000);
+			},
+			// 取消添加部门
+			addHandleCancel(e) {
+			console.log(e);
+			console.log('Clicked cancel button');
+			this.addSectionVisible = false
+			this.$refs.ruleForm.resetFields()
+			},
+			// 显示编辑对话框
 			showModal() {
 			this.editSectionVisible = true;
 			},
-			// 点击确定
-			handleOk(e) {
+			// 点击确定编辑修改
+			editHandleOk(e) {
 				console.log(e);
 				this.ModalText = 'The modal will be closed after two seconds';
 				this.confirmLoading = true;
@@ -157,8 +221,8 @@
 					this.confirmLoading = false;
 				}, 2000);
 			},
-			// 点击取消
-			handleCancel(e) {
+			// 点击取消编辑
+			editHandleCancel(e) {
 			console.log(e);
 			console.log('Clicked cancel button');
 			this.editSectionVisible = false;
