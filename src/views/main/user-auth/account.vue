@@ -64,6 +64,7 @@
 import Breadcrumb from '@/components/bread-crumb';
 import {clearProto, disabledDate} from "@/plugin/tools";
 import userAuthApi from '../../../plugin/api/user-auth';
+
 const columns = [
   {
     title: '所属部门',
@@ -157,8 +158,8 @@ export default {
     Breadcrumb,
   },
   methods: {
-    getTableList(){
-      userAuthApi.listUser(this.queryParams).then((res)=>{
+    getTableList() {
+      userAuthApi.listUser(this.queryParams).then((res) => {
         console.log(res)
       })
     },
@@ -178,12 +179,14 @@ export default {
     column: function () {
       const {isDeleted} = this.queryParams;
       const flag = isDeleted === '0';
+      const dynamicColumn = flag ? columns : columns.slice(0, 4);
       const obj = {
         title: `${flag ? '创建' : '删除'}日期`,
         dataIndex: flag ? 'gmtCreate' : 'gmtDeleted',
         key: 'date',
+        sorter: true,
       };
-      return [obj, ...columns]
+      return [obj, ...dynamicColumn]
     },
   },
 }

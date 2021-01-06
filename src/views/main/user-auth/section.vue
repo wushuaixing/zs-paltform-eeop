@@ -4,31 +4,8 @@
     <div class="frame-wrapper-content">
       <div class="frame-query">
         <a-form-model layout="inline" @submit="handleSubmit" @submit.native.prevent>
-          <a-form-model-item label="姓名">
-            <a-input v-model="queryParams.name" placeholder="请输入姓名" class="custom-prefix-6"/>
-          </a-form-model-item>
-          <a-form-model-item label="角色">
-            <a-select
-                v-model="queryParams.roleId"
-                placeholder="请选择角色"
-                style="width: 180px"
-                allowClear
-            >
-              <a-select-option v-for="item in role" :key="item.id" :value="item.id">{{ item.lable }}</a-select-option>
-
-            </a-select>
-          </a-form-model-item>
-          <a-form-model-item label="所属部门">
-            <a-select
-                v-model="queryParams.departmentId"
-                placeholder="请选择所属部门"
-                style="width: 180px"
-                allowClear
-            >
-              <a-select-option v-for="item in department" :key="item.id" :value="item.id">{{ item.lable }}
-              </a-select-option>
-
-            </a-select>
+          <a-form-model-item label="部门名称">
+            <a-input v-model="queryParams.departmentName" placeholder="请输入部门姓名" class="custom-prefix-6"/>
           </a-form-model-item>
           <a-form-model-item>
             <a-button type="primary" html-type="submit">查询</a-button>
@@ -40,8 +17,8 @@
       </div>
       <div class="frame-content">
         <a-tabs @change="handleTabChange">
-          <a-tab-pane key="0" tab="正常账号"></a-tab-pane>
-          <a-tab-pane key="1" tab="已删除账号"></a-tab-pane>
+          <a-tab-pane key="0" tab="正常部门"></a-tab-pane>
+          <a-tab-pane key="1" tab="已删除部门"></a-tab-pane>
         </a-tabs>
         <div style="height: 4px"></div>
         <a-table :columns="column" :data-source="dataSource" size="middle" :pagination="pagination"
@@ -49,8 +26,6 @@
         >
           <template slot="auction">
             <a-button type="link" size="small" :style="{paddingLeft: 0}">编辑</a-button>
-            <a-divider type="vertical"/>
-            <a-button type="link" size="small">重置密码</a-button>
             <a-divider type="vertical"/>
             <a-button type="link" size="small">删除</a-button>
           </template>
@@ -64,26 +39,23 @@
 import Breadcrumb from '@/components/bread-crumb';
 import {clearProto, disabledDate} from "@/plugin/tools";
 import userAuthApi from '../../../plugin/api/user-auth';
-const columns = [
+
+const columnsNormal = [
   {
-    title: '所属部门',
+    title: '创建日期',
+    dataIndex: 'gmtCreate',
+    key: 'gmtCreate',
+    sorter: true,
+  },
+  {
+    title: '部门名称',
     dataIndex: 'departmentName',
     key: 'departmentName',
   },
   {
-    title: '角色',
-    dataIndex: 'roleName',
-    key: 'roleName',
-  },
-  {
-    title: '姓名',
-    dataIndex: 'name',
-    key: 'name',
-  },
-  {
-    title: '账号',
-    dataIndex: 'username',
-    key: 'username',
+    title: '部门内账号数量',
+    dataIndex: 'userCount',
+    key: 'userCount',
   },
   {
     title: '操作',
@@ -91,6 +63,19 @@ const columns = [
     key: 'auction',
     scopedSlots: {customRender: 'auction'},
     width: 260,
+  },
+];
+const columnsDel = [
+  {
+    title: '删除日期',
+    dataIndex: 'gmtDel',
+    key: 'gmtDel',
+    sorter: true,
+  },
+  {
+    title: '部门名称',
+    dataIndex: 'departmentName',
+    key: 'departmentName',
   },
 ];
 
@@ -105,18 +90,24 @@ export default {
       ],
       dataSource: [{
         departmentName: "测试部门",
-        gmtCreate: "2020-12-30",
+        gmtCreate: "2020-12-08",
+        gmtDel: "2020-12-30",
         id: 0,
         userCount: 6,
+      },{
+        departmentName: "前端部门",
+        gmtCreate: "2020-12-13",
+        gmtDel: "2020-12-02",
+        id: 1,
+        userCount: 8,
       }],
       queryParams: {
         isDeleted: '0', //是否删除（0-否、1-是），默认为0
-        name: '',
+        departmentName: '',
         page: 1,
         // roleId: 1, //	角色ID
         sortColumn: '', //排序字段
         sortOrder: '', //排序顺序
-        username: '', //账号
       },
       pagination: {},
       disabledDate,
@@ -126,8 +117,8 @@ export default {
     Breadcrumb,
   },
   methods: {
-    getTableList(){
-      userAuthApi.listUser(this.queryParams).then((res)=>{
+    getTableList() {
+      userAuthApi.listUser(this.queryParams).then((res) => {
         console.log(res)
       })
     },
@@ -146,13 +137,11 @@ export default {
   computed: {
     column: function () {
       const {isDeleted} = this.queryParams;
-      const flag = isDeleted === '0';
-      const obj = {
-        title: `${flag ? '创建' : '删除'}日期`,
-        dataIndex: flag ? 'gmtCreate' : 'gmtDeleted',
-        key: 'date',
-      };
-      return [obj, ...columns]
+      if (isDeleted === '0') {
+        return columnsNormal;
+      } else {
+        return columnsDel;
+      }
     },
   },
 }
