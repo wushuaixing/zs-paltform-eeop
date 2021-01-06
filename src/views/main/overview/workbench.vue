@@ -228,8 +228,8 @@ $leftWidth: 550px;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 500px;
     img {
+			vertical-align: middle;
      width: 200px;
      height: 200px;
     }
@@ -238,7 +238,7 @@ $leftWidth: 550px;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 800px;
+    height: 300px;
     img {
      width: 200px;
      height: 200px;
