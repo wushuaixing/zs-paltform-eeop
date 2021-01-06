@@ -66,7 +66,7 @@
               点的上传
             </a-button>
           </a-upload>
-          <a class="upSucceed" v-else>{{fileName}}    <a-icon type="close" @click="showUploadList=true"></a-icon></a>
+          <a class="upSucceed" v-else>{{fileName}}&nbsp;<a-icon type="close" @click="showUploadList=true"></a-icon></a>
           <a class="download">导入模板下载</a>
         </div>
         <div class="caution">
