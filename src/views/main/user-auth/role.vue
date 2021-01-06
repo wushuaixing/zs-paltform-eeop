@@ -1,6 +1,13 @@
 <template>
   <div class="frame-wrapper">
-    <Breadcrumb :source="navData" icon="environment"></Breadcrumb>
+    <Breadcrumb :source="navData" icon="environment">
+      <template slot="suffix">
+        <a-button class="addAccount" @click="handleAccount('add')">
+          <a-icon type="user"/>
+          新建角色
+        </a-button>
+      </template>
+    </Breadcrumb>
     <div class="frame-wrapper-content">
       <div class="frame-query">
         <a-form-model layout="inline" @submit="handleSubmit" @submit.native.prevent>
@@ -25,14 +32,98 @@
         <a-table :columns="column" :data-source="dataSource" size="middle" :pagination="pagination"
                  @change="handleTableChange" :row-key="record => record.id"
         >
-          <template slot="auction">
-            <a-button type="link" size="small" :style="{paddingLeft: 0}">编辑</a-button>
+          <template slot="auction" slot-scope="text,record">
+            <a-button type="link" size="small" :style="{paddingLeft: 0}" @click="handleAccount('edit',record)">编辑
+            </a-button>
             <a-divider type="vertical"/>
             <a-button type="link" size="small">删除</a-button>
           </template>
         </a-table>
       </div>
     </div>
+    <a-modal
+        :title="`${modalSign === 'add' ?'新增':'编辑'}角色`"
+        v-model="modalVisible"
+        :destroyOnClose="true"
+        dialogClass="role-modal"
+        :maskClosable="false"
+        @ok="handleSubmit"
+    >
+      <div class="role-modal-wrapper">
+        <a-form-model
+            ref="ruleForm"
+            :model="form"
+            :rules="rules"
+            :label-col="labelCol"
+            :wrapper-col="wrapperCol"
+        >
+          <div class="part-title">角色名称</div>
+          <a-form-model-item ref="roleName" label="角色名称" prop="roleName">
+            <a-input
+                v-model="form.roleName"
+                placeholder="请输入姓名"
+            />
+          </a-form-model-item>
+          <div class="part-title">角色权限配置</div>
+          <a-form-model-item prop="roleManage">
+            <a-checkbox v-model="form.roleManage">
+              服务商名单管理
+            </a-checkbox>
+          </a-form-model-item>
+          <template v-if="form.roleManage">
+            <a-form-model-item label="管理权限" prop="managePermission">
+              <a-radio-group v-model="form.managePermission">
+                <a-radio value="1">
+                  审核
+                </a-radio>
+                <a-radio value="2">
+                  仅查看
+                </a-radio>
+              </a-radio-group>
+            </a-form-model-item>
+            <template v-if="form.managePermission === '2'">
+              <a-form-model-item label="查看范围" prop="readScope">
+                <a-radio-group v-model="form.readScope">
+                  <a-radio value="1">
+                    全阶段名单
+                  </a-radio>
+                  <a-radio value="2">
+                    仅入库名单
+                  </a-radio>
+                </a-radio-group>
+              </a-form-model-item>
+            </template>
+            <a-form-model-item label="导出权限" prop="exportPermission">
+              <a-radio-group v-model="form.exportPermission">
+                <a-radio value="1">
+                  有
+                </a-radio>
+                <a-radio value="2">
+                  无
+                </a-radio>
+              </a-radio-group>
+            </a-form-model-item>
+          </template>
+          <a-form-model-item prop="orgManage">
+            <a-checkbox v-model="form.orgManage">
+              招商项目管理
+            </a-checkbox>
+          </a-form-model-item>
+          <template v-if="form.orgManage">
+            <a-form-model-item label="服务项目查看" prop="projectManage">
+              <a-radio-group v-model="form.projectManage">
+                <a-radio value="1">
+                  发布及进展管理
+                </a-radio>
+                <a-radio value="2">
+                  仅查看
+                </a-radio>
+              </a-radio-group>
+            </a-form-model-item>
+          </template>
+        </a-form-model>
+      </div>
+    </a-modal>
   </div>
 </template>
 
@@ -92,32 +183,13 @@ export default {
   nameComment: '内部权限管理/账号管理',
   data() {
     return {
+      modalSign: 'add',
+      modalVisible: false,
       navData: [
         {id: 1, title: '内部权限管理', path: '/auth/role'},
-        {id: 2, title: '账号管理', path: '/provider/role'},
+        {id: 2, title: '角色管理', path: '/provider/role'},
       ],
-      dataSource: [{
-        gmtDelete: "2020-12-01",
-        gmtCreate: "2020-12-02",
-        gmtModify: "2020-12-30",
-        id: 0,
-        roleName: "xxx角色",
-        userCount: 34,
-      }, {
-        gmtDelete: "2020-12-03",
-        gmtCreate: "2020-12-05",
-        gmtModify: "2020-12-06",
-        id: 1,
-        roleName: "yyy角色",
-        userCount: 34,
-      }, {
-        gmtDelete: "2020-12-01",
-        gmtCreate: "2020-12-02",
-        gmtModify: "2020-12-30",
-        id: 2,
-        roleName: "zzz角色",
-        userCount: 34,
-      }],
+      dataSource: [],
       queryParams: {
         isDeleted: '0', //是否删除（0-否、1-是），默认为0
         roleName: '',
@@ -125,7 +197,43 @@ export default {
         sortColumn: '', //排序字段
         sortOrder: '', //排序顺序
       },
-      pagination: {},
+      pagination: {
+        current: 1,
+        total: 1,
+        showQuickJumper: true,
+        showLessItems: true,
+        size: 'middle',
+        showTotal: val => `共${val}条信息`,
+      },
+      labelCol: {span: 5},
+      wrapperCol: {span: 16},
+      form: {
+        roleManage: false,
+        orgManage: false,
+        projectManage: '',//项目管理权限（1：发布及进展管理，2：仅查看）
+        roleName: '',
+        exportPermission: '',//导出权限（1：有，2：无）
+        managePermission: '',//管理权限（1：审核，2：仅查看）
+        readScope: '' //查看范围（1：全阶段名单，2：仅入库名单）
+      },
+      rules: {
+        roleName: [
+          {required: true, message: '请输入角色名称'},
+          {pattern: /^[\u4e00-\u9fa5a-zA-Z]+$/, message: "仅支持汉字和字母", trigger: 'blur'},
+        ],
+        projectManage: [
+          {required: true, message: '请选择项目管理权限', trigger: 'change'},
+        ],
+        exportPermission: [
+          {required: true, message: '请选择导出权限', trigger: 'change'},
+        ],
+        managePermission: [
+          {required: true, message: '请选择管理权限', trigger: 'change'},
+        ],
+        readScope: [
+          {required: true, message: '请选择查看范围', trigger: 'change'},
+        ],
+      },
       disabledDate,
     };
   },
@@ -133,18 +241,47 @@ export default {
     Breadcrumb,
   },
   methods: {
+    handleAccount(sign) {
+      this.modalVisible = true;
+      this.modalSign = sign;
+    },
     getTableList() {
-      userAuthApi.listUser(this.queryParams).then((res) => {
+      userAuthApi.listRole(this.queryParams).then((res) => {
         console.log(res)
       })
     },
     handleSubmit(e) {
       e.preventDefault();
-      console.log(clearProto(this.queryParams));
+      const {roleManage, orgManage} = this.form;
+      if (!(roleManage || orgManage)) {
+        this.$message.warning('至少勾选1个模块')
+      } else {
+        this.$refs.ruleForm.validate(valid => {
+          if (valid) {
+            const {roleName,projectManage,exportPermission,managePermission,readScope} = clearProto(this.form);
+            const params = {
+              roleName,
+              attractInvestmentManage:{
+                projectManage,
+              },
+              serviceUserManage:{
+                exportPermission,
+                managePermission,
+                readScope
+              }
+            };
+            userAuthApi.saveRole(params).then((res)=>{
+              console.log(res)
+            })
+          } else {
+            return false;
+          }
+        });
+      }
     },
     handleTabChange(val) {
       this.queryParams.isDeleted = val;
-      this.getTableList();
+      // this.getTableList();
     },
     handleTableChange(ev) {
       console.log(ev);
@@ -163,6 +300,23 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
+.role-modal {
+  width: 680px !important;
 
+  .ant-modal-body {
+    .role-modal-wrapper {
+      .part-title {
+        font-weight: bold;
+        color: #333333;
+        font-size: 16px;
+        padding: 12px;
+      }
+    }
+  }
+
+  .ant-modal-footer {
+    text-align: center;
+  }
+}
 </style>

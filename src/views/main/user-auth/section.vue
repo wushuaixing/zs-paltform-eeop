@@ -109,7 +109,14 @@ export default {
         sortColumn: '', //排序字段
         sortOrder: '', //排序顺序
       },
-      pagination: {},
+      pagination:{
+        current:1,
+        total:1,
+        showQuickJumper:true,
+        showLessItems:true,
+        size:'middle',
+        showTotal:val=>`共${val}条信息`,
+      },
       disabledDate,
     };
   },

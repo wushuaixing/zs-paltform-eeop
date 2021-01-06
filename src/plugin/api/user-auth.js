@@ -18,5 +18,12 @@ const userAuthApi = {
     addSection: params => request.post('/operator/department/saveDepartment', params),
     // 账号管理-获取部门管理列表
     getSectionListManagement: params => request.get('/operator/department/simpleListDepartment', params),
+
+    //角色列表
+    listRole: params => request.get('/operator/role/listRole', params),
+    //添加编辑角色
+    saveRole: params => request.post('/operator/role/saveRole', params),
+    //删除角色
+    deleteRole: params => request.post('/operator/role/deleteRole', params),
 };
 export default userAuthApi;
