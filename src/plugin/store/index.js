@@ -18,14 +18,13 @@ export default new Vuex.Store({
       state.isLogin = true;
     },
     updateInfo:(state,infoSource = {})=>{
-      window.localStorage.token = infoSource.token;
+      // window.localStorage.token = infoSource.token;
       state.info = Object.assign({},state.info,infoSource)
     },
     resetInfo:(state)=>{
       state.info = {};
       state.isLogin = false;
       window.localStorage.token = '';
-
     }
   },
   actions: {

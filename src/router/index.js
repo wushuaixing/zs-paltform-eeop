@@ -65,6 +65,7 @@ const routes = [
 					      path: 'list',
 					      name:'investment/item-list',
 					      component:()=>import("@/views/main/investment/index"),
+							// component:()=>import("@/views/main/query-template")
 					    },
 					    {
 					      path: 'detail',
@@ -113,26 +114,6 @@ const routes = [
 					},
 				]
 			},
-
-
-			// {
-			//   path: 'investment',
-			//   name:'investment',
-			//   redirect: 'investment/list',
-			//   component:RouterSpace,
-			//   children:[
-			//     {
-			//       path: 'list',
-			//       name:'investment/item-list',
-			//       component:()=>import("@/views/main/investment/item-list"),
-			//     },
-			//     {
-			//       path: 'list/detail/:id',
-			//       name:'investment/item-detail',
-			//       component:()=>import("@/views/main/investment/item-detail"),
-			//     },
-			//   ]
-			// }
 		]
 	},
 	{
