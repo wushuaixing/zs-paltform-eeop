@@ -18,8 +18,8 @@
 					</a-form-model-item>
 					<a-form-model-item label="服务商类型：" v-if="status(124)">
 						<a-select v-model="query.identity" placeholder="请选择服务商身份类型" style="width: 200px" allowClear>
-							<a-select-option value="1">律师</a-select-option>
-							<a-select-option value="2">机构</a-select-option>
+							<a-select-option :value="1">律师</a-select-option>
+							<a-select-option :value="2">机构</a-select-option>
 						</a-select>
 					</a-form-model-item>
 					<a-form-model-item label="提交日期：" v-if="status(12)">
@@ -86,7 +86,8 @@
 <script>
 	import Breadcrumb from '@/components/bread-crumb';
 	import ReadStatus from '@/components/table/read-status';
-	import { clearProto, disabledDate } from "@/plugin/tools";
+	import { clearProto, disabledDate,clearObject } from "@/plugin/tools";
+	import { toReview } from "@/plugin/api/provider";
 	import { columns } from './deploy';
 
 	const auditStatus = false;
@@ -153,6 +154,16 @@ export default {
 	  ReadStatus
   },
 	created(){
+		toReview.list({
+			type:Number(this.activeKey),
+			page:1,
+			size:10
+		}).then(res=>{
+			if(res.code === 20000){
+				const source = clearObject(res.data || {});
+				console.log(...source);
+			}
+		});
 	},
   methods:{
 		status(rule){

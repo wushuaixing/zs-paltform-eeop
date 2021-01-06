@@ -240,7 +240,7 @@ export default {
       this.requestInquire()
     },
     viewDetails(v) {
-      this.$router.push({name: 'investment/item-detail', query: {id: v.id}});
+      this.$router.push({name: 'investment/item-detail', query: {id: v.id}})
       console.log(v.id)
     },
     showModal() {
