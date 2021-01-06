@@ -10,7 +10,6 @@
 								<div class="query-item-prefix">部门名称</div>
 							</template>
 						</a-input>
-						
 					</a-form-model-item>
 					<a-form-model-item>
 						<a-button type="primary" html-type="submit">查询</a-button>  
@@ -28,19 +27,31 @@
 				<div style="height: 4px"></div>
 				<a-table :columns="columns" :data-source="data" size="middle" :pagination="pagination" @change="handleTableChange">
 					<template slot="auction">
-						<a-button type="link" size="small" icon="file-text" :style="{paddingLeft: 0}">编辑</a-button>
+						<a-button type="link" size="small" icon="file-text" :style="{paddingLeft: 0}"  @click="showModal">编辑</a-button>
 						<a-divider type="vertical" />
 						<a-button type="link" size="small" icon="form" >删除</a-button>
 					</template>
 				</a-table>
 			</div>
 		</div>
+	<!-- 编辑部门对话框 -->
+	<a-modal
+      title="Title"
+      :visible="editSectionVisible"
+      :confirm-loading="confirmLoading"
+      @ok="handleOk"
+      @cancel="handleCancel"
+    >
+      <p>{{ ModalText }}</p>
+    </a-modal>
 	</div>
+
 </template>
 
 <script>
 	import Breadcrumb from '@/components/bread-crumb';
 	import { clearProto, disabledDate } from "@/plugin/tools";
+	// import { colType } from '@/main/user-auth/source'
 	const columns1 = [
 	{
 		title: '创建日期',
@@ -70,13 +81,13 @@
 	{
 		key: '1',
 		name: '2020-09-25',
-		age: 'xxx部',
+		age: '1部',
 		address: '6',
 	},
 	{
 		key: '2',
 		name: '2020-09-21',
-		age: 'xxx部',
+		age: '2部',
 		address: '2',
 	}
 	];
@@ -91,6 +102,7 @@
 				columns:columns1,
 				query:{
 					username:"",
+					// tabStatus: 1,
 					// startTime:'',
 					// endTime:'',
 					// orgType:undefined,
@@ -105,7 +117,10 @@
 				},
 				disabledDate,
 				// table每一行的数据
-				data
+				data,
+				ModalText: 'Content of the modal',// 对话框文本
+				editSectionVisible: false,// 对话框显示与隐藏
+				confirmLoading: false, // loading 效果
 			};
 		},
 		components:{
@@ -127,6 +142,26 @@
 			},
 			handleTableChange(ev){
 				console.log(ev);
+			},
+			// 显示对话框
+			showModal() {
+			this.editSectionVisible = true;
+			},
+			// 点击确定
+			handleOk(e) {
+				console.log(e);
+				this.ModalText = 'The modal will be closed after two seconds';
+				this.confirmLoading = true;
+				setTimeout(() => {
+					this.editSectionVisible = false;
+					this.confirmLoading = false;
+				}, 2000);
+			},
+			// 点击取消
+			handleCancel(e) {
+			console.log(e);
+			console.log('Clicked cancel button');
+			this.editSectionVisible = false;
 			},
 		}
 	}
