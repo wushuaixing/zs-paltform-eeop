@@ -2,7 +2,7 @@
   <div class="investment-detail-block">
     <Breadcrumb :source="navData" icon="environment" />
     <div class="detail-wrapper">
-      <h2>基本信息</h2>
+      <h2 class="title1">基本信息</h2>
       <div class="detail-conten">
         <!-- 债权基本信息-->
         <div>
@@ -145,7 +145,7 @@
         </div>
         <!--报名服务商列表-->
         <div>
-          <h3 class="title2">报名服务商列表</h3>
+          <h3 class="title-table">报名服务商列表</h3>
           <a-table v-bind="tableSource.applyServeTable" @change="applyServeTableChange">
             <template slot="name" slot-scope="name">
               <a-button type="link">{{ name }}</a-button>
@@ -167,7 +167,7 @@
         </div>
         <!--服务商提交方案列表-->
         <div>
-          <h3 class="title2">服务商提交方案列表</h3>
+          <h3 class="title-table">服务商提交方案列表</h3>
           <a-radio-group @change="changType" v-model="params.caseType" style="margin-bottom: 16px">
             <a-radio-button :value="1"> 有效方案1 </a-radio-button>
             <a-radio-button :value="2"> 末通过系统筛选2 </a-radio-button>
@@ -687,6 +687,14 @@ export default {
       .title2 {
         margin-top: 24px;
         font-weight: bold;
+        color: #333333;
+        font-size: 14px;
+      }
+      .title-table{
+        margin-top: 24px;
+        font-weight: bold;
+        color: #333333;
+        font-size: 16px;
       }
       .ant-row-flex {
         padding-left: 8px;
@@ -719,5 +727,10 @@ export default {
     margin: 10px;
     border-radius: 6px;
   }
+}
+.title1{
+  font-size: 16px;
+  color: #333333;
+  font-weight: 600;
 }
 </style>
