@@ -163,7 +163,7 @@ $leftWidth: 550px;
       padding: 20px 24px;
       border-bottom: 1px solid #E9E9E9;
       line-height: 1.5;
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 600;
       color: #262626;
     }
@@ -216,7 +216,6 @@ $leftWidth: 550px;
     .total {
       font-size: 16px;
       padding: 0 20px;
-      // margin-top: 20px;
       margin-left: 10px;
       font-weight: 600;
       color: #333333;
