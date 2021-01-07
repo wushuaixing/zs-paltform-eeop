@@ -5,8 +5,8 @@
         <div class="item-title item-format ">服务商注册情况</div>
         <div class="item-content item-format">
           <div class="number">
-            <span class="total">累计注册服务商 {{echarts.totalRegUserNum}} 名</span>
-            <span class="total">昨日新增注册 {{echarts.lastDayRegUserNum}} 名</span>
+            <span class="total">累计注册服务商 <u style="color:#0EA5FF">{{echarts.totalRegUserNum}} 名</u></span>
+            <span class="total">昨日新增注册 <u style="color:#F5222D">{{echarts.lastDayRegUserNum}} 名</u></span>
           </div>
           <div class="data-display">
             <!-- 饼图显示 -->
@@ -14,19 +14,19 @@
               <div id="main"></div>
             </div>
             <div class="schemeProcess">
-              <a-badge text="仅注册" color="#c23531"/>
+              <a-badge text="仅注册" color="#0EA5FF"/>
               <span style="margin-left: 45px">{{echarts.onlyRegUserNum}}</span>
               <br />
-              <a-badge text="已认证资质" color="#2f4554"/>
+              <a-badge text="仅提交资质" color="#9200FF"/>
               <span style="margin-left: 18px">{{echarts.confirmQuaUserNum}}</span>
               <br />
-              <a-badge text="已提交要素表" color="#61a0a8" />
-              <span style="margin-left: 4px">{{echarts.submitEleUserNum}}</span>
+              <a-badge text="待审核" color="#67CE57" />
+              <span style="margin-left: 45px">{{echarts.submitEleUserNum}}</span>
               <br />
-              <a-badge text="已入库" color="#d48265"/>
+              <a-badge text="已入库" color="#FF5F80"/>
               <span style="margin-left: 45px">{{echarts.storageUserNum}}</span>
               <br />
-              <a-badge text="审核未通过" color="#91c7ae"/>
+              <a-badge text="审核未通过" color="#F7CE22"/>
               <span style="margin-left: 18px">{{echarts.notPassAuditUserNum}}</span>
               <br />
             </div>
@@ -80,7 +80,7 @@ export default {
       console.log(res);
       this.echarts = res.data;
       let option = {
-      // color: ['red', 'blue','green','skyblue','pink'],
+      color: ['#0EA5FF', '#9200FF','#67CE57','#FF5F80','#F7CE22'],
         tooltip: {
           trigger: 'item',
         },
@@ -184,7 +184,7 @@ $leftWidth: 550px;
   }
     .data-display {
       display: flex;
-      justify-content: space-around;
+      justify-content: start;
       // align-items: center;
       width: 100%;
       height: 262px;
@@ -227,12 +227,17 @@ $leftWidth: 550px;
     font-size: 16px;
     padding: 3px 0;
   }
+  u {
+    text-decoration: none;
+    font-size: 20px;
+  }
   .progress {
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 400px;
     img {
-			vertical-align: middle;
+			// vertical-align: middle;
      width: 200px;
      height: 200px;
     }
@@ -241,7 +246,7 @@ $leftWidth: 550px;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 300px;
+    height: 800px;
     img {
      width: 200px;
      height: 200px;
