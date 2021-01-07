@@ -67,7 +67,7 @@
         </div>
         <!--项目招商信息-->
         <div>
-          <h3 class="title2">项目招商信息</h3>
+          <h3 @click="showModal" class="title2">项目招商信息 <a-icon type="form" /></h3>
           <a-row type="flex">
             <a-col :span="8">
               报名截止日期：<span>{{ detailInfo.deadline }}</span>
@@ -204,6 +204,30 @@
         </div>
       </div>
     </div>
+    <div>
+    <a-modal 
+      v-model="visible" 
+      title="修改项目招商信息" 
+      @ok="handleOk" 
+      :centered="true" 
+      :maskClosable="false"
+    >
+      <a-form-model :model="editInfo" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-form-model-item label="报名截止日期">
+          <a-input v-model="editInfo.signDeadline" />
+        </a-form-model-item>
+        <a-form-model-item label="方案提交截止日期">
+          <a-input v-model="editInfo.submitDeadline" />
+        </a-form-model-item>
+        <a-form-model-item label="期限上限">
+          <a-input v-model="editInfo.dateLimit" />
+        </a-form-model-item>
+        <a-form-model-item label="目标回款金额下限">
+          <a-input v-model="editInfo.aimedPriceBack" />
+        </a-form-model-item>
+      </a-form-model>
+    </a-modal>
+  </div>
   </div>
 </template>
 
@@ -211,6 +235,8 @@
 import {projectDetail,signService,serviceCaseSubmit} from "@/plugin/api/investment-center";
 import {collateralTypeData} from "./source"
 import {getArea} from "@/plugin/tools"
+import Breadcrumb from "@/components/bread-crumb";
+// import moment from "ant-design-vue"
 //报名服务商表数据
 const columns = [
   {
@@ -341,12 +367,21 @@ const navData = [
   { id: 2, title: "招商项目管理", path: "/investment/list" },
   { id: 2, title: "招商项目详情", path: "" },
 ];
-import Breadcrumb from "@/components/bread-crumb";
 export default {
   name: "ItemDetail",
   data() {
     return {
+      visible:false,
+      labelCol: { span: 4 },
+      wrapperCol: { span: 14 },
       navData,
+      editInfo:{
+        aimedPriceBack: "",
+        dateLimit: "",
+        id: this.$route.query.id,
+        signDeadline: "",
+        submitDeadline: ""
+      },
       params:{
         caseType: 1,
         debtor: "",
@@ -621,6 +656,15 @@ export default {
           : "DESC"
         : "";
       this.getServiceCaseSubmitList();
+    },
+    disabledDate(current) {
+      console.log(current)
+    },
+    showModal(){
+      this.visible = true;
+    },
+    handleOk(){
+
     }
   },
   filters:{
@@ -786,5 +830,9 @@ export default {
   font-size: 16px;
   color: #333333;
   font-weight: 600;
+}
+.editIpt{
+  width: 198px;
+  height: 32px;
 }
 </style>
