@@ -148,20 +148,20 @@
           <h3 class="title-table">报名服务商列表</h3>
           <div class="table-block">
             <a-table v-bind="tableSource.applyServeTable" @change="applyServeTableChange">
-              <template slot="name" slot-scope="name">
-                <a-button type="link">{{ name }}</a-button>
+              <template slot="name" slot-scope="name,row">
+                <a-button type="link" @click="goAvatar(row.id)">{{ name|show_ }}</a-button>
               </template>
-              <template slot="phone" slot-scope="phone">{{ phone }}</template>
+              <template slot="phone" slot-scope="phone">{{ phone|show_ }}</template>
               <template slot="identity" slot-scope="identity">{{identity|identityType}}</template>
-              <template slot="orgOfficeName" slot-scope="orgOfficeName">
-                <a-button v-if="orgOfficeName" type="link">{{orgOfficeName}}</a-button>
+              <template slot="orgOfficeName" slot-scope="orgOfficeName,row">
+                <a-button v-if="orgOfficeName" type="link" @click="goAvatar(row.id)">{{orgOfficeName}}</a-button>
                 <div v-else>-</div>
               </template>
               <template slot="workingTime" slot-scope="workingTime">{{workingTime|workingTimeText}}</template>
-              <template slot="areasOfGoodCases" slot-scope="areasOfGoodCases">{{areasOfGoodCases}}</template>
+              <template slot="areasOfGoodCases" slot-scope="areasOfGoodCases">{{areasOfGoodCases|show_}}</template>
               <template slot="goodCases" slot-scope="goodCases">{{goodCases|goodCasesType}}</template>
-              <template slot="applyDate" slot-scope="applyDate">{{applyDate}}</template>
-              <template slot="gmtModify" slot-scope="gmtModify">{{gmtModify}}</template>
+              <template slot="applyDate" slot-scope="applyDate">{{applyDate|show_}}</template>
+              <template slot="gmtModify" slot-scope="gmtModify">{{gmtModify|show_}}</template>
               <template slot="caseFileStatus" slot-scope="caseFileStatus">
                 <div :style="{color:caseFileStatus===1?'#008CB0':''}">{{caseFileStatus|caseFileText}}</div>
               </template>
@@ -172,23 +172,23 @@
         <div>
           <h3 class="title-table">服务商提交方案列表</h3>
           <a-radio-group @change="changType" v-model="params.caseType" style="margin-bottom: 16px">
-            <a-radio-button :value="1"> 有效方案{{}} </a-radio-button>
-            <a-radio-button :value="2"> 末通过系统筛选2 </a-radio-button>
+            <a-radio-button :value="1"> 有效方案 </a-radio-button>
+            <a-radio-button :value="2"> 末通过系统筛选 </a-radio-button>
           </a-radio-group>
           <div class="table-block">
             <a-table v-bind="tableSource.submitPlanTable" @change="submitPlanTableChange">
-              <template slot="gmtCreate" slot-scope="gmtCreate">{{gmtCreate}}</template>
-              <template slot="name" slot-scope="name">
-                <a-button type="link">{{ name }}</a-button>
+              <template slot="gmtCreate" slot-scope="gmtCreate">{{gmtCreate|show_}}</template>
+              <template slot="name" slot-scope="name,row">
+                <a-button type="link" @click="goAvatar(row.id)">{{ name }}</a-button>
               </template>
-              <template slot="phone" slot-scope="phone">{{phone}}</template>
+              <template slot="phone" slot-scope="phone">{{phone|show_}}</template>
               <template slot="identity" slot-scope="identity">{{identity|identityType}}</template>
-              <template slot="orgOfficeName" slot-scope="orgOfficeName">
-                <a-button v-if="orgOfficeName" type="link">{{orgOfficeName}}</a-button>
+              <template slot="orgOfficeName" slot-scope="orgOfficeName,row">
+                <a-button v-if="orgOfficeName" type="link" @click="goAvatar(row.id)">{{orgOfficeName}}</a-button>
                 <div v-else>-</div>
               </template>
               <template slot="serviceTime" slot-scope="serviceTime,row">
-                <div>{{serviceTime}}个月</div>
+                <div>{{serviceTime|show_}}个月</div>
                 <div v-if="row.serviceTimeInvalid===1" class="tag">未达标</div>
               </template>
               <template slot="aimBackPrice" slot-scope="aimBackPrice,row">
@@ -200,7 +200,10 @@
                   <p v-for="(item,index) in scheduleManagements" :key="index">{{item.dateMonth}}个月内完成{{item.dateMatters}}</p>
                 </div>
               </template>
-              <template slot="caseFileAddress" slot-scope="caseFileAddress">{{caseFileAddress}}</template>
+              <template slot="caseFileAddress" slot-scope="caseFileAddress">
+                <div v-if="caseFileAddress"><a href="#">服务方案.pdf</a></div>
+                <div v-else>-</div>
+              </template>
             </a-table>
           </div>
         </div>
@@ -401,7 +404,6 @@ export default {
   data() {
     return {
       visible:false,
-      
       labelCol: { span: 8 },
       wrapperCol: { span: 14 },
       navData,
@@ -443,7 +445,7 @@ export default {
         caseType: 1,
         debtor: "",
         endDate: "",
-        id: "",
+        id: this.$route.query.id,
         page: 1,
         size: 10,
         sortField: 0,
@@ -741,11 +743,13 @@ export default {
           console.log(this.editInfo)
           updateProjectInfo(this.editInfo).then(res=>{
             if(res.code === 20000) {
-              console.log(res)
+              this.$message.success("修改成功")
+              this.visible = false;
               this.getProjectDetail()
               this.getServiceCaseSubmitList()
               this.getSignServiceList()
-              this.visible = false;
+            }else{
+              this.$message.error("修改失败")
             }
           })
         }else{
@@ -807,7 +811,6 @@ export default {
     Breadcrumb,
   },
   created() {
-    this.params.id = this.$route.query.id;
     this.getProjectDetail();
     this.getSignServiceList();
     this.getServiceCaseSubmitList();
