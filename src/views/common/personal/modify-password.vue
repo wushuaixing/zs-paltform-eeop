@@ -232,12 +232,12 @@ export default {
     text-align: center;
   }
   .ant-form-explain {
-        text-align: left;
-        font-size: 12px;
-        font-weight: 400;
-        color: #f5222d;
-        line-height: 12px;
-        margin-top: 4px;
-      }
+    text-align: left;
+    font-size: 12px;
+    font-weight: 400;
+    color: #f5222d;
+    line-height: 12px;
+    margin-top: 4px;
+  }
 }
 </style>

@@ -393,7 +393,7 @@ export default {
   data() {
     return {
       visible:false,
-      labelCol: { span: 4 },
+      labelCol: { span: 8 },
       wrapperCol: { span: 14 },
       navData,
       editInfo:{
@@ -888,7 +888,7 @@ export default {
 }
 .edit-modal{
   .ant-modal-body{
-    padding: 0;
+    padding: 0px;
     .ant-form-item{
       margin-top: 24px;
       height: 32px;
@@ -900,6 +900,12 @@ export default {
   }
   .ant-modal-footer {
     text-align: center;
+  }
+  .ant-form-explain {
+    text-align: left;
+    font-size: 12px;
+    font-weight: 400;
+    color: #f5222d;
   }
 }
 </style>
