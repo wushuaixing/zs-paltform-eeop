@@ -137,7 +137,7 @@ export const getArea = (provinceCode, cityCode, areaCode) => {
  * @param single
  */
 export const areaAnalysis = (str, single = true) => {
-	if (!str) return [];
+	if (!str) return '';
 	const _str = (str || '').split(',').filter(i => i);
 	return single ? _str : _str.map(i => i.split('/').filter(i => i));
 };

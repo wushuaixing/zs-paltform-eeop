@@ -1,9 +1,11 @@
 /**
  * 返回 tab 相应table-columns
  * @param type
+ * @param sortOrder
  * @returns {*[]}
  */
-export const columns = (type = '1') =>{
+export const columns = ({ type = 1, sortOrder}) =>{
+
 	// 基础列表
 	const baseColumns = [
 		{
@@ -13,19 +15,19 @@ export const columns = (type = '1') =>{
 		},
 		{
 			title: '联系方式',
-			dataIndex: 'age',
-			key: 'age',
+			dataIndex: 'phone',
+			key: 'phone',
 			customRender:val=>val || '-',
 		},
 		{
 			title: '服务商类型',
-			dataIndex: 'address',
-			key: 'address 1',
+			dataIndex: 'identity',
+			key: 'address1',
 			customRender:(val)=> (val && (val === '1' ? '律师' : '机构')) || '-',
 		},
 		{
 			title: '机构名称/挂靠律师',
-			dataIndex: 'address',
+			dataIndex: 'orgOfficeName',
 			key: 'address 2',
 			customRender:val=>val || '-',
 		},
@@ -35,43 +37,50 @@ export const columns = (type = '1') =>{
 		slots: { title: 'customAuction' },
 		scopedSlots: { customRender: 'auction' },
 	};
-	if(type === '1'){
+
+	if(type === 1){
 		return [
 			...baseColumns,
 			{
 				title: '所在地',
 				dataIndex: 'address',
-				key: 'address 3',
-				customRender:val=>val || '-',
+				key: 'add31',
+				// customRender:val=>val || '-',
+				scopedSlots: { customRender: 'address' },
+
 			},
 			{
 				title: '从业不良时间',
 				dataIndex: 'workingTime',
-				key: 'address 41',
+				key: 'address41',
 				scopedSlots: { customRender: 'workingTime' },
 			},
 			{
 				title: '要素提交日期',
-				dataIndex: 'address',
-				key: 'address 42',
-				customRender:()=>11111,
-			},
-			auction
-		];
-	}
-	if(type === '2'){
-		return [
-			...baseColumns,
-			{
-				title: '认证提交日期',
-				dataIndex: 'address',
-				key: 'address 42',
+				dataIndex: 'gmtCreate',
+				key: 'timeField',
+				sorter: true,
+				sortOrder: sortOrder || false,
 				customRender:val=>val || '-',
 			},
 			auction
 		];
 	}
-	if(type === '3'){
+	if(type === 2){
+		return [
+			...baseColumns,
+			{
+				title: '认证提交日期',
+				dataIndex: 'gmtCreate',
+				key: 'timeField',
+				sorter: true,
+				sortOrder: sortOrder || false,
+				customRender:val=>val || '-',
+			},
+			auction
+		];
+	}
+	if(type === 3){
 		return [
 			{
 				title: '联络人姓名',
@@ -86,25 +95,29 @@ export const columns = (type = '1') =>{
 			},
 			{
 				title: '注册日期',
-				dataIndex: 'address',
-				key: 'address 42',
+				dataIndex: 'gmtCreate',
+				key: 'timeField',
+				sorter: true,
+				sortOrder: sortOrder || false,
 				customRender:val=>val || '-',
 			},
 		];
 	}
-	if(type === '4'){
+	if(type === 4){
 		return [
 			...baseColumns,
 			{
 				title: '后台导入日期',
-				dataIndex: 'address',
-				key: 'address 42',
+				dataIndex: 'gmtCreate',
+				key: 'timeField',
+				sorter: true,
+				sortOrder: sortOrder || false,
 				customRender:val=>val || '-',
 			},
 			auction
 		];
 	}
-	if(type === '5'){
+	if(type === 5){
 		return [
 			...baseColumns,
 			{
@@ -115,8 +128,10 @@ export const columns = (type = '1') =>{
 			},
 			{
 				title: '审核日期',
-				dataIndex: 'address',
+				dataIndex: 'gmtModify',
 				key: 'address 41',
+				sorter: true,
+				sortOrder: sortOrder || false,
 				customRender:val=>val || '-',
 			},
 			auction

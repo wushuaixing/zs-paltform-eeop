@@ -33,7 +33,7 @@
       background-color: #f2f3f5;
     }
     .frame-content{
-      padding-top: 4px;
+      //padding-top: 4px;
     }
     .frame-content-table{
       .ant-table-body{
@@ -46,7 +46,6 @@
             padding-right: 16px;
           }
         }
-
       }
       .ant-table-thead > tr > th{
         background-color: #F5F5F5;
@@ -54,6 +53,9 @@
       }
       .ant-table-tbody > tr:nth-child(2n){
         background: #FAFAFA;
+      }
+      .ant-table-placeholder{
+        border: none;
       }
       .frame-table-bold{
         font-weight: bold;
@@ -65,6 +67,7 @@
   .query-item-prefix{
     height: 100%;
     width: auto;
+    font-size: 13px;
     text-align:center;
     padding-right: 10px;
     border-right: 1px solid #ddd;
