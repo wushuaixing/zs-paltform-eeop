@@ -226,6 +226,7 @@ export default {
       // console.log(pagination, filters, sorter,)
       //排序
       this.findAll.sortField = sorter.field === 'deadline' ? 1 : 2;
+      
       this.findAll.sortOrder = sorter.order ? sorter.order === "ascend" ? "ASC" : "DESC" : "";
       this.findAll.page = pagination.current;
       this.findAll.size = pagination.pageSize;
