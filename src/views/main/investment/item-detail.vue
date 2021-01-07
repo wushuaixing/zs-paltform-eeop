@@ -25,7 +25,7 @@
               资产包名称：<span>{{ detailInfo.assetPackage }}</span>
             </a-col>
             <a-col :span="8">
-              资产包收购时间：<span>{{ detailInfo.capitalPurchaseTime }}</span>
+              资产包收购时间：<span>{{ detailInfo.capitalPurchaseTime|show_ }}</span>
             </a-col>
             <a-col :span="8">
               担保方式：<span>{{ detailInfo.security|guarantyType}}</span>
@@ -61,7 +61,7 @@
               项目经理：<span>{{ detailInfo.projectManager }}</span>
             </a-col>
             <a-col :span="8">
-              联系方式：<span>{{ detailInfo.contact }}</span>
+              联系方式：<span>{{ detailInfo.contact|show_ }}</span>
             </a-col>
           </a-row>
         </div>
@@ -70,15 +70,15 @@
           <h3 @click="showModal" class="title2">项目招商信息 <a-icon type="form" /></h3>
           <a-row type="flex">
             <a-col :span="8">
-              报名截止日期：<span>{{ detailInfo.deadline }}</span>
+              报名截止日期：<span>{{ detailInfo.deadline|show_ }}</span>
             </a-col>
             <a-col :span="8">
-              方案提交截止日期：<span>{{ detailInfo.submitDeadline }}</span>
+              方案提交截止日期：<span>{{ detailInfo.submitDeadline|show_ }}</span>
             </a-col>
           </a-row>
           <a-row type="flex">
             <a-col :span="8">
-              期限上限：<span>{{ detailInfo.targetYearUpperLimit }}个月</span>
+              期限上限：<span>{{ detailInfo.targetYearUpperLimit|show_ }}个月</span>
             </a-col>
             <a-col :span="8">
               目标回款金额下限：<span>{{
@@ -92,18 +92,18 @@
           <h3 class="title2">债权清收情况</h3>
           <a-row type="flex">
             <a-col :span="8">
-              是否有代理律师：<span>{{ detailInfo.isHaveProxyLawyer }}</span>
+              是否有代理律师：<span>{{ detailInfo.isHaveProxyLawyer|show_ }}</span>
             </a-col>
             <a-col :span="8">
-              代理律师联系方式：<span>{{ detailInfo.proxyLawyerContact }}</span>
+              代理律师联系方式：<span>{{ detailInfo.proxyLawyerContact|show_ }}</span>
             </a-col>
             <a-col :span="8">
-              代理截止日期：<span>{{ detailInfo.proxyLimit }}</span>
+              代理截止日期：<span>{{ detailInfo.proxyLimit|show_ }}</span>
             </a-col>
           </a-row>
           <a-row type="flex">
             <a-col :span="8">
-              代理律师姓名：<span>{{ detailInfo.proxyLawyerName }}</span>
+              代理律师姓名：<span>{{ detailInfo.proxyLawyerName|show_ }}</span>
             </a-col>
           </a-row>
           <div class="creditor-condition">
@@ -154,7 +154,8 @@
               <template slot="phone" slot-scope="phone">{{ phone }}</template>
               <template slot="identity" slot-scope="identity">{{identity|identityType}}</template>
               <template slot="orgOfficeName" slot-scope="orgOfficeName">
-                <a-button type="link">{{orgOfficeName}}</a-button>
+                <a-button v-if="orgOfficeName" type="link">{{orgOfficeName}}</a-button>
+                <div v-else>-</div>
               </template>
               <template slot="workingTime" slot-scope="workingTime">{{workingTime|workingTimeText}}</template>
               <template slot="areasOfGoodCases" slot-scope="areasOfGoodCases">{{areasOfGoodCases}}</template>
@@ -183,15 +184,16 @@
               <template slot="phone" slot-scope="phone">{{phone}}</template>
               <template slot="identity" slot-scope="identity">{{identity|identityType}}</template>
               <template slot="orgOfficeName" slot-scope="orgOfficeName">
-                <a-button type="link">{{orgOfficeName}}</a-button>
+                <a-button v-if="orgOfficeName" type="link">{{orgOfficeName}}</a-button>
+                <div v-else>-</div>
               </template>
-              <template slot="serviceTime" slot-scope="serviceTime">
+              <template slot="serviceTime" slot-scope="serviceTime,row">
                 <div>{{serviceTime}}个月</div>
-                <div v-if="serviceTime>detailInfo.targetYearUpperLimit" class="tag">未达标</div>
+                <div v-if="row.serviceTimeInvalid===1" class="tag">未达标</div>
               </template>
-              <template slot="aimBackPrice" slot-scope="aimBackPrice">
+              <template slot="aimBackPrice" slot-scope="aimBackPrice,row">
                 <div>{{aimBackPrice|amountTh}}</div>
-                <div v-if="aimBackPrice<detailInfo.targetAmountLowerLimit" class="tag">未达标</div>
+                <div v-if="row.aimBackPriceInvalid===1" class="tag">未达标</div>
               </template>
               <template slot="scheduleManagements" slot-scope="scheduleManagements">
                 <div class="plan">
@@ -730,6 +732,11 @@ export default {
     }
   },
   filters:{
+    //没有值展示'-'
+    show_(val){
+      if(!val)return '-';
+      return val;
+    },
     guarantorsList: (arr = []) => {
       return arr.map((i) => i.guarantorName).join("、");
     },
@@ -833,8 +840,7 @@ export default {
     }
   }
   .plan{
-    max-height:50px;
-    overflow-Y:scroll;
+    max-height:80px;
     overflow-X:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
