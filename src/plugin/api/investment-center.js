@@ -15,3 +15,6 @@ export const signService = params => request.post('/operator/project/signService
 
 //服务商提交方案列表接口
 export const serviceCaseSubmit = params => request.post('/operator/project/serviceCaseSubmit',params);
+
+//修改项目招商信息接口
+export const updateProjectInfo = params => request.post('/operator/project/updateProjectInfo',params);

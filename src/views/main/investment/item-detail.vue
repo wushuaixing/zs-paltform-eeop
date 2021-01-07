@@ -171,7 +171,7 @@
         <div>
           <h3 class="title-table">服务商提交方案列表</h3>
           <a-radio-group @change="changType" v-model="params.caseType" style="margin-bottom: 16px">
-            <a-radio-button :value="1"> 有效方案1 </a-radio-button>
+            <a-radio-button :value="1"> 有效方案{{}} </a-radio-button>
             <a-radio-button :value="2"> 末通过系统筛选2 </a-radio-button>
           </a-radio-group>
           <div class="table-block">
@@ -216,7 +216,8 @@
     >
       <a-form-model 
         :model="editInfo" 
-        :label-col="labelCol" 
+        :label-col="labelCol"
+        ref="ruleForm"
         :wrapper-col="wrapperCol"
         :rules="rules"
       >
@@ -226,9 +227,10 @@
             valueFormat="YYYY-MM-DD"
             v-model="editInfo.signDeadline"
             :disabled-date="disabledDate"
+            :disabled="editInfo.signDeadline >= $moment().format('YYYY-MM-DD')?false:true"
           />
         </a-form-model-item>
-        <a-form-model-item label="方案提交截止日期" prop="submitDeadline">
+        <a-form-model-item label="方案提交截止日期" prop="submitDeadline" >
           <a-date-picker
             class="editIpt"
             valueFormat="YYYY-MM-DD"
@@ -237,14 +239,16 @@
           />
         </a-form-model-item>
         <a-form-model-item label="期限上限" prop="dateLimit">
-          <a-input class="editIpt" v-model="editInfo.dateLimit">
-            <template slot="suffix"><span style="color:#BFBFBF">个月</span></template>
-          </a-input>
+          <div class="editIpt">
+            <a-input-number class="numberIpt"  v-model="editInfo.dateLimit" :min="1"/>
+            <span>个月</span>
+          </div>
         </a-form-model-item>
         <a-form-model-item label="目标回款金额下限" prop="aimedPriceBack">
-          <a-input class="editIpt" v-model="editInfo.aimedPriceBack">
-            <template slot="suffix"><span style="color:#BFBFBF">百万</span></template>
-          </a-input>
+           <div class="editIpt">
+             <a-input-number class="numberIpt" v-model="editInfo.aimedPriceBack" :min="1"  :precision="2"/>
+             <span>万元</span>
+           </div>
         </a-form-model-item>
       </a-form-model>
     </a-modal>
@@ -253,11 +257,13 @@
 </template>
 
 <script>
-import {projectDetail,signService,serviceCaseSubmit} from "@/plugin/api/investment-center";
+import {projectDetail,signService,serviceCaseSubmit,updateProjectInfo} from "@/plugin/api/investment-center";
 import {collateralTypeData} from "./source"
 import {getArea} from "@/plugin/tools"
 import Breadcrumb from "@/components/bread-crumb";
+import Vue from "vue"
 import moment from "moment"
+Vue.prototype.$moment = moment;
 //报名服务商表数据
 const columns = [
   {
@@ -393,6 +399,7 @@ export default {
   data() {
     return {
       visible:false,
+      
       labelCol: { span: 8 },
       wrapperCol: { span: 14 },
       navData,
@@ -407,13 +414,14 @@ export default {
         aimedPriceBack:[
           {
             required:true,
-            message:"请输入回款金额下限"
+            message:"请输入回款金额下限",
           }
         ],
         dateLimit:[
           {
             required:true,
-            message:"请输入期限上限"
+            message:"请输入期限上限",
+
           }
         ],
         signDeadline:[
@@ -720,13 +728,28 @@ export default {
       this.getServiceCaseSubmitList();
     },
     disabledDate(current) {
-      return current && current < moment().subtract(1, "days");
+      return current && current < this.$moment().subtract(1, "days");
     },
     showModal(){
       this.visible = true;
     },
     handleOk(){
-      
+      this.$refs.ruleForm.validate( validate => {
+        if(validate) {
+          console.log(this.editInfo)
+          updateProjectInfo(this.editInfo).then(res=>{
+            if(res.code === 20000) {
+              console.log(res)
+              this.getProjectDetail()
+              this.getServiceCaseSubmitList()
+              this.getSignServiceList()
+              this.visible = false;
+            }
+          })
+        }else{
+          return false;
+        }
+      })
     }
   },
   filters:{
@@ -865,6 +888,9 @@ export default {
     padding: 0px 5px;
   }
 }
+.ant-form-horizontal{
+  height: 230px;
+}
 </style>
 <style lang="scss">
 .table-block{
@@ -895,6 +921,22 @@ export default {
       .editIpt{
         width: 198px;
         height: 32px;
+        line-height: 32px;
+        position: relative;
+        //background-color: pink;
+        .numberIpt{
+          width: 100%;
+          height: 100%;
+        }
+        span{
+          position: absolute;
+          top: 2px;
+          right: 4px;
+          z-index: 100;
+          background-color: #FFFFFF;
+          height:28px;
+          color: rgba(0, 0, 0, 0.25);
+        }
       }
     }
   }
