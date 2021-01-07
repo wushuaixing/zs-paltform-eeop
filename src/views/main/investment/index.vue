@@ -66,7 +66,7 @@
               点的上传
             </a-button>
           </a-upload>
-          <a class="upSucceed" v-else>{{fileName}}    <a-icon type="close" @click="showUploadList=true"></a-icon></a>
+          <a class="upSucceed" v-else>{{fileName}}&nbsp;<a-icon type="close" @click="showUploadList=true"></a-icon></a>
           <a class="download">导入模板下载</a>
         </div>
         <div class="caution">
@@ -199,14 +199,6 @@ export default {
   components: {
     Breadcrumb
   },
-  watch: {
-    // startValue(val) {
-    //   console.log('startValue', val);
-    // },
-    // endValue(val) {
-    //   console.log('endValue', val);
-    // },
-  },
   created() {
     this.requestInquire()
   },
@@ -233,7 +225,7 @@ export default {
     tableHanges(pagination, filters, sorter,) {
       // console.log(pagination, filters, sorter,)
       //排序
-      this.findAll.sortField = sorter.field === 'deadline' ? 1 : 2;
+      this.findAll.sortField = sorter.field;
       this.findAll.sortOrder = sorter.order ? sorter.order === "ascend" ? "ASC" : "DESC" : "";
       this.findAll.page = pagination.current;
       this.findAll.size = pagination.pageSize;
