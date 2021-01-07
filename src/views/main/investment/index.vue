@@ -225,8 +225,7 @@ export default {
     tableHanges(pagination, filters, sorter,) {
       // console.log(pagination, filters, sorter,)
       //排序
-      this.findAll.sortField = sorter.field === 'deadline' ? 1 : 2;
-      
+      this.findAll.sortField = sorter.field;
       this.findAll.sortOrder = sorter.order ? sorter.order === "ascend" ? "ASC" : "DESC" : "";
       this.findAll.page = pagination.current;
       this.findAll.size = pagination.pageSize;
