@@ -173,7 +173,7 @@
           <h3 class="title-table">服务商提交方案列表</h3>
           <a-radio-group @change="changType" v-model="params.caseType" style="margin-bottom: 16px">
             <a-radio-button :value="1"> 有效方案 </a-radio-button>
-            <a-radio-button :value="2"> 末通过系统筛选 </a-radio-button>
+            <a-radio-button :value="2"> 末通过系统筛选2 </a-radio-button>
           </a-radio-group>
           <div class="table-block">
             <a-table v-bind="tableSource.submitPlanTable" @change="submitPlanTableChange">
@@ -195,10 +195,11 @@
                 <div>{{aimBackPrice|amountTh}}</div>
                 <div v-if="row.aimBackPriceInvalid===1" class="tag">未达标</div>
               </template>
-              <template slot="scheduleManagements" slot-scope="scheduleManagements">
-                <div class="plan">
+              <template slot="scheduleManagements" slot-scope="scheduleManagements,row">
+                <div :class="exhibit === row.id ? 'plans' : 'plan'" >
                   <p v-for="(item,index) in scheduleManagements" :key="index">{{item.dateMonth}}个月内完成{{item.dateMatters}}</p>
                 </div>
+                <span style="color: #008CB0; margin-left: 60%" @click="bit(row)" v-if="scheduleManagements.length >= 4" >{{exhibit === row.id ? '收起' :'展开'}}</span>
               </template>
               <template slot="caseFileAddress" slot-scope="caseFileAddress">
                 <div v-if="caseFileAddress"><a href="#">服务方案.pdf</a></div>
@@ -403,6 +404,7 @@ export default {
   name: "ItemDetail",
   data() {
     return {
+      exhibit:false,
       visible:false,
       labelCol: { span: 8 },
       wrapperCol: { span: 14 },
@@ -575,7 +577,7 @@ export default {
               bidId: 0,
               caseFileAddress: "www.baidu.com",
               gmtCreate: "2021-01-05",
-              id: 0,
+              id: 1,
               identity: 0,
               name: "武帅兴",
               orgOfficeName: "小米",
@@ -588,6 +590,30 @@ export default {
                   dateDay: "",
                   dateMatters: "短信催收",
                   dateMonth: 1,
+                  gmtCreate: "",
+                  gmtDelete: "",
+                  gmtModify: "",
+                  id: 0,
+                  isDelete: "",
+                },
+                {
+                  amcBidId: 0,
+                  amcServiceUserId: 0,
+                  dateDay: "",
+                  dateMatters: "短信催收",
+                  dateMonth: 1,
+                  gmtCreate: "",
+                  gmtDelete: "",
+                  gmtModify: "",
+                  id: 0,
+                  isDelete: "",
+                },
+                {
+                  amcBidId: 0,
+                  amcServiceUserId: 0,
+                  dateDay: "",
+                  dateMatters: "暴力催收",
+                  dateMonth: 2,
                   gmtCreate: "",
                   gmtDelete: "",
                   gmtModify: "",
@@ -616,25 +642,13 @@ export default {
               bidId: 0,
               caseFileAddress: "www.baidu.com",
               gmtCreate: "2021-01-05",
-              id: 0,
+              id: 2,
               identity: 0,
               name: "王千岁",
               orgOfficeName: "美团",
               phone: "543456",
               projectId: 0,
               scheduleManagements: [
-                {
-                  amcBidId: 0,
-                  amcServiceUserId: 0,
-                  dateDay: "",
-                  dateMatters: "暴力催收",
-                  dateMonth: 1,
-                  gmtCreate: "",
-                  gmtDelete: "",
-                  gmtModify: "",
-                  id: 0,
-                  isDelete: "",
-                },
                 {
                   amcBidId: 0,
                   amcServiceUserId: 0,
@@ -664,6 +678,14 @@ export default {
     };
   },
   methods: {
+    bit(val){
+      if(this.exhibit === val.id){
+        this.exhibit = false
+        return false
+      }
+      this.exhibit = val.id
+      console.log(val)
+    },
     //获取项目基本信息
     getProjectDetail(){
       projectDetail(this.params.id).then(res=>{
@@ -740,7 +762,6 @@ export default {
     handleOk(){
       this.$refs.ruleForm.validate( validate => {
         if(validate) {
-          console.log(this.editInfo)
           updateProjectInfo(this.editInfo).then(res=>{
             if(res.code === 20000) {
               this.$message.success("修改成功")
@@ -865,13 +886,36 @@ export default {
       }
     }
   }
-  .plan{
-    max-height:80px;
-    overflow-X:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
+  //我添加的样式
+  .plans{
+    white-space: nowrap;
+    overflow:hidden;
     p{
       margin: 0;
+      width: 200px;
+      overflow: hidden;
+      white-space: pre-wrap;
+    }
+    &::-webkit-scrollbar{
+      width: 3px;
+    }
+    &::-webkit-scrollbar-thumb {
+      border-radius: 3px;
+      background: #d9d9d9;
+    }
+    &::-webkit-scrollbar-track {
+      display: none;
+    }
+  }
+  .plan{
+    max-height:60px;
+    white-space: nowrap;
+    overflow:hidden;
+    p{
+      margin: 0;
+      width: 200px;
+      overflow: hidden;
+      white-space: pre-wrap;
     }
     &::-webkit-scrollbar{
       width: 3px;
