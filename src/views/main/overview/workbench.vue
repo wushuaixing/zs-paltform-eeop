@@ -5,8 +5,8 @@
         <div class="item-title item-format ">服务商注册情况</div>
         <div class="item-content item-format">
           <div class="number">
-            <span class="total">累计注册服务商 <u style="color:#0EA5FF">{{echarts.totalRegUserNum}} 名</u></span>
-            <span class="total">昨日新增注册 <u style="color:#F5222D">{{echarts.lastDayRegUserNum}} 名</u></span>
+            <span class="total">累计注册服务商 <u style="color:#0EA5FF">{{echarts.totalRegUserNum}}名</u></span>
+            <span class="total">昨日新增注册 <u style="color:#F5222D">{{echarts.lastDayRegUserNum}}名</u></span>
           </div>
           <div class="data-display">
             <!-- 饼图显示 -->
@@ -27,7 +27,7 @@
               <span style="margin-left: 45px">{{echarts.storageUserNum}}</span>
               <br />
               <a-badge text="审核未通过" color="#F7CE22"/>
-              <span style="margin-left: 18px">{{echarts.notPassAuditUserNum}}</span>
+              <span style="margin-left: 16px">{{echarts.notPassAuditUserNum}}</span>
               <br />
             </div>
           </div>
@@ -199,7 +199,7 @@ $leftWidth: 550px;
       height: 250px;
       border-radius: 50%;
     }
-    .schemeProcess,.schemeStatus {
+    .schemeProcess {
       width: 30%;
       span {
         height: 20px;
@@ -207,6 +207,10 @@ $leftWidth: 550px;
         font-weight: 400;
         color: #333333;
         line-height: 20px;
+      }
+      /deep/.ant-badge-status-dot {
+        width: 8px!important;
+        height: 8px!important;
       }
     }
     .total {
@@ -217,6 +221,7 @@ $leftWidth: 550px;
       font-weight: 600;
       color: #333333;
       line-height: 16px;
+      letter-spacing: 0.5px;
     }
   }
   .number {
