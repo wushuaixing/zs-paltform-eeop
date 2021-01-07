@@ -30,7 +30,7 @@
 <script>
   import { getInfo} from "@/plugin/api/base";
   import ModifyPwdModal from "./personal/modify-password";
-  // import {logout} from "@/plugin/api/login"
+  import {logout} from "@/plugin/api/login"
   export default {
     data() {
       return {
@@ -47,13 +47,13 @@
         this.$refs.modifyPwd.showModal()
       },
       backLogin(){
-        this.$router.push('/login')
-        // logout().then(res=>{
-        //   if(res.code === 20000 ){
-        //   }else{
-        //     return false;
-        //   }
-        // })
+        logout().then(res=>{
+          if(res.code === 20000 ){
+            this.$router.push('/login');
+          }else{
+            return this.$message.error("网络错误");
+          }
+        })
       }
     },
     created() {

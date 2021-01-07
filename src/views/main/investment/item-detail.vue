@@ -46,9 +46,9 @@
             </a-col>
           </a-row>
           <div class="guarantee">
-            <p>抵押物类型：</p>
+            抵押物类型：
             <div>
-              <p v-for="(i, index) in detailInfo.amcProjectCollaterals" :key="index">
+              <p style="margin:0" v-for="(i, index) in detailInfo.amcProjectCollaterals" :key="index">
                 {{index+1}}. {{i.collateralType|collateralType}}、{{i|area}}、{{i.collateralName}}
               </p>
             </div>
@@ -205,25 +205,46 @@
       </div>
     </div>
     <div>
+    <!-- 修改项目招商信息弹窗 -->
     <a-modal 
       v-model="visible" 
       title="修改项目招商信息" 
       @ok="handleOk" 
+      dialogClass="edit-modal"
       :centered="true" 
       :maskClosable="false"
     >
-      <a-form-model :model="editInfo" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-form-model-item label="报名截止日期">
-          <a-input v-model="editInfo.signDeadline" />
+      <a-form-model 
+        :model="editInfo" 
+        :label-col="labelCol" 
+        :wrapper-col="wrapperCol"
+        :rules="rules"
+      >
+        <a-form-model-item label="报名截止日期" prop="signDeadline">
+          <a-date-picker
+            class="editIpt"
+            valueFormat="YYYY-MM-DD"
+            v-model="editInfo.signDeadline"
+            :disabled-date="disabledDate"
+          />
         </a-form-model-item>
-        <a-form-model-item label="方案提交截止日期">
-          <a-input v-model="editInfo.submitDeadline" />
+        <a-form-model-item label="方案提交截止日期" prop="submitDeadline">
+          <a-date-picker
+            class="editIpt"
+            valueFormat="YYYY-MM-DD"
+            v-model="editInfo.submitDeadline"
+            :disabled-date="disabledDate"
+          />
         </a-form-model-item>
-        <a-form-model-item label="期限上限">
-          <a-input v-model="editInfo.dateLimit" />
+        <a-form-model-item label="期限上限" prop="dateLimit">
+          <a-input class="editIpt" v-model="editInfo.dateLimit">
+            <template slot="suffix"><span style="color:#BFBFBF">个月</span></template>
+          </a-input>
         </a-form-model-item>
-        <a-form-model-item label="目标回款金额下限">
-          <a-input v-model="editInfo.aimedPriceBack" />
+        <a-form-model-item label="目标回款金额下限" prop="aimedPriceBack">
+          <a-input class="editIpt" v-model="editInfo.aimedPriceBack">
+            <template slot="suffix"><span style="color:#BFBFBF">百万</span></template>
+          </a-input>
         </a-form-model-item>
       </a-form-model>
     </a-modal>
@@ -236,7 +257,7 @@ import {projectDetail,signService,serviceCaseSubmit} from "@/plugin/api/investme
 import {collateralTypeData} from "./source"
 import {getArea} from "@/plugin/tools"
 import Breadcrumb from "@/components/bread-crumb";
-// import moment from "ant-design-vue"
+import moment from "moment"
 //报名服务商表数据
 const columns = [
   {
@@ -376,11 +397,37 @@ export default {
       wrapperCol: { span: 14 },
       navData,
       editInfo:{
-        aimedPriceBack: "",
-        dateLimit: "",
+        aimedPriceBack: '',
+        dateLimit: '',
         id: this.$route.query.id,
-        signDeadline: "",
-        submitDeadline: ""
+        signDeadline: '',
+        submitDeadline: ''
+      },
+      rules:{
+        aimedPriceBack:[
+          {
+            required:true,
+            message:"请输入回款金额下限"
+          }
+        ],
+        dateLimit:[
+          {
+            required:true,
+            message:"请输入期限上限"
+          }
+        ],
+        signDeadline:[
+          {
+            required:true,
+            message:"请选择报名截止日期"
+          }
+        ],
+        submitDeadline:[
+          {
+            required:true,
+            message:"请选择方案提交截止日期"
+          }
+        ]
       },
       params:{
         caseType: 1,
@@ -605,12 +652,27 @@ export default {
     };
   },
   methods: {
+    //获取项目基本信息
+    getProjectDetail(){
+      projectDetail(this.params.id).then(res=>{
+        console.log(res);
+        if(res.code === 20000){
+          this.editInfo.aimedPriceBack = res.data.targetAmountLowerLimit;
+          this.editInfo.dateLimit = res.data.targetYearUpperLimit;
+          this.editInfo.signDeadline = res.data.deadline;
+          this.editInfo.submitDeadline = res.data.submitDeadline;
+          this.detailInfo = res.data;
+        }else{
+          console.log('error...');
+        }
+      });
+    },
     //获取报名服务商列表
     getSignServiceList(){
       signService(this.params).then(res=>{
         console.log(res);
         if(res.code === 20000){
-          this.tableSource.applyServeTable.pagination.total = res.data.total
+          this.tableSource.applyServeTable.pagination.total = res.data.total;
           this.tableSource.applyServeTable.dataSource = res.data.list;
         }else{
           this.$message.error("获取报名服务商列表失败,请重新加载")
@@ -658,13 +720,13 @@ export default {
       this.getServiceCaseSubmitList();
     },
     disabledDate(current) {
-      console.log(current)
+      return current && current < moment().subtract(1, "days");
     },
     showModal(){
       this.visible = true;
     },
     handleOk(){
-
+      
     }
   },
   filters:{
@@ -716,14 +778,7 @@ export default {
   },
   created() {
     this.params.id = this.$route.query.id;
-    projectDetail(this.params.id).then(res=>{
-      console.log(res);
-      if(res.code === 20000){
-        this.detailInfo = res.data;
-      }else{
-        console.log('error...');
-      }
-    });
+    this.getProjectDetail();
     this.getSignServiceList();
     this.getServiceCaseSubmitList();
   },
@@ -816,11 +871,11 @@ export default {
   table{
     border-bottom: 1px #E8E8E8 solid;
   }
-  tr{
+  tr >td,tr >th{
+		border-bottom: none;
+  }
+  tbody > tr{
     height: 80px;
-    td{
-      border-bottom: none;
-    }
   }
   tr:nth-child(2n){
     background: #FAFAFA;
@@ -831,8 +886,20 @@ export default {
   color: #333333;
   font-weight: 600;
 }
-.editIpt{
-  width: 198px;
-  height: 32px;
+.edit-modal{
+  .ant-modal-body{
+    padding: 0;
+    .ant-form-item{
+      margin-top: 24px;
+      height: 32px;
+      .editIpt{
+        width: 198px;
+        height: 32px;
+      }
+    }
+  }
+  .ant-modal-footer {
+    text-align: center;
+  }
 }
 </style>
