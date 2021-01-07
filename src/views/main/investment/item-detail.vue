@@ -729,6 +729,9 @@ export default {
     changType(){
       this.getServiceCaseSubmitList();
     },
+    goAvatar(v){
+      console.log(v);
+    },
     //报名服务商列表分页,排序操作
     applyServeTableChange(pagination, filters, sorter){
       this.params.page = pagination.current;
