@@ -195,7 +195,7 @@ export default {
     handleDel(id) {
       this.$confirm({
         title: '确定删除此部门？',
-        content: '',
+        content: '删除部门会同时删除部门内所有账号，且部门删除后，不可恢复',
         onOk: () => {
           userAuthApi.removeSection({id}).then((res) => {
             if (res.code === 20000) {
