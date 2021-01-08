@@ -230,6 +230,8 @@ export default {
           ...this.queryParams,
           roleName: '',
           page: 1,
+          sortColumn: 'DEFAULT', //排序字段
+          sortOrder: '', //排序顺序
         };
         this.pagination.current = 1;
       }
