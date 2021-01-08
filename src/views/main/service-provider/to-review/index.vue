@@ -73,7 +73,7 @@
 					<template slot="auction" slot-scope="item">
 						<a-button type="link" :icon="normal.icon" @click="toLink(item)">{{normal.text}}</a-button>
 					</template>
-					<span slot="address" slot-scope="item">{{areaAnalysis(item,false)|areas|fill}}</span>
+					<span slot="address" slot-scope="item">{{areaAnalysis(item)|area|fill}}</span>
 					<span slot="workingTime" slot-scope="item">{{item|single('expOption')}}</span>
 				</a-table>
 			</div>
