@@ -225,7 +225,7 @@ $leftWidth: 550px;
     }
   }
   .number {
-    margin-top: 45px;
+    margin-top: 24px;
   }
   span {
     font-weight: 400;
@@ -260,7 +260,7 @@ $leftWidth: 550px;
   }
   #main{
     position: absolute;
-    top: -10px;
+    top: -28px;
     left: 10px;
     width: 250px;
     height: 250px;
