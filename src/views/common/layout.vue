@@ -57,6 +57,7 @@
       }
     },
     created() {
+			if(!window.localStorage.token) return this.$router.push('/login');
       if(this.passwordChanged === 0){
         const _this = this;
         this.$confirm({
@@ -68,7 +69,6 @@
           }
         })
       }
-
       const { pathname } = window.location;
       if(/center/.test(pathname))this.selectedKey = 'b';
       if(!this.$store.state.isLogin){

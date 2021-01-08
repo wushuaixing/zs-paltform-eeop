@@ -1,4 +1,5 @@
 import axios from 'axios';
+import router from '@/router';
 
 const ENV = process.env.NODE_ENV;
 
@@ -68,11 +69,11 @@ const responseMethods = {
 			window.location.reload();
 			return response;
 		}
-		if (res.code === 403) {
-			// navigate('/');
-			// window.location.reload();
-			return response;
+		if (res.code === 70002) {
+			router.push('/login');
+			return false;
 		}
+
 		// if ((res.code === 15002 || res.code === 5002 || res.code === 15003 || res.code === 20039) && hash !== '/login') {
 		// 	axiosPromiseArr.forEach((ele, index) => {
 		// 		ele.cancel('请求取消');
