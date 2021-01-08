@@ -214,10 +214,9 @@ export default {
     color: #262626;
   }
   .ant-modal-body{
-    padding: 0;
     .ant-form-item{
       margin-top: 24px;
-      padding: 0;
+      height: 32px;
       input{
         width: 388px;
         height: 32px;
@@ -231,6 +230,14 @@ export default {
   }
   .ant-modal-footer {
     text-align: center;
+  }
+  .ant-form-explain {
+    text-align: left;
+    font-size: 12px;
+    font-weight: 400;
+    color: #f5222d;
+    line-height: 12px;
+    margin-top: 4px;
   }
 }
 </style>
