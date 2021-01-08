@@ -170,12 +170,12 @@
 				// 数据总条数
 				total: '',
 				pagination:{
-					// current:'',
-					// total:'',
-					// showQuickJumper:true,
-					// showLessItems:true,
-					// size:'middle',
-					// showTotal:val=>`共${val}条信息`,
+					current:'',
+					total:'',
+					showQuickJumper:true,
+					showLessItems:true,
+					size:'middle',
+					showTotal:val=>`共${val}条信息`,
 				},
 				disabledDate,
 				// ModalText: 'Content of the modal',// 对话框文本

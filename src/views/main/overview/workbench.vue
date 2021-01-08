@@ -5,8 +5,8 @@
         <div class="item-title item-format ">服务商注册情况</div>
         <div class="item-content item-format">
           <div class="number">
-            <span class="total">累计注册服务商 <u style="color:#0EA5FF">{{echarts.totalRegUserNum}}名</u></span>
-            <span class="total">昨日新增注册 <u style="color:#F5222D">{{echarts.lastDayRegUserNum}}名</u></span>
+            <span class="total">累计注册服务商 <u style="color:#333333">{{echarts.totalRegUserNum}}名</u></span>
+            <span class="total">昨日新增注册 <u style="color:#333333">{{echarts.lastDayRegUserNum}}名</u></span>
           </div>
           <div class="data-display">
             <!-- 饼图显示 -->
@@ -15,19 +15,19 @@
             </div>
             <div class="schemeProcess">
               <a-badge text="仅注册" color="#0EA5FF"/>
-              <span style="margin-left: 45px">{{echarts.onlyRegUserNum}}</span>
+              <span style="margin-left: 75px">{{echarts.onlyRegUserNum}}</span>
               <br />
               <a-badge text="仅提交资质" color="#9200FF"/>
-              <span style="margin-left: 18px">{{echarts.confirmQuaUserNum}}</span>
+              <span style="margin-left: 48px">{{echarts.confirmQuaUserNum}}</span>
               <br />
               <a-badge text="待审核" color="#67CE57" />
-              <span style="margin-left: 45px">{{echarts.submitEleUserNum}}</span>
+              <span style="margin-left: 75px">{{echarts.submitEleUserNum}}</span>
               <br />
-              <a-badge text="已入库" color="#FF5F80"/>
-              <span style="margin-left: 45px">{{echarts.storageUserNum}}</span>
+              <a-badge text="已入库" color="#F7CE22"/>
+              <span style="margin-left: 75px">{{echarts.storageUserNum}}</span>
               <br />
-              <a-badge text="审核未通过" color="#F7CE22"/>
-              <span style="margin-left: 16px">{{echarts.notPassAuditUserNum}}</span>
+              <a-badge text="审核未通过" color="#FF5F80"/>
+              <span style="margin-left: 48px">{{echarts.notPassAuditUserNum}}</span>
               <br />
             </div>
           </div>
@@ -80,7 +80,7 @@ export default {
       console.log(res);
       this.echarts = res.data;
       let option = {
-      color: ['#0EA5FF', '#9200FF','#67CE57','#FF5F80','#F7CE22'],
+      color: ['#0EA5FF', '#9200FF','#67CE57','#F7CE22','#FF5F80'],
         tooltip: {
           trigger: 'item',
         },
@@ -105,8 +105,8 @@ export default {
             },
             data: [
               { value: this.echarts.onlyRegUserNum, name: '仅注册'},
-              { value: this.echarts.confirmQuaUserNum, name: '已认证资质'},
-              { value: this.echarts.submitEleUserNum, name:'已提交要素表'},
+              { value: this.echarts.confirmQuaUserNum, name: '仅提交资质'},
+              { value: this.echarts.submitEleUserNum, name:'待审核'},
               { value: this.echarts.storageUserNum, name: '已入库'},
               { value: this.echarts.notPassAuditUserNum, name: '审核未通过'}
             ]
@@ -200,7 +200,8 @@ $leftWidth: 550px;
       border-radius: 50%;
     }
     .schemeProcess {
-      width: 30%;
+      width: 40%;
+      margin: 0 10px;
       span {
         height: 20px;
         font-size: 14px;
@@ -233,6 +234,7 @@ $leftWidth: 550px;
   }
   u {
     text-decoration: none;
+    font-weight: 600;
     font-size: 20px;
   }
   .progress {
