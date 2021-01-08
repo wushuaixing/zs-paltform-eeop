@@ -137,44 +137,10 @@
 
 <script>
 import Breadcrumb from '@/components/bread-crumb';
+import userAuthApi from '@/plugin/api/user-auth';
 import {clearProto} from "@/plugin/tools";
 import {encryptInfo} from "@/plugin/tools/encrypt";
-import userAuthApi from '@/plugin/api/user-auth';
-import {SORTER_TYPE} from "./source";
-
-const columns = [
-  {
-    title: '所属部门',
-    dataIndex: 'departmentName',
-    key: 'departmentName',
-    customRender: val => val || '-',
-  },
-  {
-    title: '角色',
-    dataIndex: 'roleName',
-    key: 'roleName',
-    customRender: val => val || '-',
-  },
-  {
-    title: '姓名',
-    dataIndex: 'name',
-    key: 'name',
-    customRender: val => val || '-',
-  },
-  {
-    title: '账号',
-    dataIndex: 'username',
-    key: 'username',
-    customRender: val => val || '-',
-  },
-  {
-    title: '操作',
-    dataIndex: 'auction',
-    key: 'auction',
-    scopedSlots: {customRender: 'auction'},
-    width: 260,
-  },
-];
+import {SORTER_TYPE, accountColumns} from "./source";
 
 export default {
   name: 'Account',
@@ -189,6 +155,24 @@ export default {
       ],
       role: [],
       department: [],
+      dataSource: [],
+      form: {
+        departmentId: undefined,
+        roleId: undefined,
+        name: '',
+        username: '',
+        password: '',
+      },
+      queryParams: {
+        isDeleted: '0', //是否删除（0-否、1-是），默认为0
+        name: '',
+        page: 1,
+        roleId: undefined, //	角色ID
+        departmentId: undefined,//部门ID
+        sortColumn: '', //排序字段
+        sortOrder: '', //排序顺序
+        username: '', //账号
+      },
       rules: {
         departmentId: [
           {required: true, message: '请输入所属部门'},
@@ -212,24 +196,6 @@ export default {
       },
       labelCol: {span: 5},
       wrapperCol: {span: 16},
-      form: {
-        departmentId: undefined,
-        roleId: undefined,
-        name: '',
-        username: '',
-        password: '',
-      },
-      dataSource: [],
-      queryParams: {
-        isDeleted: '0', //是否删除（0-否、1-是），默认为0
-        name: '',
-        page: 1,
-        roleId: undefined, //	角色ID
-        departmentId: undefined,//部门ID
-        sortColumn: '', //排序字段
-        sortOrder: '', //排序顺序
-        username: '', //账号
-      },
       pagination: {
         current: 1,
         total: 1,
@@ -261,28 +227,90 @@ export default {
     this.getTableList();
   },
   methods: {
-    handleResetFields(flag) {
-      if (flag === 'form') {
-        this.form = {
-          departmentId: undefined,
-          roleId: undefined,
-          name: '',
-          username: '',
-          password: '',
+    getTableList() {
+      userAuthApi.listUser(clearProto(this.queryParams)).then((res) => {
+        if (res.code === 20000) {
+          const data = res.data;
+          this.dataSource = data.list;
+          this.pagination.total = data.total;
+        } else {
+          this.$message.error(res.message)
         }
-      } else {
-        this.queryParams = {
-          isDeleted: '0',
-          name: '',
-          page: 1,
-          roleId: undefined,
-          departmentId: undefined,
-          sortColumn: '',
-          sortOrder: '',
-          username: '',
-        }
+      })
+    },
+    //查询||重置 搜索条件
+    handleQuery(flag) {
+      if (flag === 'reset') {
+        this.handleResetFields(flag);
+      }
+      this.pagination.current = 1;
+      this.getTableList();
+    },
+    //删除账号
+    handleDel(id) {
+      this.$confirm({
+        title: '确定删除账号？',
+        content: '账号删除后，不可恢复',
+        onOk: () => {
+          userAuthApi.deleteUser({id}).then((res) => {
+            if (res.code === 20000) {
+              this.$message.success('删除成功');
+              this.getTableList();
+            } else {
+              this.$message.error(res.message);
+            }
+          })
+        },
+      });
+    },
+    //重置密码
+    handleResetPsd(id) {
+      this.$confirm({
+        title: '确定重置密码？',
+        content: '重置后用户的密码将变更为账号后6位',
+        onOk: () => {
+          userAuthApi.resetPassword({id}).then((res) => {
+            if (res.code === 20000) {
+              this.$message.success('重置密码成功');
+              this.getTableList();
+            } else {
+              this.$message.error(res.message);
+            }
+          })
+        },
+      });
+    },
+    //tab切换
+    handleTabChange(val) {
+      this.queryParams.isDeleted = val;
+      this.handleResetFields('flag');
+      this.pagination.current = 1;
+      this.getTableList();
+    },
+    //翻页||排序
+    handleTableChange(pgt, filters, sorter) {
+      const params = {...this.queryParams};
+      this.pagination.current = pgt.current;
+      params.page = pgt.current;
+      params.sortOrder = SORTER_TYPE[sorter.order];
+      params.sortColumn = SORTER_TYPE[sorter.field];
+      this.queryParams = params;
+      this.getTableList();
+    },
+    handleFindKey(val, arr) {
+      if (!arr.length) return '';
+      const list = arr.find(i => i.value === val);
+      return list ? list.id : '';
+    },
+    //密码自动填充为账号后六位
+    handleAutoCompletePsw() {
+      const username = this.form.username;
+      if (/^\d{8}$/.test(username)) {
+        let defautlPsw = username.length > 6 ? username.substring(username.length - 6) : username;
+        this.form.password = defautlPsw;
       }
     },
+    //打开弹窗 编辑||添加
     handleAccount(sign, record) {
       if (sign === 'edit') {
         const obj = {
@@ -298,22 +326,7 @@ export default {
       this.modalVisible = true;
       this.modalSign = sign;
     },
-    handleFindKey(val, arr) {
-      if (!arr.length) return '';
-      const list = arr.find(i => i.value === val);
-      return list ? list.id : '';
-    },
-    getTableList() {
-      userAuthApi.listUser(clearProto(this.queryParams)).then((res) => {
-        if (res.code === 20000) {
-          const data = res.data;
-          this.dataSource = data.list;
-          this.pagination.total = data.total;
-        } else {
-          this.$message.error(res.message)
-        }
-      })
-    },
+    //添加||编辑 账号
     handleSubmit(e) {
       e.preventDefault();
       this.$refs.ruleForm.validate(valid => {
@@ -335,70 +348,30 @@ export default {
         }
       });
     },
-    handleQuery(flag) {
-      if (flag === 'reset') {
-        this.handleResetFields('query');
+    //重置弹窗表单
+    handleResetFields(flag) {
+      if (flag === 'form') {
+        this.form = {
+          departmentId: undefined,
+          roleId: undefined,
+          name: '',
+          username: '',
+          password: '',
+        }
+      } else {
+        this.queryParams.name = '';
+        this.queryParams.roleId = undefined;
+        this.queryParams.departmentId = undefined;
+        this.queryParams.page = 1;
       }
-      this.getTableList();
-    },
-    handleDel(id) {
-      this.$confirm({
-        title: '确定删除账号？',
-        content: '账号删除后，不可恢复',
-        onOk: () => {
-          userAuthApi.deleteUser({id}).then((res) => {
-            if (res.code === 20000) {
-              this.$message.success('删除成功');
-              this.getTableList();
-            } else {
-              this.$message.error(res.message);
-            }
-          })
-        },
-      });
-    },
-    handleResetPsd(id) {
-      this.$confirm({
-        title: '确定重置密码？',
-        content: '重置后用户的密码将变更为账号后6位',
-        onOk: () => {
-          userAuthApi.resetPassword({id}).then((res) => {
-            if (res.code === 20000) {
-              this.$message.success('重置密码成功');
-              this.getTableList();
-            } else {
-              this.$message.error(res.message);
-            }
-          })
-        },
-      });
-    },
-    handleTabChange(val) {
-      this.queryParams.isDeleted = val;
-      this.getTableList();
-    },
-    handleTableChange(pgt, filters, sorter) {
-      const params = {...this.queryParams};
-      this.pagination.current = pgt.current;
-      params.page = pgt.current;
-      params.sortOrder = SORTER_TYPE[sorter.order];
-      params.sortColumn = SORTER_TYPE[sorter.field];
-      this.queryParams = params;
-      this.getTableList();
-    },
-    handleAutoCompletePsw() {
-      const username = this.form.username;
-      if (/^\d{8}$/.test(username)) {
-        let defautlPsw = username.length > 6 ? username.substring(username.length - 6) : username;
-        this.form.password = defautlPsw;
-      }
+
     }
   },
   computed: {
     column: function () {
       const {isDeleted} = this.queryParams;
       const flag = isDeleted === '0';
-      const dynamicColumn = flag ? columns : columns.slice(0, 4);
+      const dynamicColumn = flag ? accountColumns : accountColumns.slice(0, 4);
       const obj = {
         title: `${flag ? '创建' : '删除'}日期`,
         dataIndex: flag ? 'gmtCreate' : 'gmtDeleted',

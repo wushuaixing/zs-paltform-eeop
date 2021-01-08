@@ -71,53 +71,9 @@
 
 <script>
 import Breadcrumb from '@/components/bread-crumb';
+import userAuthApi from '@/plugin/api/user-auth';
 import {clearProto} from "@/plugin/tools";
-import userAuthApi from '../../../plugin/api/user-auth';
-import {SORTER_TYPE} from "./source";
-
-const columnsNormal = [
-  {
-    title: '创建日期',
-    dataIndex: 'gmtCreate',
-    key: 'gmtCreate',
-    sorter: true,
-    customRender: val => val || '-',
-  },
-  {
-    title: '部门名称',
-    dataIndex: 'departmentName',
-    key: 'departmentName',
-    customRender: val => val || '-',
-  },
-  {
-    title: '部门内账号数量',
-    dataIndex: 'userCount',
-    key: 'userCount',
-    customRender: val => val || '-',
-  },
-  {
-    title: '操作',
-    dataIndex: 'auction',
-    key: 'auction',
-    scopedSlots: {customRender: 'auction'},
-    width: 260,
-  },
-];
-const columnsDel = [
-  {
-    title: '删除日期',
-    dataIndex: 'gmtDel',
-    key: 'gmtDel',
-    sorter: true,
-    customRender: val => val || '-',
-  },
-  {
-    title: '部门名称',
-    dataIndex: 'departmentName',
-    key: 'departmentName',
-    customRender: val => val || '-',
-  },
-];
+import {SORTER_TYPE, sectionNormalColumns, sectionDelColumns} from "./source";
 
 export default {
   name: 'Seciton',
@@ -126,14 +82,6 @@ export default {
     return {
       modalVisible: false,
       modalSign: 'add',
-      labelCol: {span: 5},
-      wrapperCol: {span: 16},
-      rules: {
-        departmentName: [
-          {required: true, message: '请输入部门名称'},
-          {pattern: /^[\u4e00-\u9fa5a-zA-Z]+$/, message: "仅支持汉字和字母", trigger: 'blur'},
-        ],
-      },
       navData: [
         {id: 1, title: '内部权限管理', path: '/auth/role'},
         {id: 2, title: '部门管理', path: '/auth/section'},
@@ -150,6 +98,14 @@ export default {
         departmentName: '',
         id: '',
       },
+      rules: {
+        departmentName: [
+          {required: true, message: '请输入部门名称'},
+          {pattern: /^[\u4e00-\u9fa5a-zA-Z]+$/, message: "仅支持汉字和字母", trigger: 'blur'},
+        ],
+      },
+      labelCol: {span: 5},
+      wrapperCol: {span: 16},
       pagination: {
         current: 1,
         total: 1,
@@ -167,20 +123,6 @@ export default {
     this.getTableList();
   },
   methods: {
-    handleQuery(flag) {
-      if (flag === 'reset') {
-        this.queryParams.departmentName = ''
-      }
-      this.getTableList();
-    },
-    handleSection(sign, record) {
-      if (sign === 'edit') {
-        this.form.departmentName = record.departmentName;
-        this.form.id = record.id;
-      }
-      this.modalVisible = true;
-      this.modalSign = sign;
-    },
     getTableList() {
       userAuthApi.getSectionList(this.queryParams).then((res) => {
         if (res.code === 20000) {
@@ -192,6 +134,17 @@ export default {
         }
       })
     },
+
+    //查询||重置 搜索条件
+    handleQuery(flag) {
+      if (flag === 'reset') {
+        this.queryParams.departmentName = ''
+      }
+      this.queryParams.page = 1;
+      this.pagination.current = 1;
+      this.getTableList();
+    },
+    //删除部门
     handleDel(id) {
       this.$confirm({
         title: '确定删除此部门？',
@@ -208,6 +161,38 @@ export default {
         },
       });
     },
+
+    //tab切换
+    handleTabChange(val) {
+      this.queryParams.departmentName = '';
+      this.queryParams.isDeleted = val;
+      this.queryParams.page = 1;
+      this.pagination.current = 1;
+      this.getTableList();
+    },
+
+    //排序-翻页
+    handleTableChange(pgt, filters, sorter) {
+      const params = {...this.queryParams};
+      this.pagination.current = pgt.current;
+      params.page = pgt.current;
+      params.sortOrder = SORTER_TYPE[sorter.order];
+      params.sortColumn = SORTER_TYPE[sorter.field];
+      this.queryParams = params;
+      this.getTableList();
+    },
+
+    //打开添加/编辑部门弹窗
+    handleSection(sign, record) {
+      if (sign === 'edit') {
+        this.form.departmentName = record.departmentName;
+        this.form.id = record.id;
+      }
+      this.modalVisible = true;
+      this.modalSign = sign;
+    },
+
+    //添加/编辑部门
     handleSubmit(e) {
       e.preventDefault();
       this.$refs.ruleForm.validate(valid => {
@@ -229,28 +214,14 @@ export default {
         }
       });
     },
-    handleTabChange(val) {
-      this.queryParams.isDeleted = val;
-      this.queryParams.departmentName = '';
-      this.getTableList();
-    },
-    handleTableChange(pgt, filters, sorter) {
-      const params = {...this.queryParams};
-      this.pagination.current = pgt.current;
-      params.page = pgt.current;
-      params.sortOrder = SORTER_TYPE[sorter.order];
-      params.sortColumn = SORTER_TYPE[sorter.field];
-      this.queryParams = params;
-      this.getTableList();
-    },
   },
   computed: {
     column: function () {
       const {isDeleted} = this.queryParams;
       if (isDeleted === '0') {
-        return columnsNormal;
+        return sectionNormalColumns;
       } else {
-        return columnsDel;
+        return sectionDelColumns;
       }
     },
   },

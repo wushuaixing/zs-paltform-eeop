@@ -130,61 +130,10 @@
 
 <script>
 import Breadcrumb from '@/components/bread-crumb';
+import userAuthApi from '@/plugin/api/user-auth';
 import {clearProto} from "@/plugin/tools";
-import userAuthApi from '../../../plugin/api/user-auth';
-import {SORTER_TYPE} from "./source";
+import {SORTER_TYPE,roleNormalColumns,roleDelColumns} from "./source";
 
-const columnsNormal = [
-  {
-    title: '角色名称',
-    dataIndex: 'roleName',
-    key: 'roleName',
-    customRender: val => val || '-',
-  },
-  {
-    title: '创建日期',
-    dataIndex: 'gmtCreate',
-    key: 'gmtCreate',
-    sorter: true,
-    customRender: val => val || '-',
-  },
-  {
-    title: '更新日期',
-    dataIndex: 'gmtModify',
-    key: 'gmtModify',
-    sorter: true,
-    customRender: val => val || '-',
-  },
-  {
-    title: '账号数',
-    dataIndex: 'userCount',
-    key: 'userCount',
-    customRender: val => val || '-',
-  },
-  {
-    title: '操作',
-    dataIndex: 'auction',
-    key: 'auction',
-    scopedSlots: {customRender: 'auction'},
-    width: 260,
-  },
-];
-
-const columnsDel = [
-  {
-    title: '角色名称',
-    dataIndex: 'roleName',
-    key: 'roleName',
-    customRender: val => val || '-',
-  },
-  {
-    title: '删除日期',
-    dataIndex: 'gmtDelete',
-    key: 'gmtDelete',
-    sorter: true,
-    customRender: val => val || '-',
-  },
-]
 
 export default {
   name: 'Role',
@@ -205,16 +154,6 @@ export default {
         sortColumn: 'DEFAULT', //排序字段
         sortOrder: '', //排序顺序
       },
-      pagination: {
-        current: 1,
-        total: 1,
-        showQuickJumper: true,
-        showLessItems: true,
-        size: 'middle',
-        showTotal: val => `共${val}条信息`,
-      },
-      labelCol: {span: 5},
-      wrapperCol: {span: 16},
       form: {
         serviceUserManage: false,
         attractInvestmentManage: false,
@@ -225,6 +164,16 @@ export default {
         readScope: '',//查看范围（1：全阶段名单，2：仅入库名单）
         id: '',
       },
+      pagination: {
+        current: 1,
+        total: 1,
+        showQuickJumper: true,
+        showLessItems: true,
+        size: 'middle',
+        showTotal: val => `共${val}条信息`,
+      },
+      labelCol: {span: 5},
+      wrapperCol: {span: 16},
       rules: {
         roleName: [
           {required: true, message: '请输入角色名称'},
@@ -252,6 +201,18 @@ export default {
     this.getTableList();
   },
   methods: {
+    getTableList() {
+      userAuthApi.listRole(clearProto(this.queryParams)).then((res) => {
+        if (res.code === 20000) {
+          const data = res.data;
+          this.dataSource = data.list;
+          this.pagination.total = data.total;
+        } else {
+          this.$message.error(res.message)
+        }
+      })
+    },
+    //重置弹窗表单
     handleResetFields() {
       this.form = {
         serviceUserManage: false,
@@ -264,6 +225,49 @@ export default {
         id: '',
       }
     },
+    //查询||重置 搜索条件
+    handleQuery(flag) {
+      if (flag === 'reset') {
+        this.queryParams.roleName = ''
+      }
+      this.getTableList();
+    },
+    //tab切换
+    handleTabChange(val) {
+      this.queryParams.isDeleted = val;
+      this.queryParams.roleName = '';
+      this.queryParams.page = 1;
+      this.pagination.current = 1;
+      this.getTableList();
+    },
+    //翻页||排序
+    handleTableChange(pgt, filters, sorter) {
+      const params = {...this.queryParams};
+      this.pagination.current = pgt.current;
+      params.page = pgt.current;
+      params.sortOrder = SORTER_TYPE[sorter.order];
+      params.sortColumn = SORTER_TYPE[sorter.field];
+      this.queryParams = params;
+      this.getTableList();
+    },
+    //删除角色
+    handleDel(id) {
+      this.$confirm({
+        title: '确定删除这个角色吗？',
+        content: '',
+        onOk: () => {
+          userAuthApi.deleteRole({id}).then((res) => {
+            if (res.code === 20000) {
+              this.$message.success('删除成功');
+              this.getTableList();
+            } else {
+              this.$message.error(res.message);
+            }
+          })
+        },
+      });
+    },
+    //打开弹窗 添加||编辑
     handleAccount(sign, record) {
       if (sign === 'edit') {
         userAuthApi.findConfig(record.id).then((res) => {
@@ -285,39 +289,7 @@ export default {
       this.modalSign = sign;
       this.modalVisible = true;
     },
-    getTableList() {
-      userAuthApi.listRole(clearProto(this.queryParams)).then((res) => {
-        if (res.code === 20000) {
-          const data = res.data;
-          this.dataSource = data.list;
-          this.pagination.total = data.total;
-        } else {
-          this.$message.error(res.message)
-        }
-      })
-    },
-    handleDel(id) {
-      this.$confirm({
-        title: '确定删除这个角色吗？',
-        content: '',
-        onOk: () => {
-          userAuthApi.deleteRole({id}).then((res) => {
-            if (res.code === 20000) {
-              this.$message.success('删除成功');
-              this.getTableList();
-            } else {
-              this.$message.error(res.message);
-            }
-          })
-        },
-      });
-    },
-    handleQuery(flag) {
-      if (flag === 'reset') {
-        this.queryParams.roleName = ''
-      }
-      this.getTableList();
-    },
+    //添加||编辑 角色
     handleSubmit(e) {
       e.preventDefault();
       const {serviceUserManage, attractInvestmentManage} = this.form;
@@ -341,7 +313,7 @@ export default {
             };
             userAuthApi.saveRole(params).then((res) => {
               if (res.code === 20000) {
-                this.$message.warning('保存成功');
+                this.$message.success('保存成功');
                 this.getTableList();
               } else {
                 this.$message.warning(res.message);
@@ -356,28 +328,14 @@ export default {
         });
       }
     },
-    handleTabChange(val) {
-      this.queryParams.isDeleted = val;
-      this.queryParams.roleName = '';
-      this.getTableList();
-    },
-    handleTableChange(pgt, filters, sorter) {
-      const params = {...this.queryParams};
-      this.pagination.current = pgt.current;
-      params.page = pgt.current;
-      params.sortOrder = SORTER_TYPE[sorter.order];
-      params.sortColumn = SORTER_TYPE[sorter.field];
-      this.queryParams = params;
-      this.getTableList();
-    },
   },
   computed: {
     column: function () {
       const {isDeleted} = this.queryParams;
       if (isDeleted === '0') {
-        return columnsNormal;
+        return roleNormalColumns;
       } else {
-        return columnsDel;
+        return roleDelColumns;
       }
     },
   },
