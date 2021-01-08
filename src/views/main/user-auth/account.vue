@@ -37,11 +37,11 @@
 
             </a-select>
           </a-form-model-item>
-          <a-form-model-item>
-            <a-button type="primary" @click="handleQuery('search')">查询</a-button>
-          </a-form-model-item>
-          <a-form-model-item>
+          <a-form-model-item class="reset">
             <a-button @click="handleQuery('reset')">重置</a-button>
+          </a-form-model-item>
+          <a-form-model-item class="query">
+            <a-button type="primary" @click="handleQuery('search')">查询</a-button>
           </a-form-model-item>
         </a-form-model>
       </div>
@@ -394,10 +394,65 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .account-modal {
   .ant-modal-footer {
     text-align: center;
   }
 }
+.addAccount {
+    border: 1px solid #008CB0;
+    border-radius: 2px;
+    color: #008CB0;
+  }
+  /deep/.ant-form {
+    position: relative;
+    .custom-prefix-6 {
+      width: 445px;
+      height: 32px;
+      background: #FFFFFF;
+      border-radius: 2px;
+      border: 1px solid #D9D9D9;
+    }
+    .reset {
+      position: absolute;
+      right: 70px;
+      top: 0;
+    }
+    .query {
+      position: absolute;
+      right: -10px;
+      top: 0;
+    }
+  }
+  .edit {
+    font-size: 14px;
+    font-family: PingFangSC-Regular, PingFang SC;
+    font-weight: 400;
+    color: #008CB0;
+    line-height: 20px;
+  }
+  .delete {
+    font-size: 14px;
+    font-family: PingFangSC-Regular, PingFang SC;
+    font-weight: 400;
+    color: #999999;
+    line-height: 20px;
+  }
+  // tabs
+  /deep/.ant-tabs-tab-active {
+    font-size: 14px;
+    font-family: PingFangSC-Medium, PingFang SC;
+    font-weight: 600;
+    color: #008CB0;
+    line-height: 14px;
+  }
+  /deep/.ant-table-column-title {
+    font-size: 14px;
+    font-family: PingFangSC-Medium, PingFang SC;
+    font-weight: 600;
+    color: #262626;
+    line-height: 20px;
+  }
+
 </style>
