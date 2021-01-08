@@ -170,12 +170,12 @@
 				// 数据总条数
 				total: '',
 				pagination:{
-					current:'',
-					total:'',
-					showQuickJumper:true,
-					showLessItems:true,
-					size:'middle',
-					showTotal:val=>`共${val}条信息`,
+					// current:'',
+					// total:'',
+					// // showQuickJumper:true,
+					// // showLessItems:true,
+					// size:'middle',
+					// showTotal:val=>`共${val}条信息`,
 				},
 				disabledDate,
 				// ModalText: 'Content of the modal',// 对话框文本
@@ -242,11 +242,7 @@
 				// console.log(sign,item);
 				if (sign === 'edit') {
 					// 放起请求获取数据
-					const obj = {
-					departmentName: item.departmentName,
-					};
-					// console.log(JSON.parse(JSON.stringify(obj)));
-					this.form.departmentName = obj.departmentName
+					this.form.departmentName = item.departmentName
 					this.currentSection = item //当前部门的数据
 				} else {
 					this.isTitle = 'add'

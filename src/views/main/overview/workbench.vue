@@ -87,7 +87,7 @@ export default {
         series: [
           {
             type: 'pie',
-            radius: ['50%', '70%'],
+            radius: ['40%', '70%'],
             // avoidLabelOverlap: false,
             label: {
                 show: false,
@@ -96,7 +96,7 @@ export default {
             emphasis: {
                 label: {
                     show: true,
-                    fontSize: '14',
+                    fontSize: '16',
                     fontWeight: 'bold'
                 }
             },
@@ -210,15 +210,15 @@ $leftWidth: 550px;
         line-height: 20px;
       }
       /deep/.ant-badge-status-dot {
-        width: 8px!important;
-        height: 8px!important;
+        width: 10px!important;
+        height: 10px!important;
       }
     }
     .total {
       font-size: 16px;
       padding: 0 20px;
       margin-left: 10px;
-      font-weight: 600;
+      font-weight: 400;
       color: #333333;
       line-height: 16px;
       letter-spacing: 0.5px;
