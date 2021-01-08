@@ -33,7 +33,7 @@
 			</div>
 			<a-affix :offset-bottom="0" v-if="status.code === 1">
 				<div class="review-audit-wrapper">
-					<a-button @click="toIntAdd">添加面谈印象</a-button>
+					<a-button @click="toIntAdd">{{interview.status?"查看/编辑面谈印象":"添加面谈印象"}}</a-button>
 					<a-button type="primary" @click="toAuditAdd">添加审核结果</a-button>
 				</div>
 			</a-affix>
@@ -153,8 +153,10 @@
 					factor:{},
 				},
 				interview:{
+					status:false,
 					loading:false,
 					visible:false,
+					backup:{},
 					form:{
 						amountRangeDescription:"",
 						goodCaseDescription:"",
@@ -196,18 +198,33 @@
 		created() {},
 		methods:{
 			toIntAdd(){
-				this.interview.visible = true;
+				this.interview.form = {
+					...this.interview.backup
+				};
+				this.$nextTick(()=>{
+					this.interview.visible = true;
+				});
 			},
 			toIntSubmit(){
 				this.interview.loading = true;
-				if(JSON.stringify(clearObject(this.interview.form)) === '{}'){
+				const {serviceUserId,...form} = this.interview.form;
+				if(JSON.stringify(clearObject(form)) === '{}'){
 					this.$message.error('请至少输入一项面谈印象');
 					this.interview.loading = false;
 				}else {
-					setTimeout(() => {
+					toReview.impression({
+						serviceUserId,
+						...form,
+					}).then(res=>{
 						this.interview.loading = false;
-						this.interview.visible = false;
-					}, 1000)
+						if(res.code === 20000){
+							this.interview.visible = false;
+							this.interview.status = true;
+							this.interview.backup = { ...form,serviceUserId };
+						}else{
+							this.$message.error('添加/编辑面谈印象失败');
+						}
+					}).catch(()=>this.interview.loading = false);
 				}
 			},
 			toIntCancel(){
@@ -271,12 +288,27 @@
 					const { qualifyStatus,elementStatus} = res.data;
 					if(qualifyStatus >= 3) this.audit.form.qualifyAudit = 2;
 					if(elementStatus >= 3) this.audit.form.elementAudit = 2;
+
 					const { code, text } = _status;
 					if(code === 8 || code === 9) {
 						this.$message.error(text,1,()=> this.$route.push('/provider/review'));
 					} else {
 						toReview.detail(params).then(_res=>{
 							if(_res.code === 20000){
+								const { interviewImpression} = _res.data;
+								if(interviewImpression){
+									this.interview.status = true;
+									this.interview.form = {
+										...this.interview.form,
+										...(interviewImpression || {}),
+										serviceUserId:id,
+									};
+									this.interview.backup = {
+										...this.interview.form
+									};
+								}else{
+									this.interview.status = false;
+								}
 								this.source = processData(_res.data);
 								this.status = _status;
 								this.isLawyer = this.source.identity === 1;
