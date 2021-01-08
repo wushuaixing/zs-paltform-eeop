@@ -130,7 +130,7 @@
 
 <script>
 import Breadcrumb from '@/components/bread-crumb';
-import {clearProto, disabledDate} from "@/plugin/tools";
+import {clearProto} from "@/plugin/tools";
 import userAuthApi from '../../../plugin/api/user-auth';
 import {SORTER_TYPE} from "./source";
 
@@ -187,8 +187,8 @@ const columnsDel = [
 ]
 
 export default {
-  name: 'Account',
-  nameComment: '内部权限管理/账号管理',
+  name: 'Role',
+  nameComment: '内部权限管理/角色管理',
   data() {
     return {
       modalSign: 'add',
@@ -243,7 +243,6 @@ export default {
           {required: true, message: '请选择查看范围', trigger: 'change'},
         ],
       },
-      disabledDate,
     };
   },
   components: {
@@ -331,14 +330,14 @@ export default {
             const params = {
               id,
               roleName,
-              attractInvestmentManage: {
+              attractInvestmentManage: attractInvestmentManage ? {
                 projectManage,
-              },
-              serviceUserManage: {
+              } : '',
+              serviceUserManage: serviceUserManage ? {
                 exportPermission,
                 managePermission,
                 readScope
-              }
+              } : ''
             };
             userAuthApi.saveRole(params).then((res) => {
               if (res.code === 20000) {
