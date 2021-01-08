@@ -48,7 +48,7 @@
         dialogClass="role-modal"
         :maskClosable="false"
         @ok="handleSubmit"
-        @cancel="handleResetFields"
+        @cancel="handleResetFields('form')"
     >
       <div class="role-modal-wrapper">
         <a-form-model
@@ -132,7 +132,7 @@
 import Breadcrumb from '@/components/bread-crumb';
 import userAuthApi from '@/plugin/api/user-auth';
 import {clearProto} from "@/plugin/tools";
-import {SORTER_TYPE,roleNormalColumns,roleDelColumns} from "./source";
+import {SORTER_TYPE, roleNormalColumns, roleDelColumns} from "./source";
 
 
 export default {
@@ -212,32 +212,41 @@ export default {
         }
       })
     },
-    //重置弹窗表单
-    handleResetFields() {
-      this.form = {
-        serviceUserManage: false,
-        attractInvestmentManage: false,
-        projectManage: '',
-        roleName: '',
-        exportPermission: '',
-        managePermission: '',
-        readScope: '',
-        id: '',
+    //重置表单|重置搜索条件|tab切换
+    handleResetFields(flag) {
+      if (flag === 'form') {
+        this.form = {
+          serviceUserManage: false,
+          attractInvestmentManage: false,
+          projectManage: '',
+          roleName: '',
+          exportPermission: '',
+          managePermission: '',
+          readScope: '',
+          id: '',
+        }
+      } else {
+        this.queryParams = {
+          ...this.queryParams,
+          roleName: '',
+          page: 1,
+        };
+        this.pagination.current = 1;
       }
     },
     //查询||重置 搜索条件
     handleQuery(flag) {
       if (flag === 'reset') {
-        this.queryParams.roleName = ''
+        this.handleResetFields('resetQuery');
       }
+      this.pagination.current = 1;
+      this.queryParams.page = 1;
       this.getTableList();
     },
     //tab切换
     handleTabChange(val) {
       this.queryParams.isDeleted = val;
-      this.queryParams.roleName = '';
-      this.queryParams.page = 1;
-      this.pagination.current = 1;
+      this.handleResetFields('tab');
       this.getTableList();
     },
     //翻页||排序
@@ -319,7 +328,7 @@ export default {
                 this.$message.warning(res.message);
               }
             }).finally(() => {
-              this.handleResetFields();
+              this.handleResetFields('form');
               this.modalVisible = false
             });
           } else {
@@ -331,11 +340,12 @@ export default {
   },
   computed: {
     column: function () {
-      const {isDeleted} = this.queryParams;
+      const {isDeleted, sortOrder} = this.queryParams;
+      const sort = Object.keys(SORTER_TYPE).find(i => SORTER_TYPE[i] === sortOrder);
       if (isDeleted === '0') {
-        return roleNormalColumns;
+        return roleNormalColumns(sort);
       } else {
-        return roleDelColumns;
+        return roleDelColumns(sort);
       }
     },
   },

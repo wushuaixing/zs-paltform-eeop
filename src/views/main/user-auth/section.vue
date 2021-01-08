@@ -46,7 +46,7 @@
           dialogClass="section-modal"
           :maskClosable="false"
           @ok="handleSubmit"
-          @cancel="()=> this.form.departmentName = ''"
+          @cancel="handleResetFields('form')"
       >
         <div class="section-modal-wrapper">
           <a-form-model
@@ -134,11 +134,25 @@ export default {
         }
       })
     },
+    handleResetFields(flag) {
+      if (flag === 'form') {
+        this.form.departmentName = '';
+      } else {
+        this.queryParams = {
+          ...this.queryParams,
+          departmentName: '',
+          page: 1,
+          sortColumn: '', //排序字段
+          sortOrder: '', //排序顺序
+        };
+        this.pagination.current = 1;
+      }
 
+    },
     //查询||重置 搜索条件
     handleQuery(flag) {
       if (flag === 'reset') {
-        this.queryParams.departmentName = ''
+        this.handleResetFields('resetQuery');
       }
       this.queryParams.page = 1;
       this.pagination.current = 1;
@@ -164,10 +178,8 @@ export default {
 
     //tab切换
     handleTabChange(val) {
-      this.queryParams.departmentName = '';
       this.queryParams.isDeleted = val;
-      this.queryParams.page = 1;
-      this.pagination.current = 1;
+      this.handleResetFields('tab');
       this.getTableList();
     },
 
@@ -206,7 +218,7 @@ export default {
               this.$message.warning(res.message);
             }
           }).finally(() => {
-            this.form.departmentName = '';
+            this.handleResetFields('form');
             this.modalVisible = false
           });
         } else {
@@ -217,11 +229,12 @@ export default {
   },
   computed: {
     column: function () {
-      const {isDeleted} = this.queryParams;
+      const {isDeleted, sortOrder} = this.queryParams;
+      const sort = Object.keys(SORTER_TYPE).find(i => SORTER_TYPE[i] === sortOrder);
       if (isDeleted === '0') {
-        return sectionNormalColumns;
+        return sectionNormalColumns(sort);
       } else {
-        return sectionDelColumns;
+        return sectionDelColumns(sort);
       }
     },
   },

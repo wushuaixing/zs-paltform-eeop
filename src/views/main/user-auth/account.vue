@@ -241,9 +241,10 @@ export default {
     //查询||重置 搜索条件
     handleQuery(flag) {
       if (flag === 'reset') {
-        this.handleResetFields(flag);
+        this.handleResetFields('resetQuery');
       }
       this.pagination.current = 1;
+      this.queryParams.page = 1;
       this.getTableList();
     },
     //删除账号
@@ -283,8 +284,7 @@ export default {
     //tab切换
     handleTabChange(val) {
       this.queryParams.isDeleted = val;
-      this.handleResetFields('flag');
-      this.pagination.current = 1;
+      this.handleResetFields('tab');
       this.getTableList();
     },
     //翻页||排序
@@ -348,7 +348,7 @@ export default {
         }
       });
     },
-    //重置弹窗表单
+    //重置表单|重置搜索条件|tab切换
     handleResetFields(flag) {
       if (flag === 'form') {
         this.form = {
@@ -357,26 +357,35 @@ export default {
           name: '',
           username: '',
           password: '',
-        }
+        };
       } else {
-        this.queryParams.name = '';
-        this.queryParams.roleId = undefined;
-        this.queryParams.departmentId = undefined;
-        this.queryParams.page = 1;
+        this.queryParams = {
+          ...this.queryParams,
+          name: '',
+          page: 1,
+          roleId: undefined,
+          departmentId: undefined,
+          sortColumn: '',
+          sortOrder: '',
+          username: '',
+        };
+        this.pagination.current = 1;
       }
 
     }
   },
   computed: {
     column: function () {
-      const {isDeleted} = this.queryParams;
+      const {isDeleted, sortOrder} = this.queryParams;
       const flag = isDeleted === '0';
+      const sort = Object.keys(SORTER_TYPE).find(i => SORTER_TYPE[i] === sortOrder);
       const dynamicColumn = flag ? accountColumns : accountColumns.slice(0, 4);
       const obj = {
         title: `${flag ? '创建' : '删除'}日期`,
         dataIndex: flag ? 'gmtCreate' : 'gmtDeleted',
         key: 'date',
         sorter: true,
+        sortOrder: sort || false,
         customRender: val => val || '-',
       };
       return [obj, ...dynamicColumn]

@@ -31,12 +31,13 @@ export const accountColumns = [
         width: 260,
     },
 ];
-export const sectionNormalColumns = [
+export const sectionNormalColumns = (sort) => [
     {
         title: '创建日期',
         dataIndex: 'gmtCreate',
         key: 'gmtCreate',
         sorter: true,
+        sortOrder: sort || false,
         customRender: val => val || '-',
     },
     {
@@ -59,12 +60,13 @@ export const sectionNormalColumns = [
         width: 260,
     },
 ];
-export const sectionDelColumns = [
+export const sectionDelColumns = (sort) => [
     {
         title: '删除日期',
         dataIndex: 'gmtDel',
         key: 'gmtDel',
         sorter: true,
+        sortOrder: sort || false,
         customRender: val => val || '-',
     },
     {
@@ -74,7 +76,7 @@ export const sectionDelColumns = [
         customRender: val => val || '-',
     },
 ];
-export const roleNormalColumns = [
+export const roleNormalColumns = (sort) => [
     {
         title: '角色名称',
         dataIndex: 'roleName',
@@ -86,13 +88,16 @@ export const roleNormalColumns = [
         dataIndex: 'gmtCreate',
         key: 'gmtCreate',
         sorter: true,
+        sortOrder: sort || false,
         customRender: val => val || '-',
+
     },
     {
         title: '更新日期',
         dataIndex: 'gmtModify',
         key: 'gmtModify',
         sorter: true,
+        sortOrder: sort || false,
         customRender: val => val || '-',
     },
     {
@@ -109,7 +114,7 @@ export const roleNormalColumns = [
         width: 260,
     },
 ];
-export const roleDelColumns = [
+export const roleDelColumns = (sort) => [
     {
         title: '角色名称',
         dataIndex: 'roleName',
@@ -121,6 +126,7 @@ export const roleDelColumns = [
         dataIndex: 'gmtDelete',
         key: 'gmtDelete',
         sorter: true,
+        sortOrder: sort || false,
         customRender: val => val || '-',
     },
 ]
