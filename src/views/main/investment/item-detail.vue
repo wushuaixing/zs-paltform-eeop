@@ -176,7 +176,7 @@
             <a-radio-button :value="2"> 末通过系统筛选 {{planCount.invalidCount}}</a-radio-button>
           </a-radio-group>
           <div class="table-block">
-            <a-table v-bind="tableSource.submitPlanTable" @change="submitPlanTableChange">
+            <a-table v-bind="tableSource.submitPlanTable" @change="submitPlanTableChange" >
               <template slot="gmtCreate" slot-scope="gmtCreate">{{gmtCreate|show_}}</template>
               <template slot="name" slot-scope="name,row">
                 <a-button type="link" @click="goAvatar(row.id)">{{ name }}</a-button>
@@ -646,12 +646,12 @@ export default {
   },
   methods: {
     bit(val){
+      console.log(val)
       if(this.exhibit === val.id){
         this.exhibit = false
         return false
       }
       this.exhibit = val.id
-      console.log(val)
     },
     //获取项目基本信息
     getProjectDetail(){
@@ -890,16 +890,6 @@ export default {
       overflow: hidden;
       white-space: pre-wrap;
     }
-    &::-webkit-scrollbar{
-      width: 3px;
-    }
-    &::-webkit-scrollbar-thumb {
-      border-radius: 3px;
-      background: #d9d9d9;
-    }
-    &::-webkit-scrollbar-track {
-      display: none;
-    }
   }
   .plan{
     max-height:60px;
@@ -910,16 +900,6 @@ export default {
       width: 200px;
       overflow: hidden;
       white-space: pre-wrap;
-    }
-    &::-webkit-scrollbar{
-      width: 3px;
-    }
-    &::-webkit-scrollbar-thumb {
-      border-radius: 3px;
-      background: #d9d9d9;
-    }
-    &::-webkit-scrollbar-track {
-      display: none;
     }
   }
   .ant-radio-button-wrapper {
