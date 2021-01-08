@@ -891,16 +891,6 @@ export default {
       overflow: hidden;
       white-space: pre-wrap;
     }
-    &::-webkit-scrollbar{
-      width: 3px;
-    }
-    &::-webkit-scrollbar-thumb {
-      border-radius: 3px;
-      background: #d9d9d9;
-    }
-    &::-webkit-scrollbar-track {
-      display: none;
-    }
   }
   .plan{
     max-height:60px;
@@ -911,16 +901,6 @@ export default {
       width: 200px;
       overflow: hidden;
       white-space: pre-wrap;
-    }
-    &::-webkit-scrollbar{
-      width: 3px;
-    }
-    &::-webkit-scrollbar-thumb {
-      border-radius: 3px;
-      background: #d9d9d9;
-    }
-    &::-webkit-scrollbar-track {
-      display: none;
     }
   }
   .ant-radio-button-wrapper {
@@ -971,7 +951,6 @@ export default {
         height: 32px;
         line-height: 32px;
         position: relative;
-        //background-color: pink;
         .numberIpt{
           width: 100%;
           height: 100%;

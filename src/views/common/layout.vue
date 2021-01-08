@@ -11,10 +11,10 @@
                       :getPopupContainer="e=>e.parentElement" >
             <a-menu slot="overlay" >
               <a-menu-item key="1">
-                <div @click="handleModifyPwd"><a-icon type="user" />修改登录密码</div>
+                <div @click="handleModifyPwd"><a-icon type="lock" />修改登录密码</div>
               </a-menu-item>
               <a-menu-item key="2">
-                <div @click="backLogin"><a-icon type="user" />退出登录</div>
+                <div @click="backLogin"><a-icon type="poweroff" />退出登录</div>
               </a-menu-item>
             </a-menu>
             <a-button type="link" icon="down" style="color:#fff;">Hi，{{username}}</a-button>
@@ -47,11 +47,18 @@
         this.$refs.modifyPwd.showModal()
       },
       backLogin(){
-        logout().then(res=>{
-          if(res.code === 20000 ){
-            this.$router.push('/login');
-          }else{
-            return this.$message.error("退出登录失败");
+        let _this = this;
+        this.$confirm({
+          title:"是否退出登录?",
+          centered:true,
+          onOk(){
+            logout().then(res=>{
+              if(res.code === 20000){
+                _this.$router.push('/login');
+              }else{
+                _this.$message.error("退出登录失败");
+              }
+            })
           }
         })
       }
@@ -137,5 +144,9 @@
 .spin-wrapper{
   width: 100%;
   padding-top: 10vh!important;
+}
+.ant-modal-confirm-btns{
+  margin-right: 50%;
+  transform: translateX(50%);
 }
 </style>
