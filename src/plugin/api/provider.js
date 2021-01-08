@@ -1,5 +1,8 @@
 import request from "@/plugin/tools/request";
 
+// 查询审核状态
+export const auditStatus = params => request.post('/operator/serviceUserManage/quaEndEleAuditStatus',params);
+
 // 待审查
 export const toReview = {
 	// 添加审核结果

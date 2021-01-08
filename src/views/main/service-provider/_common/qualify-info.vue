@@ -4,7 +4,7 @@
 			<div class="info-item_date" v-if="noDate">提交日期：
 				<span>{{dataSource.createTime}}</span>
 			</div>
-			<div class="info-item_title" v-if="!noTitle">我的资质认证信息</div>
+			<div class="info-item_title" v-if="statusNeed">我的资质认证信息</div>
 			<div class="info-item_list">
 				<div class="info-item_list-title">律师名称</div>
 				<div class="info-item_list-content">{{dataSource.lawyerName||'-'}}</div>
@@ -56,11 +56,21 @@
 					<FileList :fileList="dataSource.confidentialityCommitmentLetter"/>
 				</div>
 			</div>
+			<template v-if="statusNeed">
+				<div class="info-item_title" >资质更改证明</div>
+				<div class="info-item_list">
+					<div class="info-item_list-title">资质更改证据材料</div>
+					<div class="info-item_list-content">
+						<FileList :fileList="dataSource.qualifyMaterial"/>
+					</div>
+				</div>
+			</template>
 		</div>
 		<div class="info-item" data-label="我的资质认证信息-机构" v-else>
 			<div class="info-item_date" v-if="noDate">提交日期：
 				<span>{{dataSource.createTime}}</span>
 			</div>
+			<div class="info-item_title" v-if="statusNeed">我的资质认证信息</div>
 			<div class="info-item_list">
 				<div class="info-item_list-title">机构名称</div>
 				<div class="info-item_list-content">{{dataSource.name||'-'}}</div>
@@ -89,15 +99,27 @@
 					<FileList :fileList="dataSource.confidentialityCommitmentLetter"/>
 				</div>
 			</div>
+
+			<template v-if="statusNeed">
+				<div class="info-item_title" >资质更改证明</div>
+				<div class="info-item_list">
+					<div class="info-item_list-title">资质更改证据材料</div>
+					<div class="info-item_list-content">
+						<FileList :fileList="dataSource.qualifyMaterial"/>
+					</div>
+				</div>
+			</template>
+
 		</div>
 	</div>
 </template>
 
 <script>
 	import FileList from '@/components/file-list';
+	// import RowLayout from '../common/row-layout';
 	export default {
 		name: 'QualifyInfo',
-		nameComment: '资质认证信息',
+		nameComment: '资质认证',
 		data(){
 			return {
 			}
@@ -117,77 +139,29 @@
 			},
 			noDate:{
 				type:Boolean,
-				default:true,
+				default:false,
+			},
+			status:{
+				type:Number,
+				default:1,
 			}
 		},
 		components:{
 			FileList,
+			// RowLayout
 		},
 		computed:{
 			dataSource(){
 				return {...this.source};
+			},
+			statusNeed(){
+				return this.status >= 3;
 			}
 		}
 
 	}
 </script>
 
-<style lang="scss" scoped>
-	.qualifies-info-wrapper{
-		.info-item{
-			padding: 7px 0;
-			position: relative;
-			&_date{
-				position: absolute;
-				top: 0;
-				right: 20px;
-				text-align: left;
-				height: 20px;
-				line-height: 20px;
-				font-size: 14px;
-				color: $text-remark;
-				span{
-					font-size: 16px;
-					color: $text-title;
-				}
-			}
-			&_title{
-				border-left: 4px solid $common-base-active;
-				padding-left: 6px;
-				font-size: 16px;
-				height: 25px;
-				line-height: 25px;
-			}
-			&_subtitle{
-				font-size: 14px;
-				height: 25px;
-				line-height: 25px;
-				color: $text-title;
-			}
-			&_list{
-				margin:22px 0;
-				display: flex;
-				line-height: 25px;
-				&-title{
-					width: 33.3%;
-					font-size: 14px;
-					color: $text-title;
-					text-align: right;
-					padding-right: 10px;
-					&:after{
-						content:'：'
-					}
-				}
-				&-content{
-					flex: 1;
-					color: $text-content;
-					.remark{
-						display: block;
-						font-size: 12px;
-						color: $text-remark;
-					}
-				}
-			}
-		}
-	}
+<style lang="scss">
+
 </style>

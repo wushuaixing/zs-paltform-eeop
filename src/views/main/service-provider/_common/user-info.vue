@@ -1,16 +1,17 @@
 <template>
 	<div class="user-info-wrapper">
 		<div class="info-icon">
-			<a-icon type="bank"  style="font-size: 80px"/>
+			<a-icon type="user" style="font-size: 80px" v-if="isLawyer"/>
+			<a-icon type="bank" style="font-size: 80px" v-else/>
 		</div>
 		<div class="info-detail">
-			<div class="info-detail_name">username</div>
+			<div class="info-detail_name">{{info.name}}</div>
 			<div v-if="isLawyer">
 				<span>服务商类型：<i>{{identity||'-'}}</i></span>
 				<a-divider type="vertical" />
-				<span>联系方式：<i>{{info.contact||'-'}}</i></span>
+				<span>联系方式：<i>{{info.phone||'-'}}</i></span>
 				<a-divider type="vertical" />
-				<span>挂靠律所：<i>{{info.phone||'-'}}</i></span>
+				<span>挂靠律所：<i>{{info.lawOffice||'-'}}</i></span>
 			</div>
 			<div v-else>
 				<span>服务商类型：<i>{{identity||'-'}}</i></span>
@@ -42,7 +43,7 @@
 			},
 			audit:{
 				type: Boolean,
-				default:true,
+				default:false,
 			}
 		},
 		computed:{

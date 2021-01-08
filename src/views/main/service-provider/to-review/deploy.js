@@ -23,7 +23,7 @@ export const columns = ({ type = 1, sortOrder}) =>{
 			title: '服务商类型',
 			dataIndex: 'identity',
 			key: 'address1',
-			customRender:(val)=> (val && (val === '1' ? '律师' : '机构')) || '-',
+			customRender:(val)=> (val && (val === 1 ? '律师' : '机构')) || '-',
 		},
 		{
 			title: '机构名称/挂靠律师',
@@ -138,4 +138,27 @@ export const columns = ({ type = 1, sortOrder}) =>{
 		];
 	}
 	return baseColumns;
+};
+
+/**
+ * 处理详情数据
+ * @param source
+ * @returns {*}
+ */
+export const processData = source => {
+	const { lawyerElement = {},lawyerQualify = {},organizationElement = {},organizationQualify = {}, identity } = source;
+	return {
+		identity: source.identity,
+		user:{
+			identity: source.identity,
+			name:identity === 2 ? organizationQualify.name : source.name,
+			contact:source.name,
+			lawOffice:(lawyerQualify || {}).lawOffice,
+			phone:source.phone,
+		},
+		qualify:identity === 1 ? lawyerQualify : organizationQualify,
+		factor:identity === 1 ? lawyerElement : organizationElement,
+		qualifyCondition:source.qualifyCondition,
+		elementCondition:source.elementCondition
+	};
 };
