@@ -14,11 +14,11 @@
           <a-form-model-item label="部门名称">
             <a-input v-model="queryParams.departmentName" placeholder="请输入部门姓名" class="custom-prefix-6"/>
           </a-form-model-item>
-          <a-form-model-item>
-            <a-button type="primary" @click="handleQuery('search')">查询</a-button>
+          <a-form-model-item class="reset">
+            <a-button @click="handleQuery('reset')" >重置</a-button>
           </a-form-model-item>
-          <a-form-model-item>
-            <a-button @click="handleQuery('reset')">重置</a-button>
+          <a-form-model-item class="query">
+            <a-button type="primary" @click="handleQuery('search')">查询</a-button>
           </a-form-model-item>
         </a-form-model>
       </div>
@@ -32,10 +32,10 @@
                  @change="handleTableChange" :row-key="record => record.id"
         >
           <template slot="auction" slot-scope="text,record">
-            <a-button type="link" size="small" :style="{paddingLeft: 0}" @click="handleSection('edit',record)">编辑
+            <a-button type="link" size="small" class="edit" :style="{paddingLeft: 0}" @click="handleSection('edit',record)">编辑
             </a-button>
             <a-divider type="vertical"/>
-            <a-button type="link" size="small" @click="handleDel(record.id)">删除</a-button>
+            <a-button type="link" class="delete" size="small" @click="handleDel(record.id)">删除</a-button>
           </template>
         </a-table>
       </div>
@@ -46,7 +46,7 @@
           dialogClass="section-modal"
           :maskClosable="false"
           @ok="handleSubmit"
-          @cancel="()=> this.form.departmentName = ''"
+          @cancel="handleResetFields('form')"
       >
         <div class="section-modal-wrapper">
           <a-form-model
@@ -71,53 +71,9 @@
 
 <script>
 import Breadcrumb from '@/components/bread-crumb';
+import userAuthApi from '@/plugin/api/user-auth';
 import {clearProto} from "@/plugin/tools";
-import userAuthApi from '../../../plugin/api/user-auth';
-import {SORTER_TYPE} from "./source";
-
-const columnsNormal = [
-  {
-    title: '创建日期',
-    dataIndex: 'gmtCreate',
-    key: 'gmtCreate',
-    sorter: true,
-    customRender: val => val || '-',
-  },
-  {
-    title: '部门名称',
-    dataIndex: 'departmentName',
-    key: 'departmentName',
-    customRender: val => val || '-',
-  },
-  {
-    title: '部门内账号数量',
-    dataIndex: 'userCount',
-    key: 'userCount',
-    customRender: val => val || '-',
-  },
-  {
-    title: '操作',
-    dataIndex: 'auction',
-    key: 'auction',
-    scopedSlots: {customRender: 'auction'},
-    width: 260,
-  },
-];
-const columnsDel = [
-  {
-    title: '删除日期',
-    dataIndex: 'gmtDel',
-    key: 'gmtDel',
-    sorter: true,
-    customRender: val => val || '-',
-  },
-  {
-    title: '部门名称',
-    dataIndex: 'departmentName',
-    key: 'departmentName',
-    customRender: val => val || '-',
-  },
-];
+import {SORTER_TYPE, sectionNormalColumns, sectionDelColumns} from "./source";
 
 export default {
   name: 'Seciton',
@@ -126,14 +82,6 @@ export default {
     return {
       modalVisible: false,
       modalSign: 'add',
-      labelCol: {span: 5},
-      wrapperCol: {span: 16},
-      rules: {
-        departmentName: [
-          {required: true, message: '请输入部门名称'},
-          {pattern: /^[\u4e00-\u9fa5a-zA-Z]+$/, message: "仅支持汉字和字母", trigger: 'blur'},
-        ],
-      },
       navData: [
         {id: 1, title: '内部权限管理', path: '/auth/role'},
         {id: 2, title: '部门管理', path: '/auth/section'},
@@ -150,6 +98,14 @@ export default {
         departmentName: '',
         id: '',
       },
+      rules: {
+        departmentName: [
+          {required: true, message: '请输入部门名称'},
+          {pattern: /^[\u4e00-\u9fa5a-zA-Z]+$/, message: "仅支持汉字和字母", trigger: 'blur'},
+        ],
+      },
+      labelCol: {span: 5},
+      wrapperCol: {span: 16},
       pagination: {
         current: 1,
         total: 1,
@@ -167,20 +123,6 @@ export default {
     this.getTableList();
   },
   methods: {
-    handleQuery(flag) {
-      if (flag === 'reset') {
-        this.queryParams.departmentName = ''
-      }
-      this.getTableList();
-    },
-    handleSection(sign, record) {
-      if (sign === 'edit') {
-        this.form.departmentName = record.departmentName;
-        this.form.id = record.id;
-      }
-      this.modalVisible = true;
-      this.modalSign = sign;
-    },
     getTableList() {
       userAuthApi.getSectionList(this.queryParams).then((res) => {
         if (res.code === 20000) {
@@ -192,6 +134,31 @@ export default {
         }
       })
     },
+    handleResetFields(flag) {
+      if (flag === 'form') {
+        this.form.departmentName = '';
+      } else {
+        this.queryParams = {
+          ...this.queryParams,
+          departmentName: '',
+          page: 1,
+          sortColumn: '', //排序字段
+          sortOrder: '', //排序顺序
+        };
+        this.pagination.current = 1;
+      }
+
+    },
+    //查询||重置 搜索条件
+    handleQuery(flag) {
+      if (flag === 'reset') {
+        this.handleResetFields('resetQuery');
+      }
+      this.queryParams.page = 1;
+      this.pagination.current = 1;
+      this.getTableList();
+    },
+    //删除部门
     handleDel(id) {
       this.$confirm({
         title: '确定删除此部门？',
@@ -208,6 +175,36 @@ export default {
         },
       });
     },
+
+    //tab切换
+    handleTabChange(val) {
+      this.queryParams.isDeleted = val;
+      this.handleResetFields('tab');
+      this.getTableList();
+    },
+
+    //排序-翻页
+    handleTableChange(pgt, filters, sorter) {
+      const params = {...this.queryParams};
+      this.pagination.current = pgt.current;
+      params.page = pgt.current;
+      params.sortOrder = SORTER_TYPE[sorter.order];
+      params.sortColumn = SORTER_TYPE[sorter.field];
+      this.queryParams = params;
+      this.getTableList();
+    },
+
+    //打开添加/编辑部门弹窗
+    handleSection(sign, record) {
+      if (sign === 'edit') {
+        this.form.departmentName = record.departmentName;
+        this.form.id = record.id;
+      }
+      this.modalVisible = true;
+      this.modalSign = sign;
+    },
+
+    //添加/编辑部门
     handleSubmit(e) {
       e.preventDefault();
       this.$refs.ruleForm.validate(valid => {
@@ -221,7 +218,7 @@ export default {
               this.$message.warning(res.message);
             }
           }).finally(() => {
-            this.form.departmentName = '';
+            this.handleResetFields('form');
             this.modalVisible = false
           });
         } else {
@@ -229,28 +226,15 @@ export default {
         }
       });
     },
-    handleTabChange(val) {
-      this.queryParams.isDeleted = val;
-      this.queryParams.departmentName = '';
-      this.getTableList();
-    },
-    handleTableChange(pgt, filters, sorter) {
-      const params = {...this.queryParams};
-      this.pagination.current = pgt.current;
-      params.page = pgt.current;
-      params.sortOrder = SORTER_TYPE[sorter.order];
-      params.sortColumn = SORTER_TYPE[sorter.field];
-      this.queryParams = params;
-      this.getTableList();
-    },
   },
   computed: {
     column: function () {
-      const {isDeleted} = this.queryParams;
+      const {isDeleted, sortOrder} = this.queryParams;
+      const sort = Object.keys(SORTER_TYPE).find(i => SORTER_TYPE[i] === sortOrder);
       if (isDeleted === '0') {
-        return columnsNormal;
+        return sectionNormalColumns(sort);
       } else {
-        return columnsDel;
+        return sectionDelColumns(sort);
       }
     },
   },
@@ -258,5 +242,59 @@ export default {
 </script>
 
 <style scoped lang="scss">
+  .addAccount {
+    border: 1px solid #008CB0;
+    border-radius: 2px;
+    color: #008CB0;
+  }
+  /deep/.ant-form {
+    position: relative;
+    .custom-prefix-6 {
+      width: 352px;
+      height: 32px;
+      background: #FFFFFF;
+      border-radius: 2px;
+      border: 1px solid #D9D9D9;
+    }
+    .reset {
+      position: absolute;
+      right: 70px;
+      top: 0;
+    }
+    .query {
+      position: absolute;
+      right: -10px;
+      top: 0;
+    }
+  }
+  .edit {
+    font-size: 14px;
+    font-family: PingFangSC-Regular, PingFang SC;
+    font-weight: 400;
+    color: #008CB0;
+    line-height: 20px;
+  }
+  // .delete {
+  //   font-size: 14px;
+  //   font-family: PingFangSC-Regular, PingFang SC;
+  //   font-weight: 400;
+  //   color: #999999;
+  //   line-height: 20px;
+  // }
+  // tabs
+  /deep/.ant-tabs-tab-active {
+    font-size: 14px;
+    font-family: PingFangSC-Medium, PingFang SC;
+    font-weight: 600;
+    color: #008CB0;
+    line-height: 14px;
+  }
+  /deep/.ant-table-column-title {
+    font-size: 14px;
+    font-family: PingFangSC-Medium, PingFang SC;
+    font-weight: 600;
+    color: #262626;
+    line-height: 20px;
+  }
 
 </style>
