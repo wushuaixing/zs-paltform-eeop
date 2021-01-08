@@ -37,6 +37,8 @@ const preview = file =>{
 			if(res.code === 20000) {
 				file.viewUrl = res.data;
 				window.open(file.viewUrl);
+			}else{
+				message.error('该文件访问失败');
 			}
 		});
 	}

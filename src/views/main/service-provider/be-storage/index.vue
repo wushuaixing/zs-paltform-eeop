@@ -22,42 +22,30 @@
 							<a-select-option value="2">机构</a-select-option>
 						</a-select>
 					</a-form-model-item>
-
 					<a-form-model-item>
 							<a-button type="primary" html-type="submit" style="width: 80px">查询</a-button>
 					</a-form-model-item>
 				</a-form-model>
 				<a-tabs @change="handleTabChange" :activeKey="activeKey">
 					<a-tab-pane v-for="i in tabPane" :key="i.id">
-						<template slot="tab">
-							<a-badge :dot="i.dot" class="dot-badge">{{i.title}}</a-badge>
-						</template>
+						<a-badge :dot="i.dot" class="dot-badge" slot="tab">{{i.title}}</a-badge>
 					</a-tab-pane>
 				</a-tabs>
-				<div v-if="status(1234)">
-					<a-space >
-						<a-button>全部</a-button>
-						<a-button>只显示未读</a-button>
-						<a-button>全部标为已读</a-button>
-					</a-space>
-					<div style="height: 10px"></div>
-				</div>
 			</div>
 			<div class="frame-content">
 				<a-table v-bind="props" @change="handleTableChange" :dataSource="dataSource" :columns="columns">
 					<span slot="customAuction" style="padding-left: 15px">操作</span>
-					<ReadStatus slot="readStatus" slot-scope="item" :dot="item.unread">
+					<ReadStatus slot="readStatus" slot-scope="item" :dot="item.isRead">
 						{{item.name}}
-						<a-tag color="orange">重新提交</a-tag>
+						<!--<a-tag color="orange">重新提交</a-tag>-->
 					</ReadStatus>
+					<span slot="address" slot-scope="item">{{areaAnalysis(item,false)|areas|fill}}</span>
 					<template slot="auction" slot-scope="item">
-						<a-button type="link" :icon="normal?'file-text':'audit'" @click="toLink(item)" v-if="activeKey !== '1'">
-							{{normal?'查询详情':'审核'}}
-						</a-button>
-						<template v-else>
+						<template v-if="activeKey === '1'">
 							<a-button type="link" icon="file-text" @click="toLink(item)">详情</a-button>
 							<a-button type="link" icon="audit" @click="toLink(item)">印象添加</a-button>
 						</template>
+						<a-button type="link" :icon="normal.icon" @click="toLink(item)" v-else>{{normal.text}}</a-button>
 					</template>
 					<span slot="workingTime" slot-scope="item">{{item|single('expOption')}}</span>
 				</a-table>
@@ -69,7 +57,8 @@
 <script>
 	import Breadcrumb from '@/components/bread-crumb';
 	import ReadStatus from '@/components/table/read-status';
-	import { clearProto, disabledDate } from "@/plugin/tools";
+	import { clearProto, disabledDate,clearObject,areaAnalysis } from "@/plugin/tools";
+	import { beStorage } from "@/plugin/api/provider";
 	import { columns } from './deploy';
 
 	const auditStatus = false;
@@ -82,14 +71,15 @@ export default {
         {id:1,title:'服务商管理',path:'/provider/review'},
         {id:2,title:'已入库',path:'/provider/storage'},
       ],
-	    activeKey:'1',
+	    activeKey:1,
 			tabPane:[
-				{ id:'1', title:'全部已入库' },
-				{ id:'2', title:'资质修改申请' },
-				{ id:'3', title:'要素修改申请' },
+				{ id:1, title:'全部已入库', dot: false, },
+				{ id:2, title:'资质修改申请', dot: false, },
+				{ id:3, title:'要素修改申请', dot: false, },
 			],
 			props:{
 				size:'middle',
+				rowKey:'id',
 				class:'frame-content-table',
 				pagination:{
 					current:1,
@@ -101,18 +91,7 @@ export default {
 				},
 				rowClassName: i=> (i || {}).unread ? 'frame-table-bold' : '',
 			},
-	    dataSource:[
-				{
-					key:1,
-					name:'临时用户',
-					workingTime:'1'
-				},
-		    {
-			    key:2,
-			    name:'临时用户',
-			    unread:true,
-		    }
-			],
+	    dataSource:[],
       query:{
 	      userName:"",
 	      officeName:"",
@@ -120,12 +99,11 @@ export default {
         endTime:'',
 	      identity:undefined,
       },
-      disabledDate,
-			lineStyle:{
-				transform: 'rotate(90deg)',
-				margin:'0 -5px',
-				color: '#999999'
-			},
+	    loading:false,
+	    sortOrder:"",
+	    sortField:"",
+	    disabledDate,
+	    areaAnalysis,
 	    auditStatus
     };
   },
@@ -134,6 +112,7 @@ export default {
 	  ReadStatus
   },
 	created(){
+		this.toQuery();
 	},
   methods:{
 		status(rule){
@@ -154,25 +133,50 @@ export default {
 			console.log(item);
 			this.$router.push({path:'/provider/storage/detail',query: {id:'111111111111'}})
 		},
+	  // 查询数据
+	  toQuery(params = {}){
+		  this.loading = true;
+		  const queryField = clearProto(this.query);
+		  const sortOrder  = this.sortOrder ? ( this.sortOrder === 'ascend' ? 'ASC' : 'DESC' ) : '';
+		  beStorage.list(clearObject({
+			  type:Number(this.activeKey),
+			  page:1,
+			  size:10,
+			  sortOrder,
+			  ...queryField,
+			  sortField:this.sortField,
+			  ...params,
+		  })).then(res=>{
+			  if(res.code === 20000){
+				  const source = clearObject(res.data || {});
+				  this.dataSource = source.list;
+				  this.props.pagination.current = source.page;
+				  this.props.pagination.total = source.total;
+			  }
+		  }).finally(()=>{
+			  this.loading = false;
+		  });
+	  },
   },
 	computed:{
 		normal(){
-			return !(this.activeKey === '1' && this.auditStatus);
+			const res = !(this.activeKey === 1 && this.auditStatus);
+			return {
+				icon: res ? 'file-text' : 'audit',
+				text: res ? '查询详情' : '审核'
+			};
 		},
 		columns(){
-			return columns(this.activeKey)
+			return columns({
+				type: this.activeKey,
+				sortOrder:this.sortOrder,
+				sortField:this.sortField
+			})
 		},
-
 	},
 }
 </script>
 
 <style scoped>
 
-.content-action{
-  margin-bottom: 10px;
-}
-.content-action button{
-  margin-right: 15px;
-}
 </style>
