@@ -33,7 +33,7 @@
 			</div>
 			<a-affix :offset-bottom="0" v-if="status.code === 1">
 				<div class="review-audit-wrapper">
-					<a-button @click="toIntAdd">添加面谈印象</a-button>
+					<a-button @click="toIntAdd">{{interview.status?"查看/编辑面谈印象":"添加面谈印象"}}</a-button>
 					<a-button type="primary" @click="toAuditAdd">添加审核结果</a-button>
 				</div>
 			</a-affix>
@@ -68,8 +68,9 @@
 				<a-button @click="toIntCancel">取消</a-button>
 			</div>
 		</a-modal>
-		<a-modal v-model="audit.visible" title="审核结果" v-bind="modal">
-			<div style="padding:0 40px">
+		<a-modal v-model="audit.visible" :title="audit.status ===1 ?'审核结果':'审核结果提交成功'" v-bind="modal"
+		:width="audit.status === 1?'800px':'600px'">
+			<div style="padding:0 40px" v-if="audit.status ===1">
 				<a-form-model :model="audit.form" :label-col="{ span:8}" :wrapper-col="{ span: 16}">
 					<div class="text-dangerous">*资质信息与要素信息均审核通过后，该服务商将进入已入库名单，并获得已入库服务商权限。</div>
 					<div class="common-text-subtitle" style="margin-top: 20px">资质信息审核</div>
@@ -84,8 +85,9 @@
 												:maxLength="1024" placeholder="请反馈审核不通过原因"></a-textarea>
 					</a-form-model-item>
 					<div class="common-text-subtitle" style="margin-top: 20px">要素信息审核</div>
-					<a-form-model-item label="要素信息审核结果"  v-if="audit.form.elementAudit !== 3">
-						<a-radio-group v-model="audit.form.elementAudit">
+					<a-form-model-item label="要素信息审核结果"  >
+						<span class="text-success" v-if="audit.form.elementAudit === 2">已通过</span>
+						<a-radio-group v-model="audit.form.elementAudit" v-else>
 							<a-radio :value="1" style="margin-right: 50px">通过</a-radio>
 							<a-radio :value="0">不通过</a-radio>
 						</a-radio-group>
@@ -96,9 +98,22 @@
 					</a-form-model-item>
 				</a-form-model>
 			</div>
+			<div style="height: 95px;text-align: center" v-else>
+				<a-icon type="check-circle" theme="filled" style="color: #3DBD7D;font-size: 56px;"/>
+				<div class="text-remark" style="line-height: 20px;font-size: 14px;margin-top: 12px;">
+					{{audit.status === 3
+					?'审核结果提交成功，该服务商已进入“审核未通过”列表'
+					:"审核结果提交成功，该服务商已成功入库！"}}
+				</div>
+			</div>
 			<div slot="footer" style="text-align: center">
-				<a-button type="primary" :loading="audit.loading" @click="toAuditSubmit">提交</a-button>
-				<a-button @click="toAuditCancel">取消</a-button>
+				<template v-if="audit.status ===1">
+					<a-button type="primary" :loading="audit.loading" @click="toAuditSubmit">提交</a-button>
+					<a-button @click="toAuditCancel">取消</a-button>
+				</template>
+				<router-link to="/provider/review"  v-else>
+					<a-button type="primary">返回审核列表</a-button>
+				</router-link>
 			</div>
 		</a-modal>
 	</div>
@@ -119,8 +134,8 @@
 		if(q === null && e === null) return { text:'开户待确认', code:4 };
 		if(q === 2 || e === 2) return { text:'审核未通过', code:5 };
 		if(q === 1 && e === null) return { text:'仅提交资质', code:2 };
-		if((q === 1 && (e === 1 || e === 3)) || (q === 3 && e === 1)) return { text:'待审核', code:1 };
-		if(q === 3 && e === 3) return { text:'当前服务商已入库', code:8 };
+		if((q === 1 && (e === 1 || e >= 3)) || (q >= 3 && e === 1)) return { text:'待审核', code:1 };
+		if(q >= 3 && e >= 3) return { text:'当前服务商已入库', code:8 };
 		return { text:'查询失败，请稍后重新！', code: 9 };
 	};
 
@@ -138,8 +153,10 @@
 					factor:{},
 				},
 				interview:{
+					status:false,
 					loading:false,
 					visible:false,
+					backup:{},
 					form:{
 						amountRangeDescription:"",
 						goodCaseDescription:"",
@@ -150,6 +167,8 @@
 					}
 				},
 				audit:{
+					// 审核：1-待审核 2-审核通过 3-审核未通过
+					status:1,
 					loading:false,
 					visible:false,
 					form:{
@@ -159,6 +178,8 @@
 						qualifyNotPassReason:"",
 					}
 				},
+				resultVisible: true,
+				resultStatus: 1,
 				modal:{
 					width:'800px',
 					centered:true,
@@ -177,18 +198,33 @@
 		created() {},
 		methods:{
 			toIntAdd(){
-				this.interview.visible = true;
+				this.interview.form = {
+					...this.interview.backup
+				};
+				this.$nextTick(()=>{
+					this.interview.visible = true;
+				});
 			},
 			toIntSubmit(){
 				this.interview.loading = true;
-				if(JSON.stringify(clearObject(this.interview.form)) === '{}'){
+				const {serviceUserId,...form} = this.interview.form;
+				if(JSON.stringify(clearObject(form)) === '{}'){
 					this.$message.error('请至少输入一项面谈印象');
 					this.interview.loading = false;
 				}else {
-					setTimeout(() => {
+					toReview.impression({
+						serviceUserId,
+						...form,
+					}).then(res=>{
 						this.interview.loading = false;
-						this.interview.visible = false;
-					}, 1000)
+						if(res.code === 20000){
+							this.interview.visible = false;
+							this.interview.status = true;
+							this.interview.backup = { ...form,serviceUserId };
+						}else{
+							this.$message.error('添加/编辑面谈印象失败');
+						}
+					}).catch(()=>this.interview.loading = false);
 				}
 			},
 			toIntCancel(){
@@ -210,16 +246,18 @@
 						return 	this.$message.error('请填写要素审核不通过原因');
 					}
 					const { id:serviceUserId, eid:elementId, qid:qualifyId } = this.$route.query;
-					toReview.audit({
+					toReview.audit(clearObject({
 						serviceUserId,
 						elementId,
 						qualifyId,
 						identity:this.source.identity,
 						...this.audit.form
-					}).then(res=>{
+					})).then(res=>{
 						this.audit.loading = false;
 						if(res.code === 20000){
-							this.$message.success('操作成功！')
+							this.audit.status = (elementAudit === 0 || qualifyAudit === 0) ? 3 : 2;
+						}else{
+							this.$message.error('网络请求失败，请稍后再试！');
 						}
 					})
 				}else {
@@ -239,7 +277,7 @@
 					{id:2,title:'待审查',path:'/provider/review'},
 					{id:3,title:'服务商详情页' + str,path:''},
 				]
-			}
+			},
 		},
 		mounted(){
 			const { id, eid:elementId, qid:qualifyId } = this.$route.query;
@@ -247,12 +285,30 @@
 			auditStatus(params).then(res=>{
 				if(res.code === 20000){
 					const _status = toStatus(res.data);
+					const { qualifyStatus,elementStatus} = res.data;
+					if(qualifyStatus >= 3) this.audit.form.qualifyAudit = 2;
+					if(elementStatus >= 3) this.audit.form.elementAudit = 2;
+
 					const { code, text } = _status;
 					if(code === 8 || code === 9) {
 						this.$message.error(text,1,()=> this.$route.push('/provider/review'));
 					} else {
 						toReview.detail(params).then(_res=>{
 							if(_res.code === 20000){
+								const { interviewImpression} = _res.data;
+								if(interviewImpression){
+									this.interview.status = true;
+									this.interview.form = {
+										...this.interview.form,
+										...(interviewImpression || {}),
+										serviceUserId:id,
+									};
+									this.interview.backup = {
+										...this.interview.form
+									};
+								}else{
+									this.interview.status = false;
+								}
 								this.source = processData(_res.data);
 								this.status = _status;
 								this.isLawyer = this.source.identity === 1;

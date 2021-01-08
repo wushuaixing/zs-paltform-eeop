@@ -139,6 +139,7 @@ export default {
     };
   },
   mounted() {
+		window.localStorage.clear();
     this.form = this.$refs.ruleForm;
   },
   methods: {

@@ -57,7 +57,7 @@
 					<a-space >
 						<a-button :type="!query.isReadAll ? 'primary':''" @click='handleRead()'>全部</a-button>
 						<a-button :type="query.isReadAll === 2 ? 'primary':''" @click='handleRead(2)'>只显示未读</a-button>
-						<a-button>全部标为已读</a-button>
+						<a-button @click='handleReadAll'>全部标为已读</a-button>
 					</a-space>
 					<div style="height: 10px"></div>
 				</div>
@@ -73,7 +73,7 @@
 					<template slot="auction" slot-scope="item">
 						<a-button type="link" :icon="normal.icon" @click="toLink(item)">{{normal.text}}</a-button>
 					</template>
-					<span slot="address" slot-scope="item">{{areaAnalysis(item,false)|areas|fill}}</span>
+					<span slot="address" slot-scope="item">{{areaAnalysis(item)|area|fill}}</span>
 					<span slot="workingTime" slot-scope="item">{{item|single('expOption')}}</span>
 				</a-table>
 			</div>
@@ -210,6 +210,16 @@
 			handleRead(val){
 				this.query.isReadAll = val;
 				this.handleSubmit();
+			},
+			handleReadAll(){
+				toReview.readAll({type:this.activeKey}).then(res=>{
+					if(res.code === 20000){
+						this.toQuery();
+						this.toQueryUnread();
+					}else{
+						this.$message.error('操作失败！');
+					}
+				})
 			},
 			// tab切换点击
 			handleTabChange(val){
