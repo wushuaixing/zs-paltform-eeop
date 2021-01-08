@@ -1,19 +1,37 @@
 <template>
 	<div class="frame-wrapper">
 		<Breadcrumb :source="navData" icon="environment"></Breadcrumb>
-		<div class="frame-wrapper-content">
-			<UserInfo></UserInfo>
-			<div class="custom-card-container">
-				<a-tabs type="card">
-					<a-tab-pane key="1" tab="资质信息">
-						<QualifyInfo></QualifyInfo>
-					</a-tab-pane>
-					<a-tab-pane key="2" tab="要素信息">
-						<FactorInfo></FactorInfo>
-					</a-tab-pane>
-				</a-tabs>
+		<div class="frame-wrapper-content" v-if="spinning">
+			<div style="height: 10vh;"></div>
+			<a-spin class="spin-wrapper" tip="Loading......" size="large"/>
+		</div>
+		<div class="frame-wrapper-content" v-else>
+			<UserInfo :info="source.user" :isLawyer="isLawyer" />
+			<div class="custom-card-position">
+				<div class="custom-card-container-remark">
+					<a-affix :offset-top="64">
+						<div class="custom-card-container custom-card-container_normal">
+							<a-tabs type="card" :active-key="activeKey" @change="val=>activeKey=val">
+								<a-tab-pane key="1" tab="资质信息"></a-tab-pane>
+								<a-tab-pane key="2" tab="要素信息" v-if="status.code !== 2"></a-tab-pane>
+							</a-tabs>
+						</div>
+					</a-affix>
+				</div>
+				<div class="custom-card-container">
+					<a-tabs type="card" :active-key="activeKey" @change="val=>activeKey=val">
+						<a-tab-pane key="1" tab="资质信息">
+							<LastAudit type-text="资质" :source="source.qualifyCondition"/>
+							<QualifyInfo :isLawyer="isLawyer" :source="source.qualify"/>
+						</a-tab-pane>
+						<a-tab-pane key="2" tab="要素信息" v-if="status.code !== 2">
+							<LastAudit type-text="要素" :source="source.elementCondition" />
+							<FactorInfo :isLawyer="isLawyer" :source="source.factor"/>
+						</a-tab-pane>
+					</a-tabs>
+				</div>
 			</div>
-			<a-affix :offset-bottom="0">
+			<a-affix :offset-bottom="0" v-if="status.code === 1">
 				<div class="review-audit-wrapper">
 					<a-button @click="toIntAdd">添加面谈印象</a-button>
 					<a-button type="primary" @click="toAuditAdd">添加审核结果</a-button>
@@ -91,17 +109,34 @@
 	import UserInfo from '../_common/user-info';
 	import QualifyInfo from '../_common/qualify-info';
 	import FactorInfo from '../_common/factor-info';
-	import { clearProto, clearObject } from "@/plugin/tools";
+	import LastAudit from './last-audit';
+	import { auditStatus, toReview } from "@/plugin/api/provider";
+	import { clearObject } from "@/plugin/tools";
+	import { processData } from './deploy';
+
+	// 获取当前状态
+	const toStatus = ({qualifyStatus:q,elementStatus:e}) => {
+		if(q === null && e === null) return { text:'开户待确认', code:4 };
+		if(q === 2 || e === 2) return { text:'审核未通过', code:5 };
+		if(q === 1 && e === null) return { text:'仅提交资质', code:2 };
+		if((q === 1 && (e === 1 || e === 3)) || (q === 3 && e === 1)) return { text:'待审核', code:1 };
+		if(q === 3 && e === 3) return { text:'当前服务商已入库', code:8 };
+		return { text:'查询失败，请稍后重新！', code: 9 };
+	};
 
 	export default {
 		name: 'ToReview',
 		data() {
 			return {
-				navData:[
-					{id:1,title:'服务商管理',path:'/provider/review'},
-					{id:2,title:'待审查',path:'/provider/review'},
-					{id:3,title:'服务商详情页',path:''},
-				],
+				spinning: true,
+				isLawyer:true,
+				activeKey: '1',
+				status: {},
+				source:{
+					user:{},
+					qualify:{},
+					factor:{},
+				},
 				interview:{
 					loading:false,
 					visible:false,
@@ -114,8 +149,6 @@
 						socialResourcesDescription:"",
 					}
 				},
-				loadingInterview:false,
-				visibleInterview:false,
 				audit:{
 					loading:false,
 					visible:false,
@@ -138,21 +171,11 @@
 			Breadcrumb,
 			UserInfo,
 			QualifyInfo,
-			FactorInfo
+			FactorInfo,
+			LastAudit,
 		},
-		created() {
-		},
+		created() {},
 		methods:{
-			handleSubmit(e){
-				e.preventDefault();
-				console.log(clearProto(this.interview));
-			},
-			handleTabChange(val){
-				console.log(val);
-			},
-			handleTableChange(ev){
-				console.log(ev);
-			},
 			toIntAdd(){
 				this.interview.visible = true;
 			},
@@ -171,13 +194,12 @@
 			toIntCancel(){
 				this.interview.visible = false;
 			},
-
 			toAuditAdd(){
 				this.audit.visible = true;
 			},
 			toAuditSubmit(){
 				this.audit.loading = true;
-				const { elementAudit,qualifyAudit, elementNotPassReason,qualifyNotPassReason} = this.audit.form;
+				const { elementAudit, qualifyAudit, elementNotPassReason, qualifyNotPassReason } = this.audit.form;
 				if(elementAudit !== "" || qualifyAudit !== ""){
 					if(qualifyAudit !== "" && qualifyAudit === 0 && !qualifyNotPassReason){
 						this.audit.loading = false;
@@ -187,10 +209,19 @@
 						this.audit.loading = false;
 						return 	this.$message.error('请填写要素审核不通过原因');
 					}
-					setTimeout(() => {
+					const { id:serviceUserId, eid:elementId, qid:qualifyId } = this.$route.query;
+					toReview.audit({
+						serviceUserId,
+						elementId,
+						qualifyId,
+						identity:this.source.identity,
+						...this.audit.form
+					}).then(res=>{
 						this.audit.loading = false;
-						this.audit.visible = false;
-					}, 1000)
+						if(res.code === 20000){
+							this.$message.success('操作成功！')
+						}
+					})
 				}else {
 					this.$message.error('请选择相关审核');
 					this.audit.loading = false;
@@ -201,71 +232,56 @@
 			},
 		},
 		computed:{
+			navData(){
+				const str = this.status.text ? ('-' + this.status.text) : "";
+				return [
+					{id:1,title:'服务商管理',path:'/provider/review'},
+					{id:2,title:'待审查',path:'/provider/review'},
+					{id:3,title:'服务商详情页' + str,path:''},
+				]
+			}
 		},
-	}
-</script>
-
-<style scoped lang="scss">
-
-	.qualifies-info-wrapper{
-		.info-item{
-			padding: 7px 0;
-			position: relative;
-			&_date{
-				position: absolute;
-				top: 0;
-				right: 20px;
-				text-align: left;
-				height: 20px;
-				line-height: 20px;
-				font-size: 14px;
-				color: $text-remark;
-				span{
-					font-size: 16px;
-					color: $text-title;
-				}
-			}
-			&_title{
-				border-left: 4px solid $common-base-active;
-				padding-left: 6px;
-				font-size: 16px;
-				height: 25px;
-				line-height: 25px;
-			}
-			&_subtitle{
-				font-size: 14px;
-				height: 25px;
-				line-height: 25px;
-				color: $text-title;
-			}
-			&_list{
-				margin:22px 0;
-				display: flex;
-				line-height: 25px;
-				&-title{
-					width: 33.3%;
-					font-size: 14px;
-					color: $text-title;
-					text-align: right;
-					padding-right: 10px;
-					&:after{
-						content:'：'
+		mounted(){
+			const { id, eid:elementId, qid:qualifyId } = this.$route.query;
+			const params = {id,elementId,qualifyId};
+			auditStatus(params).then(res=>{
+				if(res.code === 20000){
+					const _status = toStatus(res.data);
+					const { code, text } = _status;
+					if(code === 8 || code === 9) {
+						this.$message.error(text,1,()=> this.$route.push('/provider/review'));
+					} else {
+						toReview.detail(params).then(_res=>{
+							if(_res.code === 20000){
+								this.source = processData(_res.data);
+								this.status = _status;
+								this.isLawyer = this.source.identity === 1;
+								this.spinning = false;
+							}else{
+								this.$message.error('网络异常,12312321313123123')
+							}
+						})
 					}
+				}else{
+					// this.$message.error('网络请求错误',1,()=> this.$route.push('/provider/review'));
 				}
-				&-content{
-					flex: 1;
-					color: $text-content;
-					.remark{
-						display: block;
-						font-size: 12px;
-						color: $text-remark;
-					}
-				}
-			}
+			})
 		}
 	}
-</style>
-<style lang="scss">
+</script>
+<style lang="scss" scoped>
+	.custom-card-position{
+		position: relative;
+		.custom-card-container-remark{
+			position: absolute;
+			z-index: 1;
+			top: 0;
+			width: 100%;
+		}
+		.custom-card-container_normal .ant-tabs-tabpane{
+			padding: 0;
+		}
+	}
 	.review-audit-wrapper{
 		text-align: center;
 		padding: 15px;

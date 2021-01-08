@@ -56,13 +56,13 @@ Vue.filter('multi',(val,field,remark = '',)=>{
 
 Vue.filter('single',(val,field)=>{
 	if(!field) return val;
-	if(!val) return val;
+	if(val === null || val === undefined || val === '') return val;
 	const _data = source[field] || [];
 	let result = '';
-	_data.forEach(item=>{ if(item.value.toString() === val) result = item.label; });
+	_data.forEach(item=>{ if(item.value === val.toString()) result = item.label; });
 	return result;
 });
-
+Vue.filter('fill', val=>!val ? '-' : val);
 
 // 地区省市区展示
 const areaArray = val=>{
@@ -88,6 +88,7 @@ Vue.filter('area',value=>{
 });
 
 Vue.filter('areas',data=>{
+	if(!data) return '';
 	if(data.length && Array.isArray(data)){
 		return data.map(i=>areaArray(i)).join('、');
 	}

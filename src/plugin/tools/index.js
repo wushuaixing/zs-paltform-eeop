@@ -88,15 +88,18 @@ export const fileListRuleAsync = (str) => {
  * 获取fileList
  * @param str
  */
-export const fileListRule = (str)=>{
-	if(!str) return [];
-	const source = str.split(';');
-	if(source.length) return source.map(i=>({
-		uid: ranStr(8),
-		status: 'done',
-		name:i,
-		url: i,
-	}))
+export const fileListRule = (str) => {
+	if (!str) return [];
+	try {
+		if (!Array.isArray(JSON.parse(str))) return [];
+		return JSON.parse(str).map(i => ({
+			...i,
+			status: 'done',
+		}))
+	}catch (e) {
+		return [];
+	}
+
 };
 
 /**
@@ -137,7 +140,7 @@ export const getArea = (provinceCode, cityCode, areaCode) => {
  * @param single
  */
 export const areaAnalysis = (str, single = true) => {
-	if (!str) return [];
+	if (!str) return '';
 	const _str = (str || '').split(',').filter(i => i);
 	return single ? _str : _str.map(i => i.split('/').filter(i => i));
 };

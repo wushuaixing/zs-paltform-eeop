@@ -1,9 +1,10 @@
 /**
  * 返回 tab 相应table-columns
  * @param type
+ * @param sortOrder
  * @returns {*[]}
  */
-export const columns = (type = '1') =>{
+export const columns = ({ type = 1, sortOrder}) =>{
 	// 基础列表
 	const baseColumns = [
 		{
@@ -13,20 +14,20 @@ export const columns = (type = '1') =>{
 		},
 		{
 			title: '联系方式',
-			dataIndex: 'age',
-			key: 'age',
+			dataIndex: 'phone',
+			key: 'phone',
 			customRender:val=>val || '-',
 		},
 		{
 			title: '服务商类型',
-			dataIndex: 'address',
-			key: 'address 1',
+			dataIndex: 'identity',
+			key: 'identity',
 			customRender:(val)=> (val && (val === '1' ? '律师' : '机构')) || '-',
 		},
 		{
 			title: '机构名称/挂靠律师',
-			dataIndex: 'address',
-			key: 'address 2',
+			dataIndex: 'orgOfficeName',
+			key: 'orgOfficeName',
 			customRender:val=>val || '-',
 		},
 	];
@@ -35,50 +36,55 @@ export const columns = (type = '1') =>{
 		slots: { title: 'customAuction' },
 		scopedSlots: { customRender: 'auction' },
 	};
-	if(type === '1'){
+	if(type === 1){
 		return [
 			...baseColumns,
 			{
 				title: '擅长业务区域',
-				dataIndex: 'address',
-				key: 'address 3',
-				customRender:val=>val || '-',
+				dataIndex: 'areasOfGoodCases',
+				key: 'address3',
+				scopedSlots: { customRender: 'address' },
 			},
 			{
 				title: '合作意向',
-				dataIndex: 'address',
-				key: 'address 31',
+				dataIndex: 'cooperationIntention',
+				key: 'address31',
 				customRender:val=>val || '-',
 			},
 			{
 				title: '入库时间',
-				sort:true,
-				dataIndex: 'workingTime',
-				key: 'address 41',
-				scopedSlots: { customRender: 'workingTime' },
-			},
-			auction
-		];
-	}
-	if(type === '2'){
-		return [
-			...baseColumns,
-			{
-				title: '资质修改提交日期',
-				dataIndex: 'address',
-				key: 'address 42',
+				sort: true,
+				sortOrder: sortOrder || false,
+				dataIndex: 'elementConfirmDate',
+				key: 'address41',
 				customRender:val=>val || '-',
 			},
 			auction
 		];
 	}
-	if(type === '3'){
+	if(type === 2){
+		return [
+			...baseColumns,
+			{
+				title: '资质修改提交日期',
+				sort: true,
+				sortOrder: sortOrder || false,
+				dataIndex: 'elementConfirmDate',
+				key: 'address41',
+				customRender:val=>val || '-',
+			},
+			auction
+		];
+	}
+	if(type === 3){
 		return [
 			...baseColumns,
 			{
 				title: '要素修改提交日期',
-				dataIndex: 'address',
-				key: 'address 42',
+				sort: true,
+				sortOrder: sortOrder || false,
+				dataIndex: 'elementConfirmDate',
+				key: 'address41',
 				customRender:val=>val || '-',
 			},
 			auction

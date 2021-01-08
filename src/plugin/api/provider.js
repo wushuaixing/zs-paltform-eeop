@@ -1,5 +1,8 @@
 import request from "@/plugin/tools/request";
 
+// 查询审核状态
+export const auditStatus = params => request.post('/operator/serviceUserManage/quaEndEleAuditStatus',params);
+
 // 待审查
 export const toReview = {
 	// 添加审核结果
@@ -15,14 +18,22 @@ export const toReview = {
 	// 待审查--全部标记已读
 	readAll:params => request.post('/operator/serviceUserManage/review/readAll',params),
 	// 查询服务商管理-待审查模块的未读标志
-	unreadInfo:params => request.post('/operator/serviceUserManage/review/unreadInfo',params),
+	unreadInfo:() => request.get('/operator/serviceUserManage/review/unreadInfo'),
 };
+
 // 已入库
 export const beStorage = {
-// 	查询服务商管理-待审查模块的未读标志
-// 	待审查——服务商详情
-// 保存/更新面谈印象
-// 待审查--列表页
-// 待审查--点击标记已读
-// 添加合作印象
+	// 添加合作印象
+	impression:params => request.post('/operator/serviceUserManager/storage/addCooImpression',params),
+	// 已入库——资质/要素修改审核
+	audit:params => request.post('/operator/serviceUserManager/storage/audit',params),
+	// 已入库服务商-->列表
+	list:params => request.post('/operator/serviceUserManager/storage/findAll',params),
+	// 修改资质未读、要素修改未读
+	unreadInfo:params => request.get('/operator/serviceUserManager/storage/findUnRead',params),
+	// 已入库--点击标记已读
+	read:params => request.post('/operator/serviceUserManager/storage/read',params),
+	// 已入库——服务商画像详情
+	detail:params => request.post('/operator/serviceUserManager/storage/detail',params),
+
 };

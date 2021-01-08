@@ -63,87 +63,87 @@
 	import FileList from '@/components/file-list';
 	import noFinished from '@/assets/img/no-finished.png';
 
-	const _dataSource = {
-		lawData: {
-			area: "11,1101,110101",
-			areasOfGoodCases: "擅长业务区域",
-			badAssetsWorkExp: "执业经历（不良）",
-			competentCourt: "主要代理案件管辖法院",
-			familiarCourts: "熟悉法院",
-			formerWorkUnit: "曾就业律所",
-			graduateSchool: "毕业院校",
-			isInStorage: "1",
-			isWorkOfPublicSecurityOrgans: "1",
-			isWorkOther: "1",
-			major: "专业",
-			notBadAssetsWorkExp: "执业经历（非不良）",
-			otherGoodCases: "擅长其他业务类型",
-			otherResources: '1,4',
-			otherResourcesAdvantage: "其他社会资源优势",
-			workArea: "14,14/1404",
-			workRole: "兼职/任职职务",
-			workUnitName: "兼职任职单位",
-			workingTime: "2",
-			goodCases: '1,3,5',
-			otherResourcesDetail: '其他资源补充',
-			cooperatedAmc: '1,3',
-			cooperatedAmcDetail: "具体合作AMC",
-			cooperationIntention: '1,3,4,5,6,7,',
-			cooperationSituation: "其他AMC合作情况",
-			isCooperatedWithOtherAmc: "1",
-			isCooperatedWithZheshang: "1",
-			isCooperatedWithZheshangDetail: "是否曾于浙商合作补充",
-			once_col: "历史清收情况",
-			otherCooperationIntention: "合作意向补充",
-			typeOfCooperationCode: '1,3',
-			officeData: {
-				hasOtherOffice: "1",
-				isWorkForThreeYear: "1",
-				lawOfficeAddress: "律所地址",
-				lawOfficeInformation: "律所简介",
-				lawOfficeName: "律所名称",
-				lawOfficeQualify: "律所资质",
-				lawOfficeQualifyPerformance: "律所业绩介绍",
-				lawOfficeType: "1",
-				officeWorkAddress: "15/1505/150523",
-				otherOfficeStaffInfo: "分所人员情况",
-				otherOfficeWorkAddress: "15",
-				roleInLawOffice: "1",
-				totalTeamSize: "3434",
-			},
-		},
-		orgData: {
-			areasOfGoodCases: "13,14,15", //擅长业务区域
-			branchOfficeAddress: "15/1505",//分布地区
-			goodCases: "0,1,2,4,3", //擅长业务类型
-			hasInvestmentBankExperience: "1", //是否有投行项目经验
-			hasInvestmentIntention: "1", //是否有投资意向
-			headOfficeAddress: "11,1101,110101", //机构总部所在地
-			investmentArea: "11,1101,110101", //投资区域
-			investmentBankProjectCase: "423423",//历史投行项目案例
-			investmentExperience: "423423423", //以往投资经历
-			investmentPreferenceType: "1,5,9,4", //投资偏好类型
-			numberOfCompany: 432423, //公司总人数
-			numberOfTeams: 432423, //团队数
-			organizationInformation: "workingTime",//机构简介
-			organizationalStructureInformation: "423432",//组织架构描述
-			otherGoodCases: "432423",//擅长的其他业务类型
-			otherMasterSubject: "423432",//所控制的其他主体
-			otherResourcesAdvantage: "423432432",//其他社会资源优势
-			totalTeamSize: 423432,//团队总人数
-			workingTime: "0",//从业时间
-			cooperatedAmc: '1,3',
-			cooperatedAmcDetail: "具体合作AMC",
-			cooperationIntention: '1,3,4,5,6,7,',
-			cooperationSituation: "其他AMC合作情况",
-			isCooperatedWithOtherAmc: "1",
-			isCooperatedWithZheshang: "1",
-			isCooperatedWithZheshangDetail: "是否曾于浙商合作补充",
-			once_col: "历史清收情况",
-			otherCooperationIntention: "合作意向补充",
-			typeOfCooperationCode: '1,3',
-		},
-	};
+	// const _dataSource = {
+	// 	lawData: {
+	// 		area: "11,1101,110101",
+	// 		areasOfGoodCases: "擅长业务区域",
+	// 		badAssetsWorkExp: "执业经历（不良）",
+	// 		competentCourt: "主要代理案件管辖法院",
+	// 		familiarCourts: "熟悉法院",
+	// 		formerWorkUnit: "曾就业律所",
+	// 		graduateSchool: "毕业院校",
+	// 		isInStorage: "1",
+	// 		isWorkOfPublicSecurityOrgans: "1",
+	// 		isWorkOther: "1",
+	// 		major: "专业",
+	// 		notBadAssetsWorkExp: "执业经历（非不良）",
+	// 		otherGoodCases: "擅长其他业务类型",
+	// 		otherResources: '1,4',
+	// 		otherResourcesAdvantage: "其他社会资源优势",
+	// 		workArea: "14,14/1404",
+	// 		workRole: "兼职/任职职务",
+	// 		workUnitName: "兼职任职单位",
+	// 		workingTime: "2",
+	// 		goodCases: '1,3,5',
+	// 		otherResourcesDetail: '其他资源补充',
+	// 		cooperatedAmc: '1,3',
+	// 		cooperatedAmcDetail: "具体合作AMC",
+	// 		cooperationIntention: '1,3,4,5,6,7,',
+	// 		cooperationSituation: "其他AMC合作情况",
+	// 		isCooperatedWithOtherAmc: "1",
+	// 		isCooperatedWithZheshang: "1",
+	// 		isCooperatedWithZheshangDetail: "是否曾于浙商合作补充",
+	// 		once_col: "历史清收情况",
+	// 		otherCooperationIntention: "合作意向补充",
+	// 		typeOfCooperationCode: '1,3',
+	// 		officeData: {
+	// 			hasOtherOffice: "1",
+	// 			isWorkForThreeYear: "1",
+	// 			lawOfficeAddress: "律所地址",
+	// 			lawOfficeInformation: "律所简介",
+	// 			lawOfficeName: "律所名称",
+	// 			lawOfficeQualify: "律所资质",
+	// 			lawOfficeQualifyPerformance: "律所业绩介绍",
+	// 			lawOfficeType: "1",
+	// 			officeWorkAddress: "15/1505/150523",
+	// 			otherOfficeStaffInfo: "分所人员情况",
+	// 			otherOfficeWorkAddress: "15",
+	// 			roleInLawOffice: "1",
+	// 			totalTeamSize: "3434",
+	// 		},
+	// 	},
+	// 	orgData: {
+	// 		areasOfGoodCases: "13,14,15", //擅长业务区域
+	// 		branchOfficeAddress: "15/1505",//分布地区
+	// 		goodCases: "0,1,2,4,3", //擅长业务类型
+	// 		hasInvestmentBankExperience: "1", //是否有投行项目经验
+	// 		hasInvestmentIntention: "1", //是否有投资意向
+	// 		headOfficeAddress: "11,1101,110101", //机构总部所在地
+	// 		investmentArea: "11,1101,110101", //投资区域
+	// 		investmentBankProjectCase: "423423",//历史投行项目案例
+	// 		investmentExperience: "423423423", //以往投资经历
+	// 		investmentPreferenceType: "1,5,9,4", //投资偏好类型
+	// 		numberOfCompany: 432423, //公司总人数
+	// 		numberOfTeams: 432423, //团队数
+	// 		organizationInformation: "workingTime",//机构简介
+	// 		organizationalStructureInformation: "423432",//组织架构描述
+	// 		otherGoodCases: "432423",//擅长的其他业务类型
+	// 		otherMasterSubject: "423432",//所控制的其他主体
+	// 		otherResourcesAdvantage: "423432432",//其他社会资源优势
+	// 		totalTeamSize: 423432,//团队总人数
+	// 		workingTime: "0",//从业时间
+	// 		cooperatedAmc: '1,3',
+	// 		cooperatedAmcDetail: "具体合作AMC",
+	// 		cooperationIntention: '1,3,4,5,6,7,',
+	// 		cooperationSituation: "其他AMC合作情况",
+	// 		isCooperatedWithOtherAmc: "1",
+	// 		isCooperatedWithZheshang: "1",
+	// 		isCooperatedWithZheshangDetail: "是否曾于浙商合作补充",
+	// 		once_col: "历史清收情况",
+	// 		otherCooperationIntention: "合作意向补充",
+	// 		typeOfCooperationCode: '1,3',
+	// 	},
+	// };
 
 	const formItemLayout =  {
 		labelCol: { span: 6 },
@@ -298,7 +298,7 @@
 				const _source = source || this.dataSource || {};
 				const value = _source[field];
 				const _other = (other ? _source[other] : '') || unit;
-				return f ? f(value,_other,origin) : value;
+				return f ? f(value,origin,_other) : value;
 			},
 			// 是否展示元素
 			toShow(item,source){
@@ -312,7 +312,7 @@
 		},
 		computed:{
 			dataSource(){
-				return this.source || _dataSource.lawData;
+				return this.source || {};
 			},
 			officeData(){
 				const data = this.source || {};
