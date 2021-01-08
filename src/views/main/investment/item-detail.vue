@@ -1,8 +1,8 @@
 <template>
-  <div class="investment-block">
+  <div class="investment-detail-block">
     <Breadcrumb :source="navData" icon="environment" />
     <div class="detail-wrapper">
-      <h2>基本信息</h2>
+      <h2 class="title1">基本信息</h2>
       <div class="detail-conten">
         <!-- 债权基本信息-->
         <div>
@@ -25,7 +25,7 @@
               资产包名称：<span>{{ detailInfo.assetPackage }}</span>
             </a-col>
             <a-col :span="8">
-              资产包收购时间：<span>{{ detailInfo.capitalPurchaseTime }}</span>
+              资产包收购时间：<span>{{ detailInfo.capitalPurchaseTime|show_ }}</span>
             </a-col>
             <a-col :span="8">
               担保方式：<span>{{ detailInfo.security|guarantyType}}</span>
@@ -46,9 +46,9 @@
             </a-col>
           </a-row>
           <div class="guarantee">
-            <p>抵押物类型：</p>
+            抵押物类型：
             <div>
-              <p v-for="(i, index) in detailInfo.amcProjectCollaterals" :key="index">
+              <p style="margin:0" v-for="(i, index) in detailInfo.amcProjectCollaterals" :key="index">
                 {{index+1}}. {{i.collateralType|collateralType}}、{{i|area}}、{{i.collateralName}}
               </p>
             </div>
@@ -61,24 +61,24 @@
               项目经理：<span>{{ detailInfo.projectManager }}</span>
             </a-col>
             <a-col :span="8">
-              联系方式：<span>{{ detailInfo.contact }}</span>
+              联系方式：<span>{{ detailInfo.contact|show_ }}</span>
             </a-col>
           </a-row>
         </div>
         <!--项目招商信息-->
         <div>
-          <h3 class="title2">项目招商信息</h3>
+          <h3 @click="showModal" class="title2">项目招商信息 <a-icon type="form" /></h3>
           <a-row type="flex">
             <a-col :span="8">
-              报名截止日期：<span>{{ detailInfo.deadline }}</span>
+              报名截止日期：<span>{{ detailInfo.deadline|show_ }}</span>
             </a-col>
             <a-col :span="8">
-              方案提交截止日期：<span>{{ detailInfo.submitDeadline }}</span>
+              方案提交截止日期：<span>{{ detailInfo.submitDeadline|show_ }}</span>
             </a-col>
           </a-row>
           <a-row type="flex">
             <a-col :span="8">
-              期限上限：<span>{{ detailInfo.targetYearUpperLimit }}</span>
+              期限上限：<span>{{ detailInfo.targetYearUpperLimit|show_ }}个月</span>
             </a-col>
             <a-col :span="8">
               目标回款金额下限：<span>{{
@@ -92,18 +92,18 @@
           <h3 class="title2">债权清收情况</h3>
           <a-row type="flex">
             <a-col :span="8">
-              是否有代理律师：<span>{{ detailInfo.isHaveProxyLawyer }}</span>
+              是否有代理律师：<span>{{ detailInfo.isHaveProxyLawyer|show_ }}</span>
             </a-col>
             <a-col :span="8">
-              代理律师联系方式：<span>{{ detailInfo.proxyLawyerContact }}</span>
+              代理律师联系方式：<span>{{ detailInfo.proxyLawyerContact|show_ }}</span>
             </a-col>
             <a-col :span="8">
-              代理截止日期：<span>{{ detailInfo.proxyLimit }}</span>
+              代理截止日期：<span>{{ detailInfo.proxyLimit|show_ }}</span>
             </a-col>
           </a-row>
           <a-row type="flex">
             <a-col :span="8">
-              代理律师姓名：<span>{{ detailInfo.proxyLawyerName }}</span>
+              代理律师姓名：<span>{{ detailInfo.proxyLawyerName|show_ }}</span>
             </a-col>
           </a-row>
           <div class="creditor-condition">
@@ -145,62 +145,131 @@
         </div>
         <!--报名服务商列表-->
         <div>
-          <h3 class="title2">报名服务商列表</h3>
-          <a-table v-bind="tableSource.applyServeTable" @change="applyServeTableChange">
-            <template slot="name" slot-scope="name">
-              <a-button type="link">{{ name }}</a-button>
-            </template>
-            <template slot="phone" slot-scope="phone">{{ phone }}</template>
-            <template slot="identity" slot-scope="identity">{{identity|identityType}}</template>
-            <template slot="orgOfficeName" slot-scope="orgOfficeName">
-              <a-button type="link">{{orgOfficeName}}</a-button>
-            </template>
-            <template slot="workingTime" slot-scope="workingTime">{{workingTime|workingTimeText}}</template>
-            <template slot="areasOfGoodCases" slot-scope="areasOfGoodCases">{{areasOfGoodCases}}</template>
-            <template slot="goodCases" slot-scope="goodCases">{{goodCases|goodCasesType}}</template>
-            <template slot="applyDate" slot-scope="applyDate">{{applyDate}}</template>
-            <template slot="gmtModify" slot-scope="gmtModify">{{gmtModify}}</template>
-            <template slot="caseFileStatus" slot-scope="caseFileStatus">
-              <div :style="{color:caseFileStatus===1?'#008CB0':''}">{{caseFileStatus|caseFileText}}</div>
-            </template>
-          </a-table>
+          <h3 class="title-table">报名服务商列表</h3>
+          <div class="table-block">
+            <a-table v-bind="tableSource.applyServeTable" @change="applyServeTableChange">
+              <template slot="name" slot-scope="name,row">
+                <a-button type="link" @click="goAvatar(row.id)">{{ name|show_ }}</a-button>
+              </template>
+              <template slot="phone" slot-scope="phone">{{ phone|show_ }}</template>
+              <template slot="identity" slot-scope="identity">{{identity|identityType}}</template>
+              <template slot="orgOfficeName" slot-scope="orgOfficeName,row">
+                <a-button v-if="orgOfficeName" type="link" @click="goAvatar(row.id)">{{orgOfficeName}}</a-button>
+                <div v-else>-</div>
+              </template>
+              <template slot="workingTime" slot-scope="workingTime">{{workingTime|workingTimeText}}</template>
+              <template slot="areasOfGoodCases" slot-scope="areasOfGoodCases">{{areasOfGoodCases|show_}}</template>
+              <template slot="goodCases" slot-scope="goodCases">{{goodCases|goodCasesType}}</template>
+              <template slot="applyDate" slot-scope="applyDate">{{applyDate|show_}}</template>
+              <template slot="gmtModify" slot-scope="gmtModify">{{gmtModify|show_}}</template>
+              <template slot="caseFileStatus" slot-scope="caseFileStatus">
+                <div :style="{color:caseFileStatus===1?'#008CB0':''}">{{caseFileStatus|caseFileText}}</div>
+              </template>
+            </a-table>
+          </div>
         </div>
         <!--服务商提交方案列表-->
         <div>
-          <h3 class="title2">服务商提交方案列表</h3>
+          <h3 class="title-table">服务商提交方案列表</h3>
           <a-radio-group @change="changType" v-model="params.caseType" style="margin-bottom: 16px">
-            <a-radio-button :value="1"> 有效方案1 </a-radio-button>
+            <a-radio-button :value="1"> 有效方案 </a-radio-button>
             <a-radio-button :value="2"> 末通过系统筛选2 </a-radio-button>
           </a-radio-group>
-          <a-table v-bind="tableSource.submitPlanTable" @change="submitPlanTableChange">
-            <template slot="gmtCreate" slot-scope="gmtCreate">{{gmtCreate}}</template>
-            <template slot="name" slot-scope="name">
-              <a-button type="link">{{ name }}</a-button>
-            </template>
-            <template slot="phone" slot-scope="phone">{{phone}}</template>
-            <template slot="identity" slot-scope="identity">{{identity|identityType}}</template>
-            <template slot="orgOfficeName" slot-scope="orgOfficeName">
-              <a-button type="link">{{orgOfficeName}}</a-button>
-            </template>
-            <template slot="serviceTime" slot-scope="serviceTime">{{serviceTime}}</template>
-            <template slot="aimBackPrice" slot-scope="aimBackPrice">{{aimBackPrice|amountTh}}</template>
-            <template slot="scheduleManagements" slot-scope="scheduleManagements">
-              <div >
-                <p v-for="(item,index) in scheduleManagements" :key="index">{{item.dateMonth}}个月内完成{{item.dateMatters}}</p>
-              </div>
-            </template>
-            <template slot="caseFileAddress" slot-scope="caseFileAddress">{{caseFileAddress}}</template>
-          </a-table>
+          <div class="table-block">
+            <a-table v-bind="tableSource.submitPlanTable" @change="submitPlanTableChange">
+              <template slot="gmtCreate" slot-scope="gmtCreate">{{gmtCreate|show_}}</template>
+              <template slot="name" slot-scope="name,row">
+                <a-button type="link" @click="goAvatar(row.id)">{{ name }}</a-button>
+              </template>
+              <template slot="phone" slot-scope="phone">{{phone|show_}}</template>
+              <template slot="identity" slot-scope="identity">{{identity|identityType}}</template>
+              <template slot="orgOfficeName" slot-scope="orgOfficeName,row">
+                <a-button v-if="orgOfficeName" type="link" @click="goAvatar(row.id)">{{orgOfficeName}}</a-button>
+                <div v-else>-</div>
+              </template>
+              <template slot="serviceTime" slot-scope="serviceTime,row">
+                <div>{{serviceTime|show_}}个月</div>
+                <div v-if="row.serviceTimeInvalid===1" class="tag">未达标</div>
+              </template>
+              <template slot="aimBackPrice" slot-scope="aimBackPrice,row">
+                <div>{{aimBackPrice|amountTh}}</div>
+                <div v-if="row.aimBackPriceInvalid===1" class="tag">未达标</div>
+              </template>
+              <template slot="scheduleManagements" slot-scope="scheduleManagements,row">
+                <div :class="exhibit === row.id ? 'plans' : 'plan'" >
+                  <p v-for="(item,index) in scheduleManagements" :key="index">{{item.dateMonth}}个月内完成{{item.dateMatters}}</p>
+                </div>
+                <span style="color: #008CB0; margin-left: 60%" @click="bit(row)" v-if="scheduleManagements.length >= 4" >{{exhibit === row.id ? '收起' :'展开'}}</span>
+              </template>
+              <template slot="caseFileAddress" slot-scope="caseFileAddress">
+                <div v-if="caseFileAddress"><a href="#">服务方案.pdf</a></div>
+                <div v-else>-</div>
+              </template>
+            </a-table>
+          </div>
         </div>
       </div>
     </div>
+    <div>
+    <!-- 修改项目招商信息弹窗 -->
+    <a-modal 
+      v-model="visible" 
+      title="修改项目招商信息" 
+      @ok="handleOk" 
+      dialogClass="edit-modal"
+      :centered="true" 
+      :maskClosable="false"
+    >
+      <a-form-model 
+        :model="editInfo" 
+        :label-col="labelCol"
+        ref="ruleForm"
+        :wrapper-col="wrapperCol"
+        :rules="rules"
+      >
+        <a-form-model-item label="报名截止日期" prop="signDeadline">
+          <a-date-picker
+            class="editIpt"
+            valueFormat="YYYY-MM-DD"
+            v-model="editInfo.signDeadline"
+            :disabled-date="disabledDate"
+            :disabled="editInfo.signDeadline >= $moment().format('YYYY-MM-DD')?false:true"
+          />
+        </a-form-model-item>
+        <a-form-model-item label="方案提交截止日期" prop="submitDeadline" >
+          <a-date-picker
+            class="editIpt"
+            valueFormat="YYYY-MM-DD"
+            v-model="editInfo.submitDeadline"
+            :disabled-date="disabledDate"
+          />
+        </a-form-model-item>
+        <a-form-model-item label="期限上限" prop="dateLimit">
+          <div class="editIpt">
+            <a-input-number class="numberIpt"  v-model="editInfo.dateLimit" :min="1"/>
+            <span>个月</span>
+          </div>
+        </a-form-model-item>
+        <a-form-model-item label="目标回款金额下限" prop="aimedPriceBack">
+           <div class="editIpt">
+             <a-input-number class="numberIpt" v-model="editInfo.aimedPriceBack" :min="1"  :precision="2"/>
+             <span>万元</span>
+           </div>
+        </a-form-model-item>
+      </a-form-model>
+    </a-modal>
+  </div>
   </div>
 </template>
 
 <script>
-import {projectDetail,signService,serviceCaseSubmit} from "@/plugin/api/investment-center"
+import {projectDetail,signService,serviceCaseSubmit,updateProjectInfo} from "@/plugin/api/investment-center";
 import {collateralTypeData} from "./source"
 import {getArea} from "@/plugin/tools"
+import Breadcrumb from "@/components/bread-crumb";
+import Vue from "vue"
+import moment from "moment"
+Vue.prototype.$moment = moment;
 //报名服务商表数据
 const columns = [
   {
@@ -331,17 +400,54 @@ const navData = [
   { id: 2, title: "招商项目管理", path: "/investment/list" },
   { id: 2, title: "招商项目详情", path: "" },
 ];
-import Breadcrumb from "@/components/bread-crumb";
 export default {
   name: "ItemDetail",
   data() {
     return {
+      exhibit:false,
+      visible:false,
+      labelCol: { span: 8 },
+      wrapperCol: { span: 14 },
       navData,
+      editInfo:{
+        aimedPriceBack: '',
+        dateLimit: '',
+        id: this.$route.query.id,
+        signDeadline: '',
+        submitDeadline: ''
+      },
+      rules:{
+        aimedPriceBack:[
+          {
+            required:true,
+            message:"请输入回款金额下限",
+          }
+        ],
+        dateLimit:[
+          {
+            required:true,
+            message:"请输入期限上限",
+
+          }
+        ],
+        signDeadline:[
+          {
+            required:true,
+            message:"请选择报名截止日期"
+          }
+        ],
+        submitDeadline:[
+          {
+            required:true,
+            message:"请选择方案提交截止日期"
+          }
+        ]
+      },
       params:{
         caseType: 1,
         debtor: "",
         endDate: "",
-        id: "",
+        id: this.$route.query.id,
         page: 1,
         size: 10,
         sortField: 0,
@@ -471,7 +577,7 @@ export default {
               bidId: 0,
               caseFileAddress: "www.baidu.com",
               gmtCreate: "2021-01-05",
-              id: 0,
+              id: 1,
               identity: 0,
               name: "武帅兴",
               orgOfficeName: "小米",
@@ -484,6 +590,30 @@ export default {
                   dateDay: "",
                   dateMatters: "短信催收",
                   dateMonth: 1,
+                  gmtCreate: "",
+                  gmtDelete: "",
+                  gmtModify: "",
+                  id: 0,
+                  isDelete: "",
+                },
+                {
+                  amcBidId: 0,
+                  amcServiceUserId: 0,
+                  dateDay: "",
+                  dateMatters: "短信催收",
+                  dateMonth: 1,
+                  gmtCreate: "",
+                  gmtDelete: "",
+                  gmtModify: "",
+                  id: 0,
+                  isDelete: "",
+                },
+                {
+                  amcBidId: 0,
+                  amcServiceUserId: 0,
+                  dateDay: "",
+                  dateMatters: "暴力催收",
+                  dateMonth: 2,
                   gmtCreate: "",
                   gmtDelete: "",
                   gmtModify: "",
@@ -512,25 +642,13 @@ export default {
               bidId: 0,
               caseFileAddress: "www.baidu.com",
               gmtCreate: "2021-01-05",
-              id: 0,
+              id: 2,
               identity: 0,
               name: "王千岁",
               orgOfficeName: "美团",
               phone: "543456",
               projectId: 0,
               scheduleManagements: [
-                {
-                  amcBidId: 0,
-                  amcServiceUserId: 0,
-                  dateDay: "",
-                  dateMatters: "暴力催收",
-                  dateMonth: 1,
-                  gmtCreate: "",
-                  gmtDelete: "",
-                  gmtModify: "",
-                  id: 0,
-                  isDelete: "",
-                },
                 {
                   amcBidId: 0,
                   amcServiceUserId: 0,
@@ -542,7 +660,7 @@ export default {
                   gmtModify: "",
                   id: 0,
                   isDelete: "",
-                }
+                },
               ],
               serviceTime: 0,
               serviceTimeInvalid: 0,
@@ -560,13 +678,36 @@ export default {
     };
   },
   methods: {
+    bit(val){
+      if(this.exhibit === val.id){
+        this.exhibit = false
+        return false
+      }
+      this.exhibit = val.id
+      console.log(val)
+    },
+    //获取项目基本信息
+    getProjectDetail(){
+      projectDetail(this.params.id).then(res=>{
+        console.log(res);
+        if(res.code === 20000){
+          this.editInfo.aimedPriceBack = res.data.targetAmountLowerLimit;
+          this.editInfo.dateLimit = res.data.targetYearUpperLimit;
+          this.editInfo.signDeadline = res.data.deadline;
+          this.editInfo.submitDeadline = res.data.submitDeadline;
+          this.detailInfo = res.data;
+        }else{
+          console.log('error...');
+        }
+      });
+    },
     //获取报名服务商列表
     getSignServiceList(){
       signService(this.params).then(res=>{
         console.log(res);
         if(res.code === 20000){
-          this.tableSource.applyServeTable.pagination.total = res.data.total
-          // this.tableSource.applyServeTable.dataSource = res.data.list;
+          this.tableSource.applyServeTable.pagination.total = res.data.total;
+          this.tableSource.applyServeTable.dataSource = res.data.list;
         }else{
           this.$message.error("获取报名服务商列表失败,请重新加载")
         }
@@ -578,7 +719,7 @@ export default {
         console.log(res);
         if(res.code === 20000){
           this.tableSource.submitPlanTable.pagination.total = res.data.total;
-          // this.tableSource.submitPlanTable.dataSource = res.data.list;
+          this.tableSource.submitPlanTable.dataSource = res.data.list;
         }else{
           this.$message.error("获取服务商提交方案列表失败,请重新加载")
         }
@@ -587,6 +728,9 @@ export default {
     //有效方案&未通过系统筛选切换
     changType(){
       this.getServiceCaseSubmitList();
+    },
+    goAvatar(v){
+      console.log(v);
     },
     //报名服务商列表分页,排序操作
     applyServeTableChange(pagination, filters, sorter){
@@ -611,9 +755,39 @@ export default {
           : "DESC"
         : "";
       this.getServiceCaseSubmitList();
+    },
+    disabledDate(current) {
+      return current && current < this.$moment().subtract(1, "days");
+    },
+    showModal(){
+      this.visible = true;
+    },
+    handleOk(){
+      this.$refs.ruleForm.validate( validate => {
+        if(validate) {
+          updateProjectInfo(this.editInfo).then(res=>{
+            if(res.code === 20000) {
+              this.$message.success("修改成功")
+              this.visible = false;
+              this.getProjectDetail()
+              this.getServiceCaseSubmitList()
+              this.getSignServiceList()
+            }else{
+              this.$message.error("修改失败")
+            }
+          })
+        }else{
+          return false;
+        }
+      })
     }
   },
   filters:{
+    //没有值展示'-'
+    show_(val){
+      if(!val)return '-';
+      return val;
+    },
     guarantorsList: (arr = []) => {
       return arr.map((i) => i.guarantorName).join("、");
     },
@@ -661,15 +835,7 @@ export default {
     Breadcrumb,
   },
   created() {
-    this.params.id = this.$route.query.id;
-    projectDetail(this.params.id).then(res=>{
-      console.log(res);
-      if(res.code === 20000){
-        this.detailInfo = res.data;
-      }else{
-        console.log('error...');
-      }
-    });
+    this.getProjectDetail();
     this.getSignServiceList();
     this.getServiceCaseSubmitList();
   },
@@ -677,7 +843,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.investment-block{
+.investment-detail-block{
   padding: 16px;
   .detail-wrapper {
     padding: 16px;
@@ -687,6 +853,14 @@ export default {
       .title2 {
         margin-top: 24px;
         font-weight: bold;
+        color: #333333;
+        font-size: 14px;
+      }
+      .title-table{
+        margin-top: 24px;
+        font-weight: bold;
+        color: #333333;
+        font-size: 16px;
       }
       .ant-row-flex {
         padding-left: 8px;
@@ -715,9 +889,121 @@ export default {
       }
     }
   }
+  //我添加的样式
+  .plans{
+    white-space: nowrap;
+    overflow:hidden;
+    p{
+      margin: 0;
+      width: 200px;
+      overflow: hidden;
+      white-space: pre-wrap;
+    }
+    &::-webkit-scrollbar{
+      width: 3px;
+    }
+    &::-webkit-scrollbar-thumb {
+      border-radius: 3px;
+      background: #d9d9d9;
+    }
+    &::-webkit-scrollbar-track {
+      display: none;
+    }
+  }
+  .plan{
+    max-height:60px;
+    white-space: nowrap;
+    overflow:hidden;
+    p{
+      margin: 0;
+      width: 200px;
+      overflow: hidden;
+      white-space: pre-wrap;
+    }
+    &::-webkit-scrollbar{
+      width: 3px;
+    }
+    &::-webkit-scrollbar-thumb {
+      border-radius: 3px;
+      background: #d9d9d9;
+    }
+    &::-webkit-scrollbar-track {
+      display: none;
+    }
+  }
   .ant-radio-button-wrapper {
     margin: 10px;
-    border-radius: 6px;
+    border-radius: 2px;
+  }
+  .tag{
+    width: fit-content;
+    border-radius: 2px;
+    border: 1px dashed #FAAD14;
+    font-size: 12px;
+    color: #FAAD14;
+    padding: 0px 5px;
+  }
+}
+.ant-form-horizontal{
+  height: 230px;
+}
+</style>
+<style lang="scss">
+.table-block{
+  table{
+    border-bottom: 1px #E8E8E8 solid;
+  }
+  tr >td,tr >th{
+		border-bottom: none;
+  }
+  tbody > tr{
+    height: 80px;
+  }
+  tr:nth-child(2n){
+    background: #FAFAFA;
+  }
+}
+.title1{
+  font-size: 16px;
+  color: #333333;
+  font-weight: 600;
+}
+.edit-modal{
+  .ant-modal-body{
+    padding: 0px;
+    .ant-form-item{
+      margin-top: 24px;
+      height: 32px;
+      .editIpt{
+        width: 198px;
+        height: 32px;
+        line-height: 32px;
+        position: relative;
+        //background-color: pink;
+        .numberIpt{
+          width: 100%;
+          height: 100%;
+        }
+        span{
+          position: absolute;
+          top: 2px;
+          right: 4px;
+          z-index: 100;
+          background-color: #FFFFFF;
+          height:28px;
+          color: rgba(0, 0, 0, 0.25);
+        }
+      }
+    }
+  }
+  .ant-modal-footer {
+    text-align: center;
+  }
+  .ant-form-explain {
+    text-align: left;
+    font-size: 12px;
+    font-weight: 400;
+    color: #f5222d;
   }
 }
 </style>

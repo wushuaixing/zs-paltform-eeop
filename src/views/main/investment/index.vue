@@ -47,23 +47,27 @@
         </template>
       </a-table>
     </div>
-    <!--弹框对话框文件上传https://www.mocky.io/v2/5cc8019d300000980a055e76-->
+    <!--弹框对话框文件上传-->
     <div>
       <a-modal :centered="true" v-model="visible" title="发布新项目" @ok="handleOk">
         <div class="pop-up">
-          <span>招商服务项目信息</span>
+          <span>招商服务项目信息:</span>
           <a-upload
               name="file"
+              :showUploadList="false"
               action="/proxy-api/operator/project/importExcel"
               :headers="headers"
-              @change="handleChange"
+              :beforeUpload="fileIntercept"
+              @change="fileChange"
+              v-if="showUploadList"
           >
             <a-button>
               <a-icon type="upload"/>
               点的上传
             </a-button>
           </a-upload>
-          <a>导入模板下载</a>
+          <a class="upSucceed" v-else>{{fileName}}&nbsp;<a-icon type="close" @click="showUploadList=true"></a-icon></a>
+          <a class="download">导入模板下载</a>
         </div>
         <div class="caution">
           <span>*支持导入单笔及多笔招商服务项目；</span><br>
@@ -161,12 +165,9 @@ export default {
   data() {
     return {
       navData,
-      debtorInquiry:{
-        debtorName:null,
-        startValue: null,
-        endValue: null,
-      },
       visible: false,
+      showUploadList:true,
+      fileName:'',
       tableSource:{
         columns,
         dataSource:[],
@@ -198,14 +199,6 @@ export default {
   components: {
     Breadcrumb
   },
-  watch: {
-    // startValue(val) {
-    //   console.log('startValue', val);
-    // },
-    // endValue(val) {
-    //   console.log('endValue', val);
-    // },
-  },
   created() {
     this.requestInquire()
   },
@@ -232,7 +225,7 @@ export default {
     tableHanges(pagination, filters, sorter,) {
       // console.log(pagination, filters, sorter,)
       //排序
-      this.findAll.sortField = sorter.field === 'deadline' ? 1 : 2;
+      this.findAll.sortField = sorter.field;
       this.findAll.sortOrder = sorter.order ? sorter.order === "ascend" ? "ASC" : "DESC" : "";
       this.findAll.page = pagination.current;
       this.findAll.size = pagination.pageSize;
@@ -250,15 +243,23 @@ export default {
       this.visible = false;
     },
     //上传文件
-    handleChange(info) {
-      if (info.file.status !== 'uploading') {
+    fileIntercept(file){
+      // console.log(file,fileList)
+      const isLimit16M = file.size / 1024 / 1024 <= 16;
+      const isSheet = file.type === "application/vnd.ms-excel" || file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+      if(!isLimit16M) this.$message.error("文件大小不能超过16M,请重新上传");
+      if(!isSheet) this.$message.error("请上传.xls/.xlsx文件");
+      return isSheet && isLimit16M;
+    },
+    fileChange(info) {
+      if(info.file.status === "done"){
+        this.showUploadList = false;
+        this.fileName = info.file.name;
+        if(info.file.response.code === 20000) this.$message.success('文件上传成功');
+        if(info.file.response.code === 20001) this.$message.success('文件上传失败');
+        if(info.file.response.code === 20003) this.$message.success('文件上传失败');
         console.log(info.file.response)
       }
-      // if (info.file.status === 'done') {
-      //   this.$message.success(`${info.file.name} file uploaded successfully`);
-      // } else if (info.file.status === 'error') {
-      //   this.$message.error(`${info.file.name} file upload failed.`);
-      // }
     },
   }
 };
@@ -286,7 +287,13 @@ export default {
   display: flex;
   align-items: center;
   button {
-    margin: 0 10px;
+    margin: 0 20px;
+  }
+  .upSucceed{
+    margin: 0 20px;
+  }
+  .download{
+    text-decoration:underline;
   }
 }
 .caution {
