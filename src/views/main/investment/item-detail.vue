@@ -335,7 +335,6 @@ const columns = [
     scopedSlots: { customRender: "caseFileStatus" },
   },
 ];
-
 //服务商提交方案表数据
 const columns2 = [
   {
