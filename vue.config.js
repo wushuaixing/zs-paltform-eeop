@@ -15,6 +15,7 @@ module.exports = {
 					modifyVars: {
 						'primary-color': '#008CB0', // 全局主色
 						'link-color': 'rgba(0, 140, 176, 0.73)', // 链接色
+						'border-radius-base': '2px',
 					},
 					javascriptEnabled: true,
 				},
