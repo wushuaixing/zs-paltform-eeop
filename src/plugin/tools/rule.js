@@ -46,7 +46,7 @@ export const getMenu = () => {
             path: '/provider',
             child: [
                 !serviceChild && {id: '1', title: '待审查', path: '/review'},
-                {id: '2', title: '已入库', path: '/storage'},
+                {id: serviceChild ? '1' : '2', title: '已入库', path: '/storage'},
             ].filter(i => i)
         },
         org &&
