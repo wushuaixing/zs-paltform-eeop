@@ -50,6 +50,7 @@
 						if(res.code === 20000){
 							this.$emit('change',this.textarea);
 							this.visible = false;
+							this.$message.success('合作印象添加成功！');
 						}else{
 							this.$message.error('添加/编辑面谈印象失败');
 						}

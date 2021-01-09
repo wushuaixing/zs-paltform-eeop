@@ -31,7 +31,7 @@
 						</a-select>
 					</a-form-model-item>
 					<a-form-model-item>
-							<a-button type="primary" html-type="submit" style="width: 80px">查询</a-button>
+						<a-button type="primary" html-type="submit" style="width: 80px">查询</a-button>
 					</a-form-model-item>
 				</a-form-model>
 				<a-tabs @change="handleTabChange" :activeKey="activeKey">
@@ -53,13 +53,14 @@
 					<template slot="auction" slot-scope="item">
 						<template v-if="activeKey === 1">
 							<a-button type="link" icon="file-text" @click="toLink(item)">详情</a-button>
-							<a-button type="link" icon="audit" @click="toLink(item)">印象添加</a-button>
+							<a-button type="link" icon="audit" @click="toEffect(item)">印象添加</a-button>
 						</template>
 						<a-button type="link" :icon="normal.icon" @click="toLink(item)" v-else>{{normal.text}}</a-button>
 					</template>
 				</a-table>
 			</div>
 		</div>
+		<EffectModal ref="effect" @change="onEffectChange"></EffectModal>
 	</div>
 </template>
 
@@ -68,6 +69,7 @@
 	import ReadStatus from '@/components/table/read-status';
 	import { clearProto, disabledDate,clearObject,areaAnalysis } from "@/plugin/tools";
 	import { beStorage } from "@/plugin/api/provider";
+	import EffectModal from './effect';
 	import { columns } from './deploy';
 	import { areaOption, cooIntent } from '@/assets/js/source'
 
@@ -119,6 +121,7 @@
 					goodCases:undefined,
 					cooperationIntention:undefined,
 				},
+				spinning:true,
 				loading:false,
 				sortOrder:"",
 				sortField:"",
@@ -137,7 +140,8 @@
 		},
 		components:{
 			Breadcrumb,
-			ReadStatus
+			ReadStatus,
+			EffectModal
 		},
 		created(){
 			this.toQuery();
@@ -189,11 +193,13 @@
 					query: clearObject({ id:item.id })
 				})
 			},
+			toEffect(item){
+				if(item.id) this.$refs.effect.toAdd(item.id);
+			},
 			// 查询数据
 			toQuery(params = {}){
 				this.loading = true;
 				const queryField = handleProcess(clearProto(this.query));
-				console.log(queryField);
 				const sortOrder  = this.sortOrder ? ( this.sortOrder === 'ascend' ? 'ASC' : 'DESC' ) : '';
 				beStorage.list(clearObject({
 					type:Number(this.activeKey),

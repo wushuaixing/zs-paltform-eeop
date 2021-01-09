@@ -1,7 +1,11 @@
 <template>
 	<div class="frame-wrapper">
 		<Breadcrumb :source="navData" icon="environment"></Breadcrumb>
-		<div class="frame-wrapper-content" style="padding-top: 0">
+		<div class="frame-wrapper-content" v-if="spinning">
+			<div style="height: 10vh;"></div>
+			<a-spin class="spin-wrapper" tip="Loading......" size="large"/>
+		</div>
+		<div class="frame-wrapper-content" style="padding-top: 0" v-else>
 			<a-affix :offset-top="64">
 				<div class="custom-card-position">
 					<UserInfo :info="source.user" :isLawyer="source.isLawyer" audit />
@@ -76,6 +80,7 @@
 					qualify:{},
 					factor:{},
 				},
+				spinning:true,
 				userId:'',
 				elementStatus:{},
 				qualifyStatus:{},
@@ -98,15 +103,13 @@
 					this.qualifyStatus = qualifyStatus;
 					this.elementStatus = elementStatus;
 					this.source = source;
+					this.spinning = false;
 				} else{
 					this.$message.error('网络请求异常，请稍后再试！')
 				}
 			})
 		},
 		methods:{
-			handleSubmit(e){
-				e.preventDefault();
-			},
 			onEffectChange(status){
 				console.log(status);
 			},
