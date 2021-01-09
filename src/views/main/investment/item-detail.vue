@@ -949,7 +949,6 @@ export default {
         height: 32px;
         line-height: 32px;
         position: relative;
-        //background-color: pink;
         .numberIpt{
           width: 100%;
           height: 100%;
