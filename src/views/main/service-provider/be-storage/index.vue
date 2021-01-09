@@ -41,7 +41,7 @@
 				</a-tabs>
 			</div>
 			<div class="frame-content">
-				<a-table v-bind="props" @change="handleTableChange" :dataSource="dataSource" :columns="columns">
+				<a-table v-bind="props" @change="handleTableChange" :dataSource="dataSource" :columns="columns" :loading="loading">
 					<span slot="customAuction" style="padding-left: 15px">操作</span>
 					<ReadStatus slot="readStatus" slot-scope="item" :dot="item.isRead">
 						{{item.name}}
