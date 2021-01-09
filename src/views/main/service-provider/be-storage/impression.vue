@@ -48,9 +48,9 @@
 </template>
 
 <script>
+
 	import noFinished from '@/assets/img/no-finished.png';
 	import { beStorage } from "@/plugin/api/provider";
-
 	import EffectModal from './effect';
 
 	export default {
@@ -72,8 +72,7 @@
 			toAddEffect(){
 				this.$refs.effect.toAdd(this.userId);
 			},
-			onEffectChange(val){
-				console.log(val);
+			onEffectChange(){
 				beStorage.impressionList(this.userId).then(res=>{
 					if(res.code === 20000){
 						this.data = res.data;

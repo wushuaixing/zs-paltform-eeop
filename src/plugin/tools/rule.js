@@ -7,7 +7,8 @@ export const adminField = 'admin';
 export const ruleProcess = (_this, data) => {
     const {roleName, config} = data;
     _this.$store.commit('updateInfo', data);
-    _this.$store.commit('ruleInfo', roleName, config);
+    _this.$store.commit('ruleInfo',{roleName, config});
+
     resetRouter();
     const normalRoutes = getNormalRoutes(config);
     _this.$router.addRoutes(roleName === adminField ? adminRoutes : normalRoutes);

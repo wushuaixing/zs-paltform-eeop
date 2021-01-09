@@ -73,8 +73,6 @@
 	import { columns } from './deploy';
 	import { areaOption, cooIntent } from '@/assets/js/source'
 
-	const auditStatus = false;
-
 	//处理请求数据
 	const handleProcess = data =>{
 		const {areaGoodCases:a} = data;
@@ -87,6 +85,8 @@
 	export default {
 		name: 'ToReview',
 		data() {
+		  const { roleConfig } = this.$store.getters.getRole;
+		  // console.log(roleConfig.managePermission);
 			return {
 				navData:[
 					{id:1,title:'服务商管理',path:'/provider/review'},
@@ -127,7 +127,7 @@
 				sortField:"",
 				disabledDate,
 				areaAnalysis,
-				auditStatus,
+				auditStatus:roleConfig.managePermission === 1,
 				areaProps:{
 					allowClear: true,
 					changeOnSelect: true,
@@ -144,6 +144,8 @@
 			EffectModal
 		},
 		created(){
+			console.log(this.$store.getters.getRole);
+
 			this.toQuery();
 		},
 		methods:{
@@ -231,7 +233,8 @@
 		},
 		computed:{
 			normal(){
-				const res = !(this.activeKey === 1) && this.auditStatus;
+				console.log(this.auditStatus);
+				const res = !(this.activeKey === 1) && !this.auditStatus;
 				return {
 					icon: res ? 'file-text' : 'audit',
 					text: res ? '查询详情' : '审核'

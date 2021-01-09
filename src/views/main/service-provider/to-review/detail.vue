@@ -288,10 +288,9 @@
 					const { qualifyStatus,elementStatus} = res.data;
 					if(qualifyStatus >= 3) this.audit.form.qualifyAudit = 2;
 					if(elementStatus >= 3) this.audit.form.elementAudit = 2;
-
 					const { code, text } = _status;
 					if(code === 8 || code === 9) {
-						this.$message.error(text,1,()=> this.$route.push('/provider/review'));
+						this.$message.error(text,1,()=> this.$router.push('/provider/review'));
 					} else {
 						toReview.detail(params).then(_res=>{
 							if(_res.code === 20000){
