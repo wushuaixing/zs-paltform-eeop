@@ -5,7 +5,7 @@
 			<div style="height: 10vh;"></div>
 			<a-spin class="spin-wrapper" tip="Loading......" size="large"/>
 		</div>
-		<div class="frame-wrapper-content" v-else>
+		<div class="frame-wrapper-content" v-else style="padding-top: 0">
 			<UserInfo :info="source.user" :isLawyer="isLawyer" />
 			<div class="custom-card-position">
 				<div class="custom-card-container-remark">
@@ -314,7 +314,7 @@
 								this.isLawyer = this.source.identity === 1;
 								this.spinning = false;
 							}else{
-								this.$message.error('网络异常,12312321313123123')
+								this.$message.error('网络请求异常，请稍后再试！')
 							}
 						})
 					}

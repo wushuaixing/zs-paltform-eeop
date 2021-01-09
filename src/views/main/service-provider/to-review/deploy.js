@@ -143,22 +143,38 @@ export const columns = ({ type = 1, sortOrder}) =>{
 /**
  * 处理详情数据
  * @param source
+ * @param coo
  * @returns {*}
  */
-export const processData = source => {
-	const { lawyerElement = {},lawyerQualify = {},organizationElement = {},organizationQualify = {}, identity } = source;
-	return {
+export const processData = (source, coo = false) => {
+	const { lawyerElement = {},lawyerQualify = {},organizationElement = {},organizationQualify = {}, identity,
+		cooperationImpressionList, interviewImpression,elementStatus,qualifyStatus } = source;
+	const _source = {
 		identity: source.identity,
-		user:{
+		isLawyer: source.identity === 1,
+			user:{
 			identity: source.identity,
 			name:identity === 2 ? organizationQualify.name : source.name,
 			contact:source.name,
 			lawOffice:(lawyerQualify || {}).lawOffice,
 			phone:source.phone,
+			storageAuditor:source.storageAuditor,
+			storageTime:source.storageTime,
 		},
-		qualify:identity === 1 ? lawyerQualify : organizationQualify,
-		factor:identity === 1 ? lawyerElement : organizationElement,
+		qualify:source.identity === 1 ? lawyerQualify : organizationQualify,
+		factor:source.identity === 1 ? lawyerElement : organizationElement,
 		qualifyCondition:source.qualifyCondition,
-		elementCondition:source.elementCondition
+		elementCondition:source.elementCondition,
 	};
+	if(!coo) return _source;
+	return {
+		source: {
+			..._source,
+			cooperationImpressionList,
+			interviewImpression
+		},
+		elementStatus,
+		qualifyStatus
+	}
+
 };
