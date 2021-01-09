@@ -5,13 +5,14 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    isCertification:true,
-    isSubmitElements:true,
     info:{},
     isLogin:false,
+	  roleName:'',
+	  roleConfig:{},
   },
   getters:{
     getInfo:(state)=> state.info,
+	  getRole:({roleName,roleConfig})=>({roleName,roleConfig}),
   },
   mutations: {
     updateLoginStates:(state)=>{
@@ -27,7 +28,11 @@ export default new Vuex.Store({
       state.info = {};
       state.isLogin = false;
       window.localStorage.token = '';
-    }
+    },
+	  ruleInfo:(state,roleName,deploy)=>{
+			state.roleName = roleName;
+			state.roleConfig = deploy;
+	  },
   },
   actions: {
     updateInfo:(context,source)=>{

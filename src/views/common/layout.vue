@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100%" id="root-node-wrapper">
-    <a-layout style="min-height: 100%" v-if="!loading" class="layout-wrapper">
+    <a-layout style="min-height: 100%" class="layout-wrapper">
       <a-layout-header class="header-wrapper" :style="{ position: 'fixed', zIndex: 99, width: '100%' }">
         <a-icon class="header-icon" type="codepen"/>
         <span class="header-title">浙商资产服务商招募管理系统-运营后台</span>
@@ -23,12 +23,11 @@
       </a-layout-header>
       <router-view></router-view>
     </a-layout>
-    <a-spin v-if="loading" class="spin-wrapper" size="large" tip="数据加载中，请稍后..." />
     <ModifyPwdModal ref="modifyPwd"></ModifyPwdModal>
   </div>
 </template>
 <script>
-  import { getInfo} from "@/plugin/api/base";
+  // import { getInfo} from "@/plugin/api/base";
   import ModifyPwdModal from "./personal/modify-password";
   import {logout} from "@/plugin/api/login"
   export default {
@@ -57,7 +56,6 @@
       }
     },
     created() {
-			if(!window.localStorage.token) return this.$router.push('/login');
       if(this.passwordChanged === 0){
         const _this = this;
         this.$confirm({
@@ -71,19 +69,10 @@
       }
       const { pathname } = window.location;
       if(/center/.test(pathname))this.selectedKey = 'b';
-      if(!this.$store.state.isLogin){
-        getInfo().then(res=>{
-          this.loading = false;
-          this.$store.commit('updateInfo', res.data);
-          console.log(res.data);
-        }).catch(err=>{console.log(err)}).finally(()=>this.loading = false)
-      }else{
-        this.loading = false;
-      }
     },
     mounted() {
       // console.log('默认页面：首次加载！');
-      console.log('检查校验：判断及检查相关token信息！');
+      // console.log('检查校验：判断及检查相关token信息！');
     },
     computed:{
       username(){
