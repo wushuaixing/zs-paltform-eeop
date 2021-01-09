@@ -22,9 +22,9 @@
 			</div>
 		</div>
 		<div class="info-audit info-detail" v-if="audit">
-			<span>入库时间：<i>{{'2020-12-21'}}</i></span>
+			<span>入库时间：<i>{{info.storageTime||'-'}}</i></span>
 			<a-divider type="vertical" />
-			<span>审核人：<i>{{'✖✖✖✖✖✖'}}</i></span>
+			<span>审核人：<i>{{info.storageAuditor||'-'}}</i></span>
 		</div>
 	</div>
 </template>
@@ -59,9 +59,10 @@
 
 <style scoped lang="scss">
 .user-info-wrapper{
-	margin-bottom: 15px;
 	display: flex;
 	position: relative;
+	background: #ffffff;
+	padding: 15px 0;
 	.info-icon{
 		width: 80px;
 		height: 80px;
@@ -90,8 +91,11 @@
 	.info-audit{
 		position: absolute;
 		right: 0;
-		top: 0;
+		top: 10px;
 		z-index: 2;
+	}
+	.ant-divider-vertical{
+		margin: 0 20px;
 	}
 }
 </style>

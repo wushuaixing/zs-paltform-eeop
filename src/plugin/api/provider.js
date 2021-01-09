@@ -24,16 +24,18 @@ export const toReview = {
 // 已入库
 export const beStorage = {
 	// 添加合作印象
-	impression:params => request.post('/operator/serviceUserManager/storage/addCooImpression',params),
+	impression:params => request.post('/operator/serviceUserManage/storage/addCooImpression',params),
+	// 查询合作印象记录
+	impressionList:id=>request.get(`/operator/serviceUserManage/storage/findCooImpression?id=${id}`),
 	// 已入库——资质/要素修改审核
-	audit:params => request.post('/operator/serviceUserManager/storage/audit',params),
+	audit:params => request.post('/operator/serviceUserManage/storage/audit',params),
 	// 已入库服务商-->列表
-	list:params => request.post('/operator/serviceUserManager/storage/findAll',params),
+	list:params => request.post('/operator/serviceUserManage/storage/findAll',params),
 	// 修改资质未读、要素修改未读
-	unreadInfo:params => request.get('/operator/serviceUserManager/storage/findUnRead',params),
+	unreadInfo:params => request.get('/operator/serviceUserManage/storage/findUnRead',params),
 	// 已入库--点击标记已读
-	read:params => request.post('/operator/serviceUserManager/storage/read',params),
+	read:params => request.post('/operator/serviceUserManage/storage/read',params),
 	// 已入库——服务商画像详情
-	detail:params => request.post('/operator/serviceUserManager/storage/detail',params),
+	detail:params => request.post('/operator/serviceUserManage/storage/userDetail',params),
 
 };
