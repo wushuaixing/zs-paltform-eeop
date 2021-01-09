@@ -26,100 +26,52 @@
 </template>
 
 <script>
-export default {
-  name: 'Menu',
-  data() {
-    return {
-      openCollapsed:true,
-      collapsed:false,
-      defaultKey:['11'],
-      selectedKeys:[],
-      defaultOpenKey:['1','2','3','4','11'],
-      source:[
+	import { getMenu } from "@/plugin/tools/rule";
 
-        {
-          id:'1',
-          title:'概览',
-          icon:'appstore',
-          path:'/overview',
-          child:[
-            { id:'1', title:'工作台', path:'' }
-          ]
-        },
-	      {
-		      id:'2',
-		      title:'服务商管理',
-		      icon:'solution',
-		      path:'/provider',
-		      child:[
-			      { id:'1', title:'待审查', path:'/review' },
-			      { id:'2', title:'已入库', path:'/storage' },
-		      ]
-	      },
-	      {
-		      id:'3',
-		      title:'招商管理',
-		      icon:'schedule',
-		      path:'/investment',
-		      child:[
-			      { id:'1', title:'招商项目管理', path:'/list' },
-		      ]
-	      },
-	      {
-		      id:'4',
-		      title:'服务跟踪',
-		      icon:'pushpin',
-		      path:'/track',
-		      child:[
-			      { id:'1', title:'服务项目管理', path:'/' },
-		      ]
-	      },
-	      {
-		      id:'11',
-		      title:'内部权限管理',
-		      icon:'key',
-		      path:'/auth',
-		      child:[
-			      { id:'1', title:'角色管理', path:'/role' },
-			      { id:'2', title:'部门管理', path:'/section' },
-			      { id:'3', title:'账号管理', path:'/account' },
-		      ]
-	      },
-      ],
-    };
-  },
-  methods:{
-    getSelectKey(path){
-      let defaultKey = '1';
-      let childKey = '1';
-      this.source.filter(i=>i.path).forEach(i=>{
-        if(new RegExp('^' + i.path).test(path)){
-          defaultKey = i.id;
-          (i.child || []).filter(i=>i.path).forEach(item=>{
-            if(new RegExp('^' + i.path + item.path).test(path)) childKey = item.id;
-          })
-        }
-      });
-      return [defaultKey + childKey];
-    },
-    toggleCollapsed(){
-      this.collapsed = !this.collapsed;
-    },
-  },
-  created() {
-    const { path } = this.$route;
-    this.selectedKeys = this.getSelectKey(path);
-
-  },
-  mounted(){
-  },
-  watch:{
-    $route(to,from){
-      // console.log("to.path",to.path,from.path);
-      if(to.path !== from.path) this.selectedKeys = this.getSelectKey(to.path);
-    }
-  }
-}
+		export default {
+		name: 'Menu',
+		data() {
+			return {
+				openCollapsed:true,
+				collapsed:false,
+				defaultKey:['11'],
+				selectedKeys:[],
+				defaultOpenKey:['1','2','3','4','11'],
+				source:[],
+			};
+		},
+		created(){
+			this.source = getMenu();
+			const { path } = this.$route;
+			this.selectedKeys = this.getSelectKey(path);
+		},
+		methods:{
+			getSelectKey(path){
+				let defaultKey = '1';
+				let childKey = '1';
+				this.source.filter(i=>i.path).forEach(i=>{
+					if(new RegExp('^' + i.path).test(path)){
+						defaultKey = i.id;
+						(i.child || []).filter(i=>i.path).forEach(item=>{
+							if(new RegExp('^' + i.path + item.path).test(path)) childKey = item.id;
+						})
+					}
+				});
+				return [defaultKey + childKey];
+			},
+			toggleCollapsed(){
+				this.collapsed = !this.collapsed;
+			},
+		},
+		mounted(){
+		},
+		watch:{
+			$route(to,from){
+				// console.log("to.path",to.path,from.path);
+				if(to.path !== from.path) this.selectedKeys = this.getSelectKey(to.path);
+			}
+		}
+	}
 </script>
 
 <style scoped>

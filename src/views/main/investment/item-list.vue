@@ -1,7 +1,4 @@
-<template>
-  <div>
-    <Breadcrumb :source="navData" icon="environment">
-      <a-button icon="search">后台开户</a-button>
+<template>  <div>    <Breadcrumb :source="navData" icon="environment">      <a-button icon="search">后台开户</a-button>
     </Breadcrumb>
     <div class="to-review-wrapper">
       <div class="to-review-query">

@@ -14,28 +14,29 @@
           <a-form-model-item label="角色名称">
             <a-input v-model="queryParams.roleName" placeholder="请输入角色名称" class="custom-prefix-6"/>
           </a-form-model-item>
-          <a-form-model-item>
-            <a-button type="primary" @click="handleQuery('search')">查询</a-button>
-          </a-form-model-item>
-          <a-form-model-item>
+          <a-form-model-item class="reset">
             <a-button @click="handleQuery('reset')">重置</a-button>
+          </a-form-model-item>
+          <a-form-model-item class="query">
+            <a-button type="primary" @click="handleQuery('search')">查询</a-button>
           </a-form-model-item>
         </a-form-model>
       </div>
       <div class="frame-content">
-        <a-tabs @change="handleTabChange">
+        <a-tabs @change="handleTabChange" :activeKey="queryParams.isDeleted" :animated="false">
           <a-tab-pane key="0" tab="正常角色"></a-tab-pane>
           <a-tab-pane key="1" tab="已删除角色"></a-tab-pane>
         </a-tabs>
         <div style="height: 4px"></div>
         <a-table :columns="column" :data-source="dataSource" size="middle" :pagination="pagination"
-                 @change="handleTableChange" :row-key="record => record.id"
+                 @change="handleTableChange" :row-key="record => record.id" :loading="loading"
         >
           <template slot="auction" slot-scope="text,record">
             <a-button type="link" size="small" :style="{paddingLeft: 0}" @click="handleAccount('edit',record)">编辑
             </a-button>
             <a-divider type="vertical"/>
-            <a-button type="link" size="small" @click="handleDel(record.id)" :disabled="Boolean(record.userCount)">删除
+            <a-button type="link" size="small" class="delete" @click="handleDel(record.id)"
+                      :disabled="Boolean(record.userCount)">删除
             </a-button>
           </template>
         </a-table>
@@ -48,7 +49,7 @@
         dialogClass="role-modal"
         :maskClosable="false"
         @ok="handleSubmit"
-        @cancel="handleResetFields"
+        @cancel="handleResetFields('form')"
     >
       <div class="role-modal-wrapper">
         <a-form-model
@@ -130,61 +131,10 @@
 
 <script>
 import Breadcrumb from '@/components/bread-crumb';
+import userAuthApi from '@/plugin/api/user-auth';
 import {clearProto} from "@/plugin/tools";
-import userAuthApi from '../../../plugin/api/user-auth';
-import {SORTER_TYPE} from "./source";
+import {SORTER_TYPE, roleColumns} from "./source";
 
-const columnsNormal = [
-  {
-    title: '角色名称',
-    dataIndex: 'roleName',
-    key: 'roleName',
-    customRender: val => val || '-',
-  },
-  {
-    title: '创建日期',
-    dataIndex: 'gmtCreate',
-    key: 'gmtCreate',
-    sorter: true,
-    customRender: val => val || '-',
-  },
-  {
-    title: '更新日期',
-    dataIndex: 'gmtModify',
-    key: 'gmtModify',
-    sorter: true,
-    customRender: val => val || '-',
-  },
-  {
-    title: '账号数',
-    dataIndex: 'userCount',
-    key: 'userCount',
-    customRender: val => val || '-',
-  },
-  {
-    title: '操作',
-    dataIndex: 'auction',
-    key: 'auction',
-    scopedSlots: {customRender: 'auction'},
-    width: 260,
-  },
-];
-
-const columnsDel = [
-  {
-    title: '角色名称',
-    dataIndex: 'roleName',
-    key: 'roleName',
-    customRender: val => val || '-',
-  },
-  {
-    title: '删除日期',
-    dataIndex: 'gmtDelete',
-    key: 'gmtDelete',
-    sorter: true,
-    customRender: val => val || '-',
-  },
-]
 
 export default {
   name: 'Role',
@@ -193,6 +143,7 @@ export default {
     return {
       modalSign: 'add',
       modalVisible: false,
+      loading: false,
       navData: [
         {id: 1, title: '内部权限管理', path: '/auth/role'},
         {id: 2, title: '角色管理', path: '/auth/role'},
@@ -205,16 +156,6 @@ export default {
         sortColumn: 'DEFAULT', //排序字段
         sortOrder: '', //排序顺序
       },
-      pagination: {
-        current: 1,
-        total: 1,
-        showQuickJumper: true,
-        showLessItems: true,
-        size: 'middle',
-        showTotal: val => `共${val}条信息`,
-      },
-      labelCol: {span: 5},
-      wrapperCol: {span: 16},
       form: {
         serviceUserManage: false,
         attractInvestmentManage: false,
@@ -225,6 +166,16 @@ export default {
         readScope: '',//查看范围（1：全阶段名单，2：仅入库名单）
         id: '',
       },
+      pagination: {
+        current: 1,
+        total: 1,
+        showQuickJumper: true,
+        showLessItems: true,
+        size: 'middle',
+        showTotal: val => `共${val}条信息`,
+      },
+      labelCol: {span: 5},
+      wrapperCol: {span: 16},
       rules: {
         roleName: [
           {required: true, message: '请输入角色名称'},
@@ -252,40 +203,8 @@ export default {
     this.getTableList();
   },
   methods: {
-    handleResetFields() {
-      this.form = {
-        serviceUserManage: false,
-        attractInvestmentManage: false,
-        projectManage: '',
-        roleName: '',
-        exportPermission: '',
-        managePermission: '',
-        readScope: '',
-        id: '',
-      }
-    },
-    handleAccount(sign, record) {
-      if (sign === 'edit') {
-        userAuthApi.findConfig(record.id).then((res) => {
-          if (res.code === 20000) {
-            const data = res.data;
-            this.form = {
-              id: record.id,
-              roleName: record.roleName,
-              attractInvestmentManage: data.attractInvestmentManage,
-              serviceUserManage: data.serviceUserManage,
-              exportPermission: data.exportPermission && data.exportPermission.toString() || '',
-              managePermission: data.managePermission && data.managePermission.toString() || '',
-              readScope: data.readScope && data.readScope.toString() || '',
-              projectManage: data.projectManage && data.projectManage.toString() || '',
-            }
-          }
-        })
-      }
-      this.modalSign = sign;
-      this.modalVisible = true;
-    },
     getTableList() {
+      this.loading = true;
       userAuthApi.listRole(clearProto(this.queryParams)).then((res) => {
         if (res.code === 20000) {
           const data = res.data;
@@ -294,8 +213,60 @@ export default {
         } else {
           this.$message.error(res.message)
         }
-      })
+      }).finally(() => {
+        this.loading = false;
+      });
     },
+    //重置表单|重置搜索条件|tab切换
+    handleResetFields(flag) {
+      if (flag === 'form') {
+        this.form = {
+          serviceUserManage: false,
+          attractInvestmentManage: false,
+          projectManage: '',
+          roleName: '',
+          exportPermission: '',
+          managePermission: '',
+          readScope: '',
+          id: '',
+        }
+      } else {
+        this.queryParams = {
+          ...this.queryParams,
+          roleName: '',
+          page: 1,
+          sortColumn: 'DEFAULT', //排序字段
+          sortOrder: '', //排序顺序
+        };
+        this.pagination.current = 1;
+      }
+    },
+    //查询||重置 搜索条件
+    handleQuery(flag) {
+      if (flag === 'reset') {
+        this.handleResetFields('resetQuery');
+      }
+      this.pagination.current = 1;
+      this.queryParams.page = 1;
+      this.getTableList();
+    },
+    //tab切换
+    handleTabChange(val) {
+      this.queryParams.isDeleted = val;
+      this.handleResetFields('tab');
+      this.getTableList();
+    },
+    //翻页||排序
+    handleTableChange(pgt, filters, sorter) {
+      const params = {...this.queryParams};
+      this.pagination.current = pgt.current;
+      params.page = pgt.current;
+      params.sortOrder = SORTER_TYPE[sorter.order];
+      params.sortColumn = SORTER_TYPE[sorter.field];
+      this.queryParams = params;
+      this.getTableList();
+    },
+    //删除角色
     handleDel(id) {
       this.$confirm({
         title: '确定删除这个角色吗？',
@@ -312,12 +283,29 @@ export default {
         },
       });
     },
-    handleQuery(flag) {
-      if (flag === 'reset') {
-        this.queryParams.roleName = ''
+    //打开弹窗 添加||编辑
+    handleAccount(sign, record) {
+      if (sign === 'edit') {
+        userAuthApi.findConfig(record.id).then((res) => {
+          if (res.code === 20000) {
+            const data = res.data;
+            this.form = {
+              id: record.id,
+              roleName: record.roleName,
+              attractInvestmentManage: data && data.attractInvestmentManage || false,
+              serviceUserManage: data && data.serviceUserManage || false,
+              exportPermission: data && data.exportPermission && data.exportPermission.toString() || '',
+              managePermission: data && data.managePermission && data.managePermission.toString() || '',
+              readScope: data && data.readScope && data.readScope.toString() || '',
+              projectManage: data && data.projectManage && data.projectManage.toString() || '',
+            }
+          }
+        })
       }
-      this.getTableList();
+      this.modalSign = sign;
+      this.modalVisible = true;
     },
+    //添加||编辑 角色
     handleSubmit(e) {
       e.preventDefault();
       const {serviceUserManage, attractInvestmentManage} = this.form;
@@ -341,13 +329,13 @@ export default {
             };
             userAuthApi.saveRole(params).then((res) => {
               if (res.code === 20000) {
-                this.$message.warning('保存成功');
+                this.$message.success('保存成功');
                 this.getTableList();
               } else {
                 this.$message.warning(res.message);
               }
             }).finally(() => {
-              this.handleResetFields();
+              this.handleResetFields('form');
               this.modalVisible = false
             });
           } else {
@@ -356,29 +344,12 @@ export default {
         });
       }
     },
-    handleTabChange(val) {
-      this.queryParams.isDeleted = val;
-      this.queryParams.roleName = '';
-      this.getTableList();
-    },
-    handleTableChange(pgt, filters, sorter) {
-      const params = {...this.queryParams};
-      this.pagination.current = pgt.current;
-      params.page = pgt.current;
-      params.sortOrder = SORTER_TYPE[sorter.order];
-      params.sortColumn = SORTER_TYPE[sorter.field];
-      this.queryParams = params;
-      this.getTableList();
-    },
   },
   computed: {
     column: function () {
-      const {isDeleted} = this.queryParams;
-      if (isDeleted === '0') {
-        return columnsNormal;
-      } else {
-        return columnsDel;
-      }
+      const {isDeleted, sortOrder, sortColumn} = this.queryParams;
+      const sort = Object.keys(SORTER_TYPE).find(i => SORTER_TYPE[i] === sortOrder);
+      return roleColumns(sort, isDeleted, sortColumn);
     },
   },
   watch: {
@@ -398,7 +369,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .role-modal {
   width: 680px !important;
 
@@ -417,4 +388,67 @@ export default {
     text-align: center;
   }
 }
+
+.addAccount {
+  border: 1px solid #008CB0;
+  border-radius: 2px;
+  color: #008CB0;
+}
+
+/deep/ .ant-form {
+  position: relative;
+
+  .custom-prefix-6 {
+    width: 352px;
+    height: 32px;
+    background: #FFFFFF;
+    border-radius: 2px;
+    border: 1px solid #D9D9D9;
+  }
+
+  .reset {
+    position: absolute;
+    right: 70px;
+    top: 0;
+  }
+
+  .query {
+    position: absolute;
+    right: -10px;
+    top: 0;
+  }
+}
+
+.edit {
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #008CB0;
+  line-height: 20px;
+}
+
+// .delete {
+//   font-size: 14px;
+//   font-family: PingFangSC-Regular, PingFang SC;
+//   font-weight: 400;
+//   color: #999999;
+//   line-height: 20px;
+// }
+// tabs
+/deep/ .ant-tabs-tab-active {
+  font-size: 14px;
+  font-family: PingFangSC-Medium, PingFang SC;
+  font-weight: 600;
+  color: #008CB0;
+  line-height: 14px;
+}
+
+/deep/ .ant-table-column-title {
+  font-size: 14px;
+  font-family: PingFangSC-Medium, PingFang SC;
+  font-weight: 600;
+  color: #262626;
+  line-height: 20px;
+}
+
 </style>

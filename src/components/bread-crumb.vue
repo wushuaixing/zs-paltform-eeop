@@ -71,9 +71,14 @@ export default {
 
       &-slot {
         position: absolute;
-        top: 10px;
+        top: 0;
         right: 16px;
         z-index: 1;
+				bottom:0;
+				display: flex;
+				align-items: center;
+				/*实现水平居中*/
+				justify-content: center;
       }
     }
   }

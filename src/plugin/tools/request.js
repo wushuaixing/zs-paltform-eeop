@@ -1,7 +1,7 @@
 import axios from 'axios';
 import router from '@/router';
 
-const ENV = process.env.NODE_ENV;
+export const ENV = process.env.NODE_ENV;
 
 /* =========  常规请求   ========= */
 const request = axios.create({

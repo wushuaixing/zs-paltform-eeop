@@ -89,6 +89,7 @@
 <script>
 import * as api from "@/plugin/api/login";
 import { encryptInfo } from "@/plugin/tools/encrypt";
+import { ruleProcess } from "@/plugin/tools/rule";
 
 export default {
   name: "RegisterView",
@@ -186,8 +187,10 @@ export default {
         .then((res) => {
           console.log(res);
           if (res.code === 20000) {
-            this.$store.dispatch("login", res.data);
-            this.$router.push("/");
+
+	          this.$store.dispatch("login", res.data);
+	          ruleProcess(this,res.data);
+	          this.$router.push("/");
           } else{
             this.params.pictureCode = "";
             this.toGetImageCode();
