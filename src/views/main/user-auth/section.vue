@@ -15,7 +15,7 @@
             <a-input v-model="queryParams.departmentName" placeholder="请输入部门姓名" class="custom-prefix-6"/>
           </a-form-model-item>
           <a-form-model-item class="reset">
-            <a-button @click="handleQuery('reset')" >重置</a-button>
+            <a-button @click="handleQuery('reset')">重置</a-button>
           </a-form-model-item>
           <a-form-model-item class="query">
             <a-button type="primary" @click="handleQuery('search')">查询</a-button>
@@ -23,16 +23,17 @@
         </a-form-model>
       </div>
       <div class="frame-content">
-        <a-tabs @change="handleTabChange">
+        <a-tabs @change="handleTabChange" :activeKey="queryParams.isDeleted" :animated="false">
           <a-tab-pane key="0" tab="正常部门"></a-tab-pane>
           <a-tab-pane key="1" tab="已删除部门"></a-tab-pane>
         </a-tabs>
         <div style="height: 4px"></div>
         <a-table :columns="column" :data-source="dataSource" size="middle" :pagination="pagination"
-                 @change="handleTableChange" :row-key="record => record.id"
+                 @change="handleTableChange" :row-key="record => record.id" :loading="loading"
         >
           <template slot="auction" slot-scope="text,record">
-            <a-button type="link" size="small" class="edit" :style="{paddingLeft: 0}" @click="handleSection('edit',record)">编辑
+            <a-button type="link" size="small" class="edit" :style="{paddingLeft: 0}"
+                      @click="handleSection('edit',record)">编辑
             </a-button>
             <a-divider type="vertical"/>
             <a-button type="link" class="delete" size="small" @click="handleDel(record.id)">删除</a-button>
@@ -73,7 +74,7 @@
 import Breadcrumb from '@/components/bread-crumb';
 import userAuthApi from '@/plugin/api/user-auth';
 import {clearProto} from "@/plugin/tools";
-import {SORTER_TYPE, sectionNormalColumns, sectionDelColumns} from "./source";
+import {SORTER_TYPE, sectionColumns} from "./source";
 
 export default {
   name: 'Seciton',
@@ -82,6 +83,7 @@ export default {
     return {
       modalVisible: false,
       modalSign: 'add',
+      loading: false,
       navData: [
         {id: 1, title: '内部权限管理', path: '/auth/role'},
         {id: 2, title: '部门管理', path: '/auth/section'},
@@ -124,6 +126,7 @@ export default {
   },
   methods: {
     getTableList() {
+      this.loading = true;
       userAuthApi.getSectionList(this.queryParams).then((res) => {
         if (res.code === 20000) {
           const data = res.data;
@@ -132,7 +135,9 @@ export default {
         } else {
           this.$message.error(res.message)
         }
-      })
+      }).finally(() => {
+        this.loading = false;
+      });
     },
     handleResetFields(flag) {
       if (flag === 'form') {
@@ -231,70 +236,73 @@ export default {
     column: function () {
       const {isDeleted, sortOrder} = this.queryParams;
       const sort = Object.keys(SORTER_TYPE).find(i => SORTER_TYPE[i] === sortOrder);
-      if (isDeleted === '0') {
-        return sectionNormalColumns(sort);
-      } else {
-        return sectionDelColumns(sort);
-      }
+      return sectionColumns(sort, isDeleted);
     },
   },
 }
 </script>
 
 <style scoped lang="scss">
-  .addAccount {
-    border: 1px solid #008CB0;
+.addAccount {
+  border: 1px solid #008CB0;
+  border-radius: 2px;
+  color: #008CB0;
+}
+
+/deep/ .ant-form {
+  position: relative;
+
+  .custom-prefix-6 {
+    width: 352px;
+    height: 32px;
+    background: #FFFFFF;
     border-radius: 2px;
-    color: #008CB0;
+    border: 1px solid #D9D9D9;
   }
-  /deep/.ant-form {
-    position: relative;
-    .custom-prefix-6 {
-      width: 352px;
-      height: 32px;
-      background: #FFFFFF;
-      border-radius: 2px;
-      border: 1px solid #D9D9D9;
-    }
-    .reset {
-      position: absolute;
-      right: 70px;
-      top: 0;
-    }
-    .query {
-      position: absolute;
-      right: -10px;
-      top: 0;
-    }
+
+  .reset {
+    position: absolute;
+    right: 70px;
+    top: 0;
   }
-  .edit {
-    font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
-    font-weight: 400;
-    color: #008CB0;
-    line-height: 20px;
+
+  .query {
+    position: absolute;
+    right: -10px;
+    top: 0;
   }
-  // .delete {
-  //   font-size: 14px;
-  //   font-family: PingFangSC-Regular, PingFang SC;
-  //   font-weight: 400;
-  //   color: #999999;
-  //   line-height: 20px;
-  // }
-  // tabs
-  /deep/.ant-tabs-tab-active {
-    font-size: 14px;
-    font-family: PingFangSC-Medium, PingFang SC;
-    font-weight: 600;
-    color: #008CB0;
-    line-height: 14px;
-  }
-  /deep/.ant-table-column-title {
-    font-size: 14px;
-    font-family: PingFangSC-Medium, PingFang SC;
-    font-weight: 600;
-    color: #262626;
-    line-height: 20px;
-  }
+}
+
+.edit {
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #008CB0;
+  line-height: 20px;
+}
+
+// .delete {
+//   font-size: 14px;
+//   font-family: PingFangSC-Regular, PingFang SC;
+//   font-weight: 400;
+//   color: #999999;
+//   line-height: 20px;
+// }
+// tabs
+/deep/ .ant-tabs-tab-active {
+  font-size: 14px;
+  font-family: PingFangSC-Medium, PingFang SC;
+  font-weight: 600;
+  color: #008CB0;
+  line-height: 14px;
+}
+
+/deep/ .ant-table-column-title {
+  font-size: 14px;
+  font-family: PingFangSC-Medium, PingFang SC;
+  font-weight: 600;
+  color: #262626;
+  line-height: 20px;
+}
 
 </style>

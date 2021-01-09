@@ -11,8 +11,20 @@
     <div class="frame-wrapper-content">
       <div class="frame-query">
         <a-form-model layout="inline">
-          <a-form-model-item label="姓名">
-            <a-input v-model="queryParams.name" placeholder="请输入姓名" class="custom-prefix-6"/>
+          <a-form-model-item>
+            <a-input-group compact>
+              <a-select v-model="searchParams">
+                <a-select-option value="1">
+                  按姓名查询
+                </a-select-option>
+                <a-select-option value="2">
+                  按账号查询
+                </a-select-option>
+              </a-select>
+              <a-input v-model="queryParams.name" placeholder="请输入姓名" class="custom-prefix-6"
+                       v-if="searchParams==='1'"/>
+              <a-input v-model="queryParams.username" placeholder="请输入账号" class="custom-prefix-6" v-else/>
+            </a-input-group>
           </a-form-model-item>
           <a-form-model-item label="角色">
             <a-select
@@ -46,13 +58,13 @@
         </a-form-model>
       </div>
       <div class="frame-content">
-        <a-tabs @change="handleTabChange">
+        <a-tabs @change="handleTabChange" :activeKey="queryParams.isDeleted" :animated="false">
           <a-tab-pane key="0" tab="正常账号"></a-tab-pane>
           <a-tab-pane key="1" tab="已删除账号"></a-tab-pane>
         </a-tabs>
         <div style="height: 4px"></div>
         <a-table :columns="column" :data-source="dataSource" size="middle" :pagination="pagination"
-                 @change="handleTableChange" :row-key="record => record.id"
+                 @change="handleTableChange" :row-key="record => record.id" :loading="loading"
         >
           <template slot="auction" slot-scope="text,record">
             <a-button type="link" size="small" :style="{paddingLeft: 0}" @click="handleAccount('edit',record)">编辑
@@ -149,6 +161,8 @@ export default {
     return {
       modalVisible: false,
       modalSign: 'add',
+      searchParams: '1',
+      loading: false,
       navData: [
         {id: 1, title: '内部权限管理', path: '/auth/role'},
         {id: 2, title: '账号管理', path: '/auth/account'},
@@ -192,6 +206,8 @@ export default {
         password: [
           {required: true, message: '请输入密码'},
           {min: 6, max: 20, message: '密码长度需6-20位', trigger: 'blur'},
+          {pattern: /^[^ ]+$/, message: "密码不支持空格", trigger: 'blur'},
+          {pattern: /^[^\u4e00-\u9fa5]{0,}$/, message: "密码不支持中文", trigger: 'blur'},
         ],
       },
       labelCol: {span: 5},
@@ -228,6 +244,7 @@ export default {
   },
   methods: {
     getTableList() {
+      this.loading = true;
       userAuthApi.listUser(clearProto(this.queryParams)).then((res) => {
         if (res.code === 20000) {
           const data = res.data;
@@ -236,7 +253,9 @@ export default {
         } else {
           this.$message.error(res.message)
         }
-      })
+      }).finally(() => {
+        this.loading = false;
+      });
     },
     //查询||重置 搜索条件
     handleQuery(flag) {
@@ -391,6 +410,12 @@ export default {
       return [obj, ...dynamicColumn]
     },
   },
+  watch: {
+    searchParams() {
+      this.queryParams.name = '';
+      this.queryParams.username = '';
+    }
+  }
 }
 </script>
 
@@ -400,59 +425,68 @@ export default {
     text-align: center;
   }
 }
+
 .addAccount {
-    border: 1px solid #008CB0;
+  border: 1px solid #008CB0;
+  border-radius: 2px;
+  color: #008CB0;
+}
+
+/deep/ .ant-form {
+  position: relative;
+
+  .custom-prefix-6 {
+    width: 445px;
+    height: 32px;
+    background: #FFFFFF;
     border-radius: 2px;
-    color: #008CB0;
+    border: 1px solid #D9D9D9;
   }
-  /deep/.ant-form {
-    position: relative;
-    .custom-prefix-6 {
-      width: 445px;
-      height: 32px;
-      background: #FFFFFF;
-      border-radius: 2px;
-      border: 1px solid #D9D9D9;
-    }
-    .reset {
-      position: absolute;
-      right: 70px;
-      top: 0;
-    }
-    .query {
-      position: absolute;
-      right: -10px;
-      top: 0;
-    }
+
+  .reset {
+    position: absolute;
+    right: 70px;
+    top: 0;
   }
-  .edit {
-    font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
-    font-weight: 400;
-    color: #008CB0;
-    line-height: 20px;
+
+  .query {
+    position: absolute;
+    right: -10px;
+    top: 0;
   }
-  .delete {
-    font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
-    font-weight: 400;
-    color: #999999;
-    line-height: 20px;
-  }
-  // tabs
-  /deep/.ant-tabs-tab-active {
-    font-size: 14px;
-    font-family: PingFangSC-Medium, PingFang SC;
-    font-weight: 600;
-    color: #008CB0;
-    line-height: 14px;
-  }
-  /deep/.ant-table-column-title {
-    font-size: 14px;
-    font-family: PingFangSC-Medium, PingFang SC;
-    font-weight: 600;
-    color: #262626;
-    line-height: 20px;
-  }
+}
+
+.edit {
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #008CB0;
+  line-height: 20px;
+}
+
+.delete {
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #999999;
+  line-height: 20px;
+}
+
+// tabs
+/deep/ .ant-tabs-tab-active {
+  font-size: 14px;
+  font-family: PingFangSC-Medium, PingFang SC;
+  font-weight: 600;
+  color: #008CB0;
+  line-height: 14px;
+}
+
+/deep/ .ant-table-column-title {
+  font-size: 14px;
+  font-family: PingFangSC-Medium, PingFang SC;
+  font-weight: 600;
+  color: #262626;
+  line-height: 20px;
+}
 
 </style>
