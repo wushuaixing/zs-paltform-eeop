@@ -46,19 +46,13 @@
         this.$refs.modifyPwd.showModal()
       },
       backLogin(){
-        let _this = this;
         this.$confirm({
           title:"是否退出登录?",
           centered:true,
-          onOk(){
-            logout().then(res=>{
-              if(res.code === 20000){
-                _this.$router.push('/login');
-              }else{
-                _this.$message.error("退出登录失败");
-              }
-            })
-          }
+					onOk:()=>{
+						this.$router.push('/login');
+						logout()
+					}
         })
       }
     },
