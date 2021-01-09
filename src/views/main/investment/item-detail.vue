@@ -335,7 +335,7 @@ const columns = [
   },
 ];
 //服务商提交方案表数据
-const columns2 = (sortOrder) => [
+const columns2 = (sortOrder) =>[
   {
     title: "服务方案提交日期",
     dataIndex: "gmtCreate",
@@ -453,70 +453,33 @@ export default {
         id: this.$route.query.id,
         page: 1,
         size: 10,
-        sortField: 0,
+        sortField: '',
         sortOrder: "",
         startDate: ""
       },
       detailInfo: {
         alreadyCollectionStatus: "",
-        amcProjectCollaterals: [
-          {
-            amcProjectId: 0,
-            areaCode: 0,
-            cityCode: 0,
-            collateralName: "",
-            collateralType: 0,
-            gmtCreate: "",
-            gmtDeleted: "",
-            gmtModify: "",
-            id: 0,
-            isDeleted: "",
-            provinceCode: 0,
-          },
-        ],
-        amcProjectGuarantors: [
-          {
-            amcProjectId: 0,
-            gmtCreate: "",
-            gmtDeleted: "",
-            gmtModify: "",
-            guarantorCard: "",
-            guarantorName: "张三",
-            guarantorPhone: "",
-            id: 0,
-            isDeleted: "",
-          },
-          {
-            amcProjectId: 0,
-            gmtCreate: "",
-            gmtDeleted: "",
-            gmtModify: "",
-            guarantorCard: "",
-            guarantorName: "李四",
-            guarantorPhone: "",
-            id: 0,
-            isDeleted: "",
-          }
-        ],
+        amcProjectCollaterals: [],
+        amcProjectGuarantors: [],
         assetPackage: "",
-        businessDepartmentRecoveryTime: 0,
-        businessDepartmentTarget: 0,
+        businessDepartmentRecoveryTime: '',
+        businessDepartmentTarget: '',
         businessTeam: "",
         capitalOrg: "",
         capitalProfitOrg: "",
         capitalPurchaseTime: "",
         contact: "",
         deadline: "",
-        debtCaptial: 0,
-        debtInterest: 0,
+        debtCaptial: '',
+        debtInterest: '',
         debtor: "",
         debtorStatus: "",
         disposeDescription: "",
         disposeDifficulty: "",
         guarantorStatus: "",
-        id: 0,
-        isHaveProxyLawyer: 0,
-        isLawsuit: 1,
+        id: '',
+        isHaveProxyLawyer: '',
+        isLawsuit: '',
         judicialProcess: "",
         mortgagorStatus: "",
         projectManager: "",
@@ -524,10 +487,10 @@ export default {
         proxyLawyerContact: "",
         proxyLawyerName: "",
         proxyLimit: "",
-        security: 0,
+        security: '',
         submitDeadline: "",
-        targetAmountLowerLimit: 0,
-        targetYearUpperLimit: 0,
+        targetAmountLowerLimit: '',
+        targetYearUpperLimit: '',
       },
       sortOrder:'',
       //table表格数据
@@ -535,34 +498,7 @@ export default {
         //报名服务商列表
         applyServeTable: {
           columns,
-          dataSource: [
-            {
-              applyDate: "2021-01-05",
-              areasOfGoodCases: "杭州市",
-              caseFileStatus: 1,
-              gmtModify: "2020-12-31",
-              goodCases: "1",
-              id: 0,
-              identity: 0,
-              name: "蔡徐坤",
-              orgOfficeName: "阿里",
-              phone: "123456",
-              workingTime: 1,
-            },
-            {
-              applyDate: "2021-01-05",
-              areasOfGoodCases: "西湖区",
-              caseFileStatus: 0,
-              gmtModify: "2020-12-31",
-              goodCases: "1",
-              id: 0,
-              identity: 0,
-              name: "王千岁",
-              orgOfficeName: "小米",
-              phone: "6789876543",
-              workingTime: 0,
-            },
-          ],
+          dataSource: [],
           pagination: {
             total: 40,
             pageSizeOptions: ["10", "20", "30", "40"],
@@ -573,69 +509,9 @@ export default {
         },
         //服务方案提交列表
         submitPlanTable: {
-          // columns: columns2,
-          dataSource: [
-            {
-              aimBackPrice: "111.11",
-              aimBackPriceInvalid: 0,
-              bidId: 0,
-              caseFileAddress: "www.baidu.com",
-              gmtCreate: "2021-01-05",
-              id: 1,
-              identity: 0,
-              name: "武帅兴",
-              orgOfficeName: "小米",
-              phone: "1234345",
-              projectId: 0,
-              scheduleManagements: [
-                {
-                  amcBidId: 0,
-                  amcServiceUserId: 0,
-                  dateDay: "",
-                  dateMatters: "短信催收",
-                  dateMonth: 1,
-                  gmtCreate: "",
-                  gmtDelete: "",
-                  gmtModify: "",
-                  id: 0,
-                  isDelete: "",
-                },
-              ],
-              serviceTime: 0,
-              serviceTimeInvalid: 0,
-            },
-            {
-              aimBackPrice: "123.12",
-              aimBackPriceInvalid: 0,
-              bidId: 0,
-              caseFileAddress: "www.baidu.com",
-              gmtCreate: "2021-01-05",
-              id: 2,
-              identity: 0,
-              name: "王千岁",
-              orgOfficeName: "美团",
-              phone: "543456",
-              projectId: 0,
-              scheduleManagements: [
-                {
-                  amcBidId: 0,
-                  amcServiceUserId: 0,
-                  dateDay: "",
-                  dateMatters: "打死",
-                  dateMonth: 2,
-                  gmtCreate: "",
-                  gmtDelete: "",
-                  gmtModify: "",
-                  id: 0,
-                  isDelete: "",
-                },
-              ],
-              serviceTime: 0,
-              serviceTimeInvalid: 0,
-            }
-          ],
+          dataSource: [],
           pagination: {
-            total: 40,
+            total: 0,
             pageSizeOptions: ["10", "20", "30", "40"],
             showSizeChanger: true,
             showQuickJumper: true,
@@ -648,7 +524,7 @@ export default {
   computed:{
     columns2(){
       return columns2(this.sortOrder)
-    }
+    },
   },
   methods: {
     bit(val){
@@ -700,7 +576,7 @@ export default {
     },
     //有效方案&未通过系统筛选切换
     changType(){
-      this.sortOrder = false
+      this.sortOrder = false;
       this.getServiceCaseSubmitList();
     },
     goAvatar(v){
@@ -720,6 +596,7 @@ export default {
     },
     //服务商提交方案列表分页,排序操作
     submitPlanTableChange(pagination, filters, sorter){
+      console.log(sorter)
       this.params.page = pagination.current;
       this.params.size = pagination.pageSize;
       this.params.sortField = sorter.field;

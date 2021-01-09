@@ -37,7 +37,7 @@
         </a-col>
       </a-row>
       <!--展示招商项目表格-->
-        <a-table   @change="tableHanges" v-bind="tableSource" rowKey=id >
+        <a-table   @change="tableHanges" v-bind="tableSource" rowKey=id :columns="columns">
           <a slot="name" slot-scope="text">{{ text }}</a>
           <template slot="security" slot-scope="text,row">{{row.security|guarantyType}}</template>
           <template slot="debtCaptial" slot-scope="text,row">{{row.debtCaptial|amountTh}}</template>
@@ -85,7 +85,8 @@ import Breadcrumb from '@/components/bread-crumb';
 import { projectFind,upFiles} from "@/plugin/api/investment-center";
 import { disabledDate } from "@/plugin/tools";
 //提交代码
-const columns = [
+const columns = (sortedInfo) =>{
+  return  [
   {
     title: '债务人名字',
     dataIndex: 'debtor',
@@ -113,11 +114,13 @@ const columns = [
     title: '项目发布日期',
     dataIndex: 'gmtCreate',
     sorter: true,//排序
+    sortOrder: sortedInfo.columnKey === 'gmtCreate' && sortedInfo.order
   },
   {
     title: '报名截止日期',
     dataIndex: 'deadline',
     sorter: true,//排序
+    sortOrder: sortedInfo.columnKey === 'deadline' && sortedInfo.order
   },
   {
     title: '当前报名人数',
@@ -133,21 +136,8 @@ const columns = [
     key: 'action',
     scopedSlots: {customRender: 'action'},
   },
-];
-// const data = [
-//   {
-//     id:12345,
-//     debtor: '浙江鲲田实业有限公司',
-//     debtCaptial: '6666666',
-//     debtInterest: 32,
-//     numsSignIn:6,
-//     numsSubmit:10,
-//     deadline:'2021-01-26',
-//     examine: '查看详情',
-//     security:1,//担保方式
-//     gmtCreate:"2021-01-05"
-//   }
-// ];
+]
+};
 const navData = [
   {id: 1, title: "招商管理", path: "/investment/list"},
   {id: 2, title: "招商项目管理", path: "/investment/list"},
@@ -163,17 +153,15 @@ export default {
       showUploadList:true,
       fileName:'',
       tableSource:{
-        columns,
         class:'frame-content-table',
         dataSource:[],
         pagination: {
           total: 0,
-          pageSizeOptions: [ '10', '20', '30',],
-          showSizeChanger: true,
           showQuickJumper: true,
           showTotal:(val)=>`共${val}多少条`
         },
       },
+      sortedInfo:null,
       headers: {
         authorization: 'authorization-text',
         token: window.localStorage.token,
@@ -197,6 +185,13 @@ export default {
   },
   components: {
     Breadcrumb
+  },
+  computed:{
+    columns(){
+      let {sortedInfo} = this;
+      sortedInfo = sortedInfo || {};
+      return columns(sortedInfo)
+    }
   },
   created() {
     this.requestInquire()
@@ -226,12 +221,14 @@ export default {
     reset(){
       this.findAll.debtor = "";
       this.findAll.endDate = "";
+      this.sortedInfo = null;
       this.findAll.startDate = "";
       this.requestInquire()
     },
     tableHanges(pagination, filters, sorter,) {
       //排序
       this.findAll.sortField = sorter.field;
+      this.sortedInfo = sorter;
       this.findAll.sortOrder = sorter.order ? sorter.order === "ascend" ? "ASC" : "DESC" : "";
       this.findAll.page = pagination.current;
       this.findAll.size = pagination.pageSize;
