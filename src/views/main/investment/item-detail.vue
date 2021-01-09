@@ -176,7 +176,7 @@
             <a-radio-button :value="2"> 末通过系统筛选 {{planCount.invalidCount}}</a-radio-button>
           </a-radio-group>
           <div class="table-block">
-            <a-table  v-bind="tableSource.submitPlanTable" @change="submitPlanTableChange" >
+            <a-table  v-bind="tableSource.submitPlanTable" @change="submitPlanTableChange" :columns="columns2">
               <template slot="gmtCreate" slot-scope="gmtCreate">{{gmtCreate|show_}}</template>
               <template slot="name" slot-scope="name,row">
                 <a-button type="link" @click="goAvatar(row.id)">{{ name }}</a-button>
@@ -335,12 +335,13 @@ const columns = [
   },
 ];
 //服务商提交方案表数据
-const columns2 = [
+const columns2 = (sortOrder) =>[
   {
     title: "服务方案提交日期",
     dataIndex: "gmtCreate",
     width: 200,
     sorter: true, //排序
+    sortOrder: sortOrder || false,
     scopedSlots: { customRender: "gmtCreate" },
   },
   {
@@ -452,70 +453,33 @@ export default {
         id: this.$route.query.id,
         page: 1,
         size: 10,
-        sortField: 0,
+        sortField: '',
         sortOrder: "",
         startDate: ""
       },
       detailInfo: {
         alreadyCollectionStatus: "",
-        amcProjectCollaterals: [
-          {
-            amcProjectId: 0,
-            areaCode: 0,
-            cityCode: 0,
-            collateralName: "",
-            collateralType: 0,
-            gmtCreate: "",
-            gmtDeleted: "",
-            gmtModify: "",
-            id: 0,
-            isDeleted: "",
-            provinceCode: 0,
-          },
-        ],
-        amcProjectGuarantors: [
-          {
-            amcProjectId: 0,
-            gmtCreate: "",
-            gmtDeleted: "",
-            gmtModify: "",
-            guarantorCard: "",
-            guarantorName: "张三",
-            guarantorPhone: "",
-            id: 0,
-            isDeleted: "",
-          },
-          {
-            amcProjectId: 0,
-            gmtCreate: "",
-            gmtDeleted: "",
-            gmtModify: "",
-            guarantorCard: "",
-            guarantorName: "李四",
-            guarantorPhone: "",
-            id: 0,
-            isDeleted: "",
-          }
-        ],
+        amcProjectCollaterals: [],
+        amcProjectGuarantors: [],
         assetPackage: "",
-        businessDepartmentRecoveryTime: 0,
-        businessDepartmentTarget: 0,
+        businessDepartmentRecoveryTime: '',
+        businessDepartmentTarget: '',
         businessTeam: "",
         capitalOrg: "",
         capitalProfitOrg: "",
         capitalPurchaseTime: "",
         contact: "",
         deadline: "",
-        debtCaptial: 0,
-        debtInterest: 0,
+        debtCaptial: '',
+        debtInterest: '',
         debtor: "",
         debtorStatus: "",
         disposeDescription: "",
         disposeDifficulty: "",
         guarantorStatus: "",
-        id: 0,
-        isHaveProxyLawyer: 0,
-        isLawsuit: 1,
+        id: '',
+        isHaveProxyLawyer: '',
+        isLawsuit: '',
         judicialProcess: "",
         mortgagorStatus: "",
         projectManager: "",
@@ -523,11 +487,12 @@ export default {
         proxyLawyerContact: "",
         proxyLawyerName: "",
         proxyLimit: "",
-        security: 0,
+        security: '',
         submitDeadline: "",
-        targetAmountLowerLimit: 0,
-        targetYearUpperLimit: 0,
+        targetAmountLowerLimit: '',
+        targetYearUpperLimit: '',
       },
+      sortOrder:'',
       //table表格数据
       tableSource: {
         //报名服务商列表
@@ -571,7 +536,6 @@ export default {
         },
         //服务方案提交列表
         submitPlanTable: {
-          columns: columns2,
           dataSource: [
             {
               aimBackPrice: "111.11",
@@ -643,6 +607,11 @@ export default {
       },
     };
   },
+  computed:{
+    columns2(){
+      return columns2(this.sortOrder)
+    },
+  },
   methods: {
     bit(val){
       console.log(val)
@@ -693,6 +662,7 @@ export default {
     },
     //有效方案&未通过系统筛选切换
     changType(){
+      this.sortOrder = false;
       this.getServiceCaseSubmitList();
     },
     goAvatar(v){
@@ -712,9 +682,11 @@ export default {
     },
     //服务商提交方案列表分页,排序操作
     submitPlanTableChange(pagination, filters, sorter){
+      console.log(sorter)
       this.params.page = pagination.current;
       this.params.size = pagination.pageSize;
       this.params.sortField = sorter.field;
+      this.sortOrder = sorter.order;
       this.params.sortOrder = sorter.order
         ? sorter.order === "ascend"
           ? "ASC"
