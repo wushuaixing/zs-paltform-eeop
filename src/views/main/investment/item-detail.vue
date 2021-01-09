@@ -170,13 +170,13 @@
         </div>
         <!--服务商提交方案列表-->
         <div>
-          <h3 class="title-table">服务商提交方案列表</h3>
+          <h3 class="title-table">服务商提交方案列表 {{planCount.validCount+planCount.invalidCount}}</h3>
           <a-radio-group @change="changType" v-model="params.caseType" style="margin-bottom: 16px">
-            <a-radio-button :value="1"> 有效方案 </a-radio-button>
-            <a-radio-button :value="2"> 末通过系统筛选2 </a-radio-button>
+            <a-radio-button :value="1"> 有效方案 {{planCount.validCount}}</a-radio-button>
+            <a-radio-button :value="2"> 末通过系统筛选 {{planCount.invalidCount}}</a-radio-button>
           </a-radio-group>
           <div class="table-block">
-            <a-table v-bind="tableSource.submitPlanTable" @change="submitPlanTableChange">
+            <a-table v-bind="tableSource.submitPlanTable" @change="submitPlanTableChange" >
               <template slot="gmtCreate" slot-scope="gmtCreate">{{gmtCreate|show_}}</template>
               <template slot="name" slot-scope="name,row">
                 <a-button type="link" @click="goAvatar(row.id)">{{ name }}</a-button>
@@ -202,7 +202,7 @@
                 <span style="color: #008CB0; margin-left: 60%" @click="bit(row)" v-if="scheduleManagements.length >= 4" >{{exhibit === row.id ? '收起' :'展开'}}</span>
               </template>
               <template slot="caseFileAddress" slot-scope="caseFileAddress">
-                <div v-if="caseFileAddress"><a href="#">服务方案.pdf</a></div>
+                <a-button type="link" v-if="caseFileAddress" @click="downLoad(caseFileAddress)">服务方案.pdf</a-button>
                 <div v-else>-</div>
               </template>
             </a-table>
@@ -263,13 +263,12 @@
 </template>
 
 <script>
+/*eslint-disable*/
 import {projectDetail,signService,serviceCaseSubmit,updateProjectInfo} from "@/plugin/api/investment-center";
 import {collateralTypeData} from "./source"
 import {getArea} from "@/plugin/tools"
-import Breadcrumb from "@/components/bread-crumb";
-import Vue from "vue"
-import moment from "moment"
-Vue.prototype.$moment = moment;
+import Breadcrumb from "@/components/bread-crumb";getDownLoadToken
+import {getDownLoadToken} from "@/plugin/api/base"
 //报名服务商表数据
 const columns = [
   {
@@ -335,7 +334,6 @@ const columns = [
     scopedSlots: { customRender: "caseFileStatus" },
   },
 ];
-
 //服务商提交方案表数据
 const columns2 = [
   {
@@ -409,6 +407,11 @@ export default {
       labelCol: { span: 8 },
       wrapperCol: { span: 14 },
       navData,
+      planCount:{
+        validCount:'',
+        invalidCount:''
+      },
+      //修改项目招商信息
       editInfo:{
         aimedPriceBack: '',
         dateLimit: '',
@@ -596,42 +599,6 @@ export default {
                   id: 0,
                   isDelete: "",
                 },
-                {
-                  amcBidId: 0,
-                  amcServiceUserId: 0,
-                  dateDay: "",
-                  dateMatters: "短信催收",
-                  dateMonth: 1,
-                  gmtCreate: "",
-                  gmtDelete: "",
-                  gmtModify: "",
-                  id: 0,
-                  isDelete: "",
-                },
-                {
-                  amcBidId: 0,
-                  amcServiceUserId: 0,
-                  dateDay: "",
-                  dateMatters: "暴力催收",
-                  dateMonth: 2,
-                  gmtCreate: "",
-                  gmtDelete: "",
-                  gmtModify: "",
-                  id: 0,
-                  isDelete: "",
-                },
-                {
-                  amcBidId: 0,
-                  amcServiceUserId: 0,
-                  dateDay: "",
-                  dateMatters: "暴力催收",
-                  dateMonth: 2,
-                  gmtCreate: "",
-                  gmtDelete: "",
-                  gmtModify: "",
-                  id: 0,
-                  isDelete: "",
-                }
               ],
               serviceTime: 0,
               serviceTimeInvalid: 0,
@@ -679,12 +646,12 @@ export default {
   },
   methods: {
     bit(val){
+      console.log(val)
       if(this.exhibit === val.id){
         this.exhibit = false
         return false
       }
       this.exhibit = val.id
-      console.log(val)
     },
     //获取项目基本信息
     getProjectDetail(){
@@ -780,6 +747,13 @@ export default {
           return false;
         }
       })
+    },
+    downLoad(v){
+      getDownLoadToken(v).then(res=>{
+        if(res.code === 20000){
+          console.log(res)
+        }
+      })
     }
   },
   filters:{
@@ -835,9 +809,26 @@ export default {
     Breadcrumb,
   },
   created() {
+    let id = this.$route.query.id
     this.getProjectDetail();
     this.getSignServiceList();
-    this.getServiceCaseSubmitList();
+    serviceCaseSubmit({caseType:1,id,page:1,size:10}).then(res=>{
+      console.log(res)
+      if(res.code === 20000){
+        this.planCount.validCount = res.data.total;
+        this.tableSource.submitPlanTable.pagination.total = res.data.total;
+        this.tableSource.submitPlanTable.dataSource = res.data.list;
+      }else{
+        this.$message.error("获取服务商提交方案列表失败,请重新加载")
+      }
+    })
+    serviceCaseSubmit({caseType:2,id,page:1,size:10}).then(res=>{
+      if(res.code = 20000){
+        this.planCount.invalidCount = res.data.total;
+      }else{
+        return false;
+      }
+    })
   },
 };
 </script>
@@ -899,16 +890,6 @@ export default {
       overflow: hidden;
       white-space: pre-wrap;
     }
-    &::-webkit-scrollbar{
-      width: 3px;
-    }
-    &::-webkit-scrollbar-thumb {
-      border-radius: 3px;
-      background: #d9d9d9;
-    }
-    &::-webkit-scrollbar-track {
-      display: none;
-    }
   }
   .plan{
     max-height:60px;
@@ -919,16 +900,6 @@ export default {
       width: 200px;
       overflow: hidden;
       white-space: pre-wrap;
-    }
-    &::-webkit-scrollbar{
-      width: 3px;
-    }
-    &::-webkit-scrollbar-thumb {
-      border-radius: 3px;
-      background: #d9d9d9;
-    }
-    &::-webkit-scrollbar-track {
-      display: none;
     }
   }
   .ant-radio-button-wrapper {

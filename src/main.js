@@ -9,12 +9,13 @@ import 'element-ui/lib/theme-chalk/index.css';
 import './assets/css/public.scss';
 import './version';
 import './plugin/element';
+import moment from "moment"
 
 Vue.use(Antd);
 Vue.use(install, filter);
 Vue.prototype.$form = Form;
 Vue.config.productionTip = false;
-
+Vue.prototype.$moment = moment;
 message.config({
   top: `47vh`,
   duration: 2,

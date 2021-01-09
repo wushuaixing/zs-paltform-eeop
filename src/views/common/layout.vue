@@ -51,7 +51,7 @@
           if(res.code === 20000 ){
             this.$router.push('/login');
           }else{
-            return this.$message.error("网络错误");
+            return this.$message.error("退出登录失败");
           }
         })
       }

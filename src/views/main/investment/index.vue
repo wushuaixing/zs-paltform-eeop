@@ -7,7 +7,7 @@
         </a-button>
       </template>
     </Breadcrumb>
-    <div class="content">
+    <div class="content" >
       <!--收索框-->
       <a-row class="search_box" type="flex" >
         <a-col :span="11">
@@ -20,15 +20,15 @@
         <a-col :span="10">
           <span>报名截止日期：</span>
           <a-date-picker
-              v-model="findAll.startDate"
-              valueFormat="YYYY-MM-D"
+              v-model="field.startTime"
               placeholder="搜索范围起始日期"
+              :disabled-date="val=>disabledDate(val,field.endTime,'start')"
           />
           <span style="margin: 0 6px">至</span>
           <a-date-picker
-              v-model="findAll.endDate"
-              valueFormat="YYYY-MM-D"
+              v-model="field.endTime"
               placeholder="搜索范围截止日期"
+              :disabled-date="val=>disabledDate(field.startTime,val)"
           />
         </a-col>
         <a-col :span="3" style="text-align: right" >
@@ -37,15 +37,15 @@
         </a-col>
       </a-row>
       <!--展示招商项目表格-->
-      <a-table  @change="tableHanges" v-bind="tableSource" rowKey=id >
-        <a slot="name" slot-scope="text">{{ text }}</a>
-        <template slot="security" slot-scope="text,row">{{row.security|guarantyType}}</template>
-        <template slot="debtCaptial" slot-scope="text,row">{{row.debtCaptial|amountTh}}</template>
-        <template slot="debtInterest" slot-scope="text,row">{{row.debtInterest|amountTh}}</template>
-        <template slot="action" slot-scope="text,row">
-          <span class="table-view"  @click="viewDetails(row)">查看详情</span>
-        </template>
-      </a-table>
+        <a-table  @change="tableHanges" v-bind="tableSource" rowKey=id >
+          <a slot="name" slot-scope="text">{{ text }}</a>
+          <template slot="security" slot-scope="text,row">{{row.security|guarantyType}}</template>
+          <template slot="debtCaptial" slot-scope="text,row">{{row.debtCaptial|amountTh}}</template>
+          <template slot="debtInterest" slot-scope="text,row">{{row.debtInterest|amountTh}}</template>
+          <template slot="action" slot-scope="text,row">
+            <span class="table-view"  @click="viewDetails(row)">查看详情</span>
+          </template>
+        </a-table>
     </div>
     <!--弹框对话框文件上传-->
     <div>
@@ -83,6 +83,7 @@
 <script>
 import Breadcrumb from '@/components/bread-crumb';
 import { projectFind } from "@/plugin/api/investment-center";
+import { disabledDate } from "@/plugin/tools";
 //提交代码
 const columns = [
   {
@@ -165,11 +166,13 @@ export default {
   data() {
     return {
       navData,
+      disabledDate,
       visible: false,
       showUploadList:true,
       fileName:'',
       tableSource:{
         columns,
+        class:'frame-content-table',
         dataSource:[],
         pagination: {
           total: 0,
@@ -193,6 +196,10 @@ export default {
         sortField: 0,
         sortOrder: "",
         startDate: ""
+      },
+      field:{
+        startTime:'',
+        endTime:'',
       }
     };
   },
@@ -201,6 +208,15 @@ export default {
   },
   created() {
     this.requestInquire()
+  },
+  watch:{
+    'field':{
+      handler:function({startTime,endTime}){
+        this.findAll.startDate = startTime ? startTime.format('YYYY-MM-DD') : '';
+        this.findAll.endDate = endTime ? endTime.format('YYYY-MM-DD') : '';
+      },
+      deep:true
+    }
   },
   methods: {
     //请求封装
