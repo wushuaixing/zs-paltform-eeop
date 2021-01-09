@@ -55,7 +55,7 @@
           <a-upload
               name="file"
               :showUploadList="false"
-              action="/proxy-api/operator/project/importExcel"
+              :action="this.upAction"
               :headers="headers"
               :beforeUpload="fileIntercept"
               @change="fileChange"
@@ -82,7 +82,7 @@
 
 <script>
 import Breadcrumb from '@/components/bread-crumb';
-import { projectFind } from "@/plugin/api/investment-center";
+import { projectFind,upAction } from "@/plugin/api/investment-center";
 import { disabledDate } from "@/plugin/tools";
 //提交代码
 const columns = [
@@ -165,6 +165,7 @@ export default {
   name: "Investment",
   data() {
     return {
+      upAction,
       navData,
       disabledDate,
       visible: false,
@@ -252,6 +253,7 @@ export default {
       this.visible = true;
     },
     handleOk(e) {
+      console.log(e)
       this.visible = false;
     },
     //上传文件
