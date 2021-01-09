@@ -23,7 +23,7 @@
         </a-form-model>
       </div>
       <div class="frame-content">
-        <a-tabs @change="handleTabChange">
+        <a-tabs @change="handleTabChange" :activeKey="queryParams.isDeleted" :animated="false">
           <a-tab-pane key="0" tab="正常角色"></a-tab-pane>
           <a-tab-pane key="1" tab="已删除角色"></a-tab-pane>
         </a-tabs>
@@ -35,7 +35,8 @@
             <a-button type="link" size="small" :style="{paddingLeft: 0}" @click="handleAccount('edit',record)">编辑
             </a-button>
             <a-divider type="vertical"/>
-            <a-button type="link" size="small" class="delete" @click="handleDel(record.id)" :disabled="Boolean(record.userCount)">删除
+            <a-button type="link" size="small" class="delete" @click="handleDel(record.id)"
+                      :disabled="Boolean(record.userCount)">删除
             </a-button>
           </template>
         </a-table>
@@ -132,7 +133,7 @@
 import Breadcrumb from '@/components/bread-crumb';
 import userAuthApi from '@/plugin/api/user-auth';
 import {clearProto} from "@/plugin/tools";
-import {SORTER_TYPE, roleNormalColumns, roleDelColumns} from "./source";
+import {SORTER_TYPE, roleColumns} from "./source";
 
 
 export default {
@@ -342,13 +343,9 @@ export default {
   },
   computed: {
     column: function () {
-      const {isDeleted, sortOrder} = this.queryParams;
+      const {isDeleted, sortOrder, sortColumn} = this.queryParams;
       const sort = Object.keys(SORTER_TYPE).find(i => SORTER_TYPE[i] === sortOrder);
-      if (isDeleted === '0') {
-        return roleNormalColumns(sort);
-      } else {
-        return roleDelColumns(sort);
-      }
+      return roleColumns(sort, isDeleted, sortColumn);
     },
   },
   watch: {
@@ -387,59 +384,67 @@ export default {
     text-align: center;
   }
 }
+
 .addAccount {
-    border: 1px solid #008CB0;
+  border: 1px solid #008CB0;
+  border-radius: 2px;
+  color: #008CB0;
+}
+
+/deep/ .ant-form {
+  position: relative;
+
+  .custom-prefix-6 {
+    width: 352px;
+    height: 32px;
+    background: #FFFFFF;
     border-radius: 2px;
-    color: #008CB0;
+    border: 1px solid #D9D9D9;
   }
-  /deep/.ant-form {
-    position: relative;
-    .custom-prefix-6 {
-      width: 352px;
-      height: 32px;
-      background: #FFFFFF;
-      border-radius: 2px;
-      border: 1px solid #D9D9D9;
-    }
-    .reset {
-      position: absolute;
-      right: 70px;
-      top: 0;
-    }
-    .query {
-      position: absolute;
-      right: -10px;
-      top: 0;
-    }
+
+  .reset {
+    position: absolute;
+    right: 70px;
+    top: 0;
   }
-  .edit {
-    font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
-    font-weight: 400;
-    color: #008CB0;
-    line-height: 20px;
+
+  .query {
+    position: absolute;
+    right: -10px;
+    top: 0;
   }
-  // .delete {
-  //   font-size: 14px;
-  //   font-family: PingFangSC-Regular, PingFang SC;
-  //   font-weight: 400;
-  //   color: #999999;
-  //   line-height: 20px;
-  // }
-  // tabs
-  /deep/.ant-tabs-tab-active {
-    font-size: 14px;
-    font-family: PingFangSC-Medium, PingFang SC;
-    font-weight: 600;
-    color: #008CB0;
-    line-height: 14px;
-  }
-  /deep/.ant-table-column-title {
-    font-size: 14px;
-    font-family: PingFangSC-Medium, PingFang SC;
-    font-weight: 600;
-    color: #262626;
-    line-height: 20px;
-  }
+}
+
+.edit {
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #008CB0;
+  line-height: 20px;
+}
+
+// .delete {
+//   font-size: 14px;
+//   font-family: PingFangSC-Regular, PingFang SC;
+//   font-weight: 400;
+//   color: #999999;
+//   line-height: 20px;
+// }
+// tabs
+/deep/ .ant-tabs-tab-active {
+  font-size: 14px;
+  font-family: PingFangSC-Medium, PingFang SC;
+  font-weight: 600;
+  color: #008CB0;
+  line-height: 14px;
+}
+
+/deep/ .ant-table-column-title {
+  font-size: 14px;
+  font-family: PingFangSC-Medium, PingFang SC;
+  font-weight: 600;
+  color: #262626;
+  line-height: 20px;
+}
 
 </style>

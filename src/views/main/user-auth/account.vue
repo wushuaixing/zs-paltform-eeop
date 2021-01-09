@@ -46,7 +46,7 @@
         </a-form-model>
       </div>
       <div class="frame-content">
-        <a-tabs @change="handleTabChange">
+        <a-tabs @change="handleTabChange" :activeKey="queryParams.isDeleted" :animated="false">
           <a-tab-pane key="0" tab="正常账号"></a-tab-pane>
           <a-tab-pane key="1" tab="已删除账号"></a-tab-pane>
         </a-tabs>
