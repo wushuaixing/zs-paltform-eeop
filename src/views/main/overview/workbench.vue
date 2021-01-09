@@ -5,8 +5,8 @@
         <div class="item-title item-format ">服务商注册情况</div>
         <div class="item-content item-format">
           <div class="number">
-            <span class="total">累计注册服务商 {{echarts.totalRegUserNum}} 名</span>
-            <span class="total">昨日新增注册 {{echarts.lastDayRegUserNum}} 名</span>
+            <span class="total">累计注册服务商 <u style="color:#333333">{{echarts.totalRegUserNum}}名</u></span>
+            <span class="total">昨日新增注册 <u style="color:#333333">{{echarts.lastDayRegUserNum}}名</u></span>
           </div>
           <div class="data-display">
             <!-- 饼图显示 -->
@@ -14,20 +14,20 @@
               <div id="main"></div>
             </div>
             <div class="schemeProcess">
-              <a-badge text="仅注册" color="#c23531"/>
-              <span style="margin-left: 45px">{{echarts.onlyRegUserNum}}</span>
+              <a-badge text="仅注册" color="#0EA5FF"/>
+              <span style="margin-left: 75px">{{echarts.onlyRegUserNum}}</span>
               <br />
-              <a-badge text="已认证资质" color="#2f4554"/>
-              <span style="margin-left: 18px">{{echarts.confirmQuaUserNum}}</span>
+              <a-badge text="仅提交资质" color="#9200FF"/>
+              <span style="margin-left: 48px">{{echarts.confirmQuaUserNum}}</span>
               <br />
-              <a-badge text="已提交要素表" color="#61a0a8" />
-              <span style="margin-left: 4px">{{echarts.submitEleUserNum}}</span>
+              <a-badge text="待审核" color="#67CE57" />
+              <span style="margin-left: 75px">{{echarts.submitEleUserNum}}</span>
               <br />
-              <a-badge text="已入库" color="#d48265"/>
-              <span style="margin-left: 45px">{{echarts.storageUserNum}}</span>
+              <a-badge text="已入库" color="#F7CE22"/>
+              <span style="margin-left: 75px">{{echarts.storageUserNum}}</span>
               <br />
-              <a-badge text="审核未通过" color="#91c7ae"/>
-              <span style="margin-left: 18px">{{echarts.notPassAuditUserNum}}</span>
+              <a-badge text="审核未通过" color="#FF5F80"/>
+              <span style="margin-left: 48px">{{echarts.notPassAuditUserNum}}</span>
               <br />
             </div>
           </div>
@@ -67,6 +67,9 @@ export default {
     };
   },
   computed: {
+    // isShowEcharts(){
+    //   return Object.values(this.echarts).some(i=>i!==0)
+    // }
   },
   methods: {
     //echarts饼图项目招商
@@ -77,14 +80,14 @@ export default {
       console.log(res);
       this.echarts = res.data;
       let option = {
-      // color: ['red', 'blue','green','skyblue','pink'],
+      color: ['#0EA5FF', '#9200FF','#67CE57','#F7CE22','#FF5F80'],
         tooltip: {
           trigger: 'item',
         },
         series: [
           {
             type: 'pie',
-            radius: ['50%', '70%'],
+            radius: ['40%', '70%'],
             // avoidLabelOverlap: false,
             label: {
                 show: false,
@@ -93,7 +96,7 @@ export default {
             emphasis: {
                 label: {
                     show: true,
-                    fontSize: '14',
+                    fontSize: '16',
                     fontWeight: 'bold'
                 }
             },
@@ -102,8 +105,8 @@ export default {
             },
             data: [
               { value: this.echarts.onlyRegUserNum, name: '仅注册'},
-              { value: this.echarts.confirmQuaUserNum, name: '已认证资质'},
-              { value: this.echarts.submitEleUserNum, name:'已提交要素表'},
+              { value: this.echarts.confirmQuaUserNum, name: '仅提交资质'},
+              { value: this.echarts.submitEleUserNum, name:'待审核'},
               { value: this.echarts.storageUserNum, name: '已入库'},
               { value: this.echarts.notPassAuditUserNum, name: '审核未通过'}
             ]
@@ -160,7 +163,7 @@ $leftWidth: 550px;
       padding: 20px 24px;
       border-bottom: 1px solid #E9E9E9;
       line-height: 1.5;
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 600;
       color: #262626;
     }
@@ -181,7 +184,7 @@ $leftWidth: 550px;
   }
     .data-display {
       display: flex;
-      justify-content: space-around;
+      justify-content: start;
       // align-items: center;
       width: 100%;
       height: 262px;
@@ -196,8 +199,9 @@ $leftWidth: 550px;
       height: 250px;
       border-radius: 50%;
     }
-    .schemeProcess,.schemeStatus {
-      width: 30%;
+    .schemeProcess {
+      width: 40%;
+      margin: 0 10px;
       span {
         height: 20px;
         font-size: 14px;
@@ -205,31 +209,41 @@ $leftWidth: 550px;
         color: #333333;
         line-height: 20px;
       }
+      /deep/.ant-badge-status-dot {
+        width: 10px!important;
+        height: 10px!important;
+      }
     }
     .total {
       font-size: 16px;
       padding: 0 20px;
-      // margin-top: 20px;
       margin-left: 10px;
-      font-weight: 600;
+      font-weight: 400;
       color: #333333;
       line-height: 16px;
+      letter-spacing: 0.5px;
     }
   }
   .number {
-    margin-top: 45px;
+    margin-top: 24px;
   }
   span {
     font-weight: 400;
     font-size: 16px;
     padding: 3px 0;
   }
+  u {
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 20px;
+  }
   .progress {
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 400px;
     img {
-			vertical-align: middle;
+			// vertical-align: middle;
      width: 200px;
      height: 200px;
     }
@@ -238,7 +252,7 @@ $leftWidth: 550px;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 300px;
+    height: 800px;
     img {
      width: 200px;
      height: 200px;
@@ -246,7 +260,7 @@ $leftWidth: 550px;
   }
   #main{
     position: absolute;
-    top: -10px;
+    top: -28px;
     left: 10px;
     width: 250px;
     height: 250px;
