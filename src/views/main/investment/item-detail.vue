@@ -176,7 +176,7 @@
             <a-radio-button :value="2"> 末通过系统筛选 {{planCount.invalidCount}}</a-radio-button>
           </a-radio-group>
           <div class="table-block">
-            <a-table v-bind="tableSource.submitPlanTable" @change="submitPlanTableChange" >
+            <a-table  v-bind="tableSource.submitPlanTable" @change="submitPlanTableChange" >
               <template slot="gmtCreate" slot-scope="gmtCreate">{{gmtCreate|show_}}</template>
               <template slot="name" slot-scope="name,row">
                 <a-button type="link" @click="goAvatar(row.id)">{{ name }}</a-button>
@@ -267,7 +267,7 @@
 import {projectDetail,signService,serviceCaseSubmit,updateProjectInfo} from "@/plugin/api/investment-center";
 import {collateralTypeData} from "./source"
 import {getArea} from "@/plugin/tools"
-import Breadcrumb from "@/components/bread-crumb";getDownLoadToken
+import Breadcrumb from "@/components/bread-crumb";
 import {getDownLoadToken} from "@/plugin/api/base"
 //报名服务商表数据
 const columns = [
@@ -430,7 +430,6 @@ export default {
           {
             required:true,
             message:"请输入期限上限",
-
           }
         ],
         signDeadline:[

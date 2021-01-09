@@ -11,11 +11,11 @@ const userAuth = {
     resetPassword: params => request.post('/operator/userManage/resetPassword', params),
 
     // 获取部门管理列表
-    getSectionList: params => request.get('/operator/department/listDepartment', params),
+    getSection: params => request.post('/operator/department/listDepartment', params),
     // 删除部门
     removeSection: params => request.post('/operator/department/deleteDepartment', params),
     // 添加编辑部门
-    addSection: params => request.post('/operator/department/saveDepartment', params),
+    addSectionData: params => request.post('/operator/department/saveDepartment', params),
     // 账号管理-获取部门管理列表
     getSectionListManagement: params => request.get('/operator/department/simpleListDepartment', params),
 };

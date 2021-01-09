@@ -37,7 +37,7 @@
         </a-col>
       </a-row>
       <!--展示招商项目表格-->
-        <a-table  @change="tableHanges" v-bind="tableSource" rowKey=id >
+        <a-table   @change="tableHanges" v-bind="tableSource" rowKey=id >
           <a slot="name" slot-scope="text">{{ text }}</a>
           <template slot="security" slot-scope="text,row">{{row.security|guarantyType}}</template>
           <template slot="debtCaptial" slot-scope="text,row">{{row.debtCaptial|amountTh}}</template>
@@ -55,7 +55,7 @@
           <a-upload
               name="file"
               :showUploadList="false"
-              action="/proxy-api/operator/project/importExcel"
+              :action="upFiles"
               :headers="headers"
               :beforeUpload="fileIntercept"
               @change="fileChange"
@@ -82,7 +82,7 @@
 
 <script>
 import Breadcrumb from '@/components/bread-crumb';
-import { projectFind } from "@/plugin/api/investment-center";
+import { projectFind,upFiles} from "@/plugin/api/investment-center";
 import { disabledDate } from "@/plugin/tools";
 //提交代码
 const columns = [
@@ -90,57 +90,48 @@ const columns = [
     title: '债务人名字',
     dataIndex: 'debtor',
     key: 'name',
-    width: 200,
   },
   {
     title: '债权人(万元)',
     dataIndex: 'debtCaptial',
     key: 'debtCaptial',
     scopedSlots: {customRender: 'debtCaptial'},
-    width: 200,
   },
   {
     title: '债权利息(万元)',
     dataIndex: 'debtInterest',
     key: 'debtInterest',
     scopedSlots: {customRender: 'debtInterest'},
-    width: 200,
   },
   {
     title: '担保方式',
     dataIndex: 'security',
     key: 'security',
     scopedSlots: {customRender: 'security'},
-    width: 200,
   },
   {
     title: '项目发布日期',
     dataIndex: 'gmtCreate',
     sorter: true,//排序
-    width: 200,
   },
   {
     title: '报名截止日期',
     dataIndex: 'deadline',
     sorter: true,//排序
-    width: 200,
   },
   {
     title: '当前报名人数',
     dataIndex: 'numsSignIn',
-    width: 200,
   },
   {
     title: '当前方案提交人数',
     dataIndex: 'numsSubmit',
-    width: 200,
   },
   {
     title: '操作',
     dataIndex: 'id',
     key: 'action',
     scopedSlots: {customRender: 'action'},
-    width: 200,
   },
 ];
 // const data = [
@@ -165,6 +156,7 @@ export default {
   name: "Investment",
   data() {
     return {
+      upFiles,
       navData,
       disabledDate,
       visible: false,
