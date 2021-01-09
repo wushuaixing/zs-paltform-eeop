@@ -1,4 +1,4 @@
-import request from "@/plugin/tools/request";
+import request,{ENV} from "@/plugin/tools/request";
 
 export const amcProjectListApi = params => request.post('/service/amcProject',params);
 
@@ -18,3 +18,6 @@ export const serviceCaseSubmit = params => request.post('/operator/project/servi
 
 //修改项目招商信息接口
 export const updateProjectInfo = params => request.post('/operator/project/updateProjectInfo',params);
+
+//上传表格上传
+export  const  upFiles = ENV === 'development' ? '/proxy-api/operator/project/importExcel' : '/api/operator/project/importExcel';

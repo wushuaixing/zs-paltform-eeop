@@ -87,7 +87,6 @@
 	import { clearProto, disabledDate,clearObject,areaAnalysis } from "@/plugin/tools";
 	import { toReview } from "@/plugin/api/provider";
 	import { columns } from './deploy';
-
 	const auditStatus = false;
 
 	export default {
