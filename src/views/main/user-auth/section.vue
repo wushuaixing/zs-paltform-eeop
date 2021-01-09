@@ -29,7 +29,7 @@
         </a-tabs>
         <div style="height: 4px"></div>
         <a-table :columns="column" :data-source="dataSource" size="middle" :pagination="pagination"
-                 @change="handleTableChange" :row-key="record => record.id"
+                 @change="handleTableChange" :row-key="record => record.id" :loading="loading"
         >
           <template slot="auction" slot-scope="text,record">
             <a-button type="link" size="small" class="edit" :style="{paddingLeft: 0}"
@@ -83,6 +83,7 @@ export default {
     return {
       modalVisible: false,
       modalSign: 'add',
+      loading: false,
       navData: [
         {id: 1, title: '内部权限管理', path: '/auth/role'},
         {id: 2, title: '部门管理', path: '/auth/section'},
@@ -125,6 +126,7 @@ export default {
   },
   methods: {
     getTableList() {
+      this.loading = true;
       userAuthApi.getSectionList(this.queryParams).then((res) => {
         if (res.code === 20000) {
           const data = res.data;
@@ -133,7 +135,9 @@ export default {
         } else {
           this.$message.error(res.message)
         }
-      })
+      }).finally(() => {
+        this.loading = false;
+      });
     },
     handleResetFields(flag) {
       if (flag === 'form') {

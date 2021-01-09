@@ -51,7 +51,7 @@ export const sectionColumns = (sort, isDel) => {
             title: '部门内账号数量',
             dataIndex: 'userCount',
             key: 'userCount',
-            customRender: val => val || '-',
+            customRender: val => val || 0,
         },
         {
             title: '操作',
@@ -64,8 +64,8 @@ export const sectionColumns = (sort, isDel) => {
     const sectionDel = [
         {
             title: '删除日期',
-            dataIndex: 'gmtDel',
-            key: 'gmtDel',
+            dataIndex: 'gmtDelete',
+            key: 'gmtDelete',
             sorter: true,
             sortOrder: sort || false,
             customRender: val => val || '-',
@@ -107,7 +107,7 @@ export const roleColumns = (sort, isDel, sortText) => {
             title: '账号数',
             dataIndex: 'userCount',
             key: 'userCount',
-            customRender: val => val || '-',
+            customRender: val => val || 0,
         },
         {
             title: '操作',

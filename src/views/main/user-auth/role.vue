@@ -29,7 +29,7 @@
         </a-tabs>
         <div style="height: 4px"></div>
         <a-table :columns="column" :data-source="dataSource" size="middle" :pagination="pagination"
-                 @change="handleTableChange" :row-key="record => record.id"
+                 @change="handleTableChange" :row-key="record => record.id" :loading="loading"
         >
           <template slot="auction" slot-scope="text,record">
             <a-button type="link" size="small" :style="{paddingLeft: 0}" @click="handleAccount('edit',record)">编辑
@@ -143,6 +143,7 @@ export default {
     return {
       modalSign: 'add',
       modalVisible: false,
+      loading: false,
       navData: [
         {id: 1, title: '内部权限管理', path: '/auth/role'},
         {id: 2, title: '角色管理', path: '/auth/role'},
@@ -203,6 +204,7 @@ export default {
   },
   methods: {
     getTableList() {
+      this.loading = true;
       userAuthApi.listRole(clearProto(this.queryParams)).then((res) => {
         if (res.code === 20000) {
           const data = res.data;
@@ -211,7 +213,9 @@ export default {
         } else {
           this.$message.error(res.message)
         }
-      })
+      }).finally(() => {
+        this.loading = false;
+      });
     },
     //重置表单|重置搜索条件|tab切换
     handleResetFields(flag) {
@@ -288,12 +292,12 @@ export default {
             this.form = {
               id: record.id,
               roleName: record.roleName,
-              attractInvestmentManage: data.attractInvestmentManage,
-              serviceUserManage: data.serviceUserManage,
-              exportPermission: data.exportPermission && data.exportPermission.toString() || '',
-              managePermission: data.managePermission && data.managePermission.toString() || '',
-              readScope: data.readScope && data.readScope.toString() || '',
-              projectManage: data.projectManage && data.projectManage.toString() || '',
+              attractInvestmentManage: data && data.attractInvestmentManage || false,
+              serviceUserManage: data && data.serviceUserManage || false,
+              exportPermission: data && data.exportPermission && data.exportPermission.toString() || '',
+              managePermission: data && data.managePermission && data.managePermission.toString() || '',
+              readScope: data && data.readScope && data.readScope.toString() || '',
+              projectManage: data && data.projectManage && data.projectManage.toString() || '',
             }
           }
         })
