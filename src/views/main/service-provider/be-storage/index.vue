@@ -55,12 +55,12 @@
 							<a-button type="link" icon="file-text" @click="toLink(item)">详情</a-button>
 							<a-button type="link" icon="audit" @click="toEffect(item)">印象添加</a-button>
 						</template>
-						<a-button type="link" :icon="normal.icon" @click="toLink(item)" v-else>{{normal.text}}</a-button>
+						<a-button type="link" :icon="normal.icon" @click="toLink(item,true)" v-else>{{normal.text}}</a-button>
 					</template>
 				</a-table>
 			</div>
 		</div>
-		<EffectModal ref="effect" @change="onEffectChange"></EffectModal>
+		<EffectModal ref="effect" />
 	</div>
 </template>
 
@@ -187,11 +187,19 @@
 				this.toQuery({ page:row.current });
 			},
 			// link 跳转
-			toLink(item){
-				this.$router.push({
-					path:'/provider/storage/detail',
-					query: clearObject({ id:item.id })
-				})
+			toLink(item,audit){
+				if(audit){
+					this.$router.push({
+						path:'/provider/storage/audit',
+						query: clearObject({ id:item.id,type:this.activeKey })
+					})
+				}else{
+					this.$router.push({
+						path:'/provider/storage/detail',
+						query: clearObject({ id:item.id })
+					})
+				}
+
 			},
 			toEffect(item){
 				if(item.id) this.$refs.effect.toAdd(item.id);
@@ -223,7 +231,7 @@
 		},
 		computed:{
 			normal(){
-				const res = !(this.activeKey === 1 && this.auditStatus);
+				const res = !(this.activeKey === 1) && this.auditStatus;
 				return {
 					icon: res ? 'file-text' : 'audit',
 					text: res ? '查询详情' : '审核'

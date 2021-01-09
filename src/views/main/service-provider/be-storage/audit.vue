@@ -11,9 +11,33 @@
 					<UserInfo :info="source.user" :isLawyer="source.isLawyer" />
 				</div>
 			</a-affix>
-			<QualifyInfo :isLawyer="source.isLawyer" :source="source.qualify"/>
-			<FactorInfo :isLawyer="source.isLawyer" :source="source.factor"/>
+			<QualifyInfo v-bind="info" :source="source.qualify" v-if="type === 2" />
+			<FactorInfo v-bind="info" :source="source.factor" v-if="type === 3"/>
+			<a-affix :offset-bottom="0">
+				<div class="review-audit-wrapper">
+					<a-button type="primary" @click="visible = true">添加审核结果</a-button>
+				</div>
+			</a-affix>
 		</div>
+		<a-modal v-model="visible" title="审核结果" v-bind="modal">
+				<a-form-model  :label-col="{ span:6}" :wrapper-col="{ span: 18}">
+					<a-form-model-item :label="`${type===2?'资质':'要素'}信息审核结果`"  >
+						<a-radio-group v-model="form.audit">
+							<a-radio :value="1" style="margin-right: 50px">通过</a-radio>
+							<a-radio :value="0">不通过</a-radio>
+						</a-radio-group>
+					</a-form-model-item>
+					<a-form-model-item label="未通过原因" v-if="form.audit === 0" required>
+						<a-textarea v-model="form.notPassReason" :rows="4" style="width: 500px"
+												:maxLength="1024" placeholder="请反馈审核不通过原因"></a-textarea>
+					</a-form-model-item>
+				</a-form-model>
+			<div slot="footer" style="text-align: center">
+				<a-button type="primary" :loading="loading" @click="toAuditSubmit">提交</a-button>
+				<a-button @click="visible = fasle">取消</a-button>
+			</div>
+		</a-modal>
+
 	</div>
 </template>
 
@@ -26,21 +50,31 @@
 	// import { processData } from '../to-review/deploy';
 
 	export default {
-		name: 'ToReview',
+		name: 'Audit',
 		data() {
 			return {
-
-				activeKey:'1',
 				source:{
 					isLawyer: true,
 					user:{},
 					qualify:{},
 					factor:{},
 				},
+				infoId:'',
 				spinning:true,
-				userId:'',
-				elementStatus:{},
-				qualifyStatus:{},
+				visible:false,
+				loading:false,
+				type:'',
+				form:{
+					audit:'',
+					notPassReason:'',
+				},
+				modal:{
+					width:'800px',
+					centered:true,
+					maskClosable:true,
+					keyboard:false,
+					closable:false,
+				}
 			};
 		},
 		components:{
@@ -52,41 +86,86 @@
 		created() {
 			const { id,type } = this.$route.query;
 			this.userId = id;
+			this.type = Number(type);
 			if(type === '2' || type === '3') {
-				beStorage.detail({id,type:Number(type)}).then(res=>{
+				beStorage.detail({id,type:this.type}).then(res=>{
 					if(res.code === 20000){
-						console.log(res.data);
+						const { elementModifyVO, qualifyModifyVO } = res.data;
+						const { identity, name, phone,} = elementModifyVO || qualifyModifyVO || {};
+						this.source.isLawyer = identity === 1;
+						this.source.identity = identity;
+						this.source.user = {
+							identity,
+							name:identity === 2 ? ((qualifyModifyVO || {}).organizationQualify || {}).name : name,
+							contact:name,
+							lawOffice:((qualifyModifyVO || {}).lawyerQualify || {}).lawOffice,
+							phone,
+						};
+						if(this.type === 2){
+							const { organizationQualify = {} ,lawyerQualify = {}, qualifyId} = qualifyModifyVO;
+							this.source.qualify = {
+								...lawyerQualify,
+								...organizationQualify,
+							};
+							this.infoId = qualifyId;
+						}
+						if(this.type === 3){
+							const { organizationElement = {} ,lawyerElement = {}, elementId} = elementModifyVO;
+							this.source.factor = {
+								...lawyerElement,
+								...organizationElement,
+							};
+							this.infoId = elementId;
+						}
 					} else{
 						this.$message.error('网络请求异常，请稍后再试！',1,()=>{
-							this.$route.push('/provider/storage')
+							this.$router.push('/provider/storage')
 						})
 					}
+					this.spinning = false;
 				})
 			}else{
 				this.$message.error('当前数据有误，请重新查询！',1,()=>{
-					this.$route.push('/provider/storage')
+					this.$router.push('/provider/storage')
 				})
 			}
 		},
 		methods:{
-			onEffectChange(status){
-				console.log(status);
-			},
+			toAuditSubmit(){
+				const { audit, notPassReason } = this.form;
+				if(audit === 0 && !notPassReason) return this.$message.error('请反馈审核不通过原因');
+				beStorage.audit({
+					audit,
+					notPassReason,
+					type:this.type === 2 ? 1 : 2,
+					serviceUserId:this.userId,
+					identity:this.source.identity,
+					id:this.infoId
+				}).then(res=>{
+					if(res.code === 20000){
+						this.$message.success('审核操作成功！',1,this.$router.push('/provider/storage'));
+					}else{
+						this.$message.error('操作失败，请稍后再试！');
+					}
+				});
+				console.log('toAuditSubmit');
+			}
 		},
 		computed:{
-			impSource(){
+			info(){
 				return {
-					int:this.source.interviewImpression,
-					coo:this.source.cooperationImpressionList,
+					isLawyer:this.source.isLawyer,
+					status:3
 				}
 			},
 			navSource(){
 				const { type } = this.$route.query;
-				console.log(type);
+				const str = (type === '2' || type === '3' )
+					? (type === '2' ? ' - 资质修改申请' : ' - 要素修改申请') : '';
 				return [
 					{id:1,title:'服务商管理',path:'/provider/review'},
 					{id:2,title:'已入库',path:'/provider/storage'},
-					{id:3,title:'服务商详情页',path:''},
+					{id:3,title:`服务商详情页${str}`,path:''},
 				]
 			}
 		},
@@ -96,6 +175,8 @@
 <style scoped lang="scss">
 	.custom-card-position{
 		position: relative;
+		border-bottom: 1px solid $border-base;
+		margin-bottom: 10px;
 		.custom-card-container-remark{
 			position: absolute;
 			z-index: 1;

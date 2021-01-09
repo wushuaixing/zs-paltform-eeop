@@ -49,7 +49,7 @@
 		computed:{
 			identity(){
 				if(this.info.identity){
-					return this.info.identity === '1' ? "律师" : "机构"
+					return (this.info.identity).toString() === '1' ? "律师" : "机构"
 				}
 				return ''
 			}

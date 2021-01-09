@@ -135,6 +135,11 @@ export const getNormalRoutes = config => {
                                     name: 'service-provider/be-storage/detail',
                                     component: () => import("@/views/main/service-provider/be-storage/detail"),
                                 },
+		                            {
+			                            path: 'storage/audit',
+			                            name: 'service-provider/be-storage/audit',
+			                            component: () => import("@/views/main/service-provider/be-storage/audit"),
+		                            },
                             ].filter(i => i)
                         },
                         // 招商管理
