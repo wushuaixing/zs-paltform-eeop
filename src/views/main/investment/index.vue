@@ -230,7 +230,6 @@ export default {
     },
     inquire(){
       this.requestInquire()
-      console.log(this.findAll)
     },
     reset(){
       this.findAll.debtor = "";
@@ -239,7 +238,6 @@ export default {
       this.requestInquire()
     },
     tableHanges(pagination, filters, sorter,) {
-      // console.log(pagination, filters, sorter,)
       //排序
       this.findAll.sortField = sorter.field;
       this.findAll.sortOrder = sorter.order ? sorter.order === "ascend" ? "ASC" : "DESC" : "";
@@ -249,18 +247,15 @@ export default {
     },
     viewDetails(v) {
       this.$router.push({name: 'investment/item-detail', query: {id: v.id}})
-      console.log(v.id)
     },
     showModal() {
       this.visible = true;
     },
     handleOk(e) {
-      console.log(e);
       this.visible = false;
     },
     //上传文件
     fileIntercept(file){
-      // console.log(file,fileList)
       const isLimit16M = file.size / 1024 / 1024 <= 16;
       const isSheet = file.type === "application/vnd.ms-excel" || file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
       if(!isLimit16M) this.$message.error("文件大小不能超过16M,请重新上传");
