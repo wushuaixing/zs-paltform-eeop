@@ -90,18 +90,26 @@ export const fileListRuleAsync = (str) => {
  */
 export const fileListRule = (str) => {
 	if (!str) return [];
-	try {
-		if (!Array.isArray(JSON.parse(str))) return [];
-		return JSON.parse(str).map(i => ({
-			...i,
-			status: 'done',
-		}))
-	}catch (e) {
-		return [];
-	}
+	if (!Array.isArray(JSON.parse(str))) return [];
+	return JSON.parse(str).map(i => {
+		if(typeof i === 'string'){
+			return {
+				uid: i,
+				hash:i,
+				name :(i.split('_'))[2] || i,
+				status: 'done',
+			}
+		}else{
+			const name = i.name || (i.name.split('_'))[2] || i;
+			return {
+				...i,
+				name,
+				status: 'done',
+			}
+		}
 
+	})
 };
-
 /**
  * 获取省市区组合名称
  * @param provinceCode
