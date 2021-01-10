@@ -229,6 +229,7 @@ export default {
       this.findAll.endDate = this.field.endTime = '';
       this.findAll.startDate = this.field.startTime = '';
       this.sortedInfo = null;
+      this.findAll.sortOrder = '';
       this.requestInquire()
     },
     tableHanges(pagination, filters, sorter,) {
