@@ -15,6 +15,8 @@
 </template>
 
 <script>
+	import { beStorage } from "@/plugin/api/provider";
+
 	export default {
 		name:'Effect',
 		data(){
@@ -41,12 +43,18 @@
 					this.$message.error('请输入服务商合作印象');
 					this.loading = false;
 				}else {
-					setTimeout(() => {
-						this.loading = false;
-						this.visible = false;
-						this.id = '';
-						this.$emit('onChange',true);
-					}, 1000)
+					beStorage.impression({
+						id:this.id,
+						impression:this.textarea
+					}).then(res=>{
+						if(res.code === 20000){
+							this.$emit('change',this.textarea);
+							this.visible = false;
+							this.$message.success('合作印象添加成功！');
+						}else{
+							this.$message.error('添加/编辑面谈印象失败');
+						}
+					}).catch(()=>this.loading = false);
 				}
 			},
 			toCancel(){

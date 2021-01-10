@@ -29,7 +29,7 @@
 <script>
   // import { getInfo} from "@/plugin/api/base";
   import ModifyPwdModal from "./personal/modify-password";
-  import {logout} from "@/plugin/api/login"
+  import { logout } from "@/plugin/api/login"
   export default {
     data() {
       return {
@@ -77,7 +77,7 @@
     },
     computed:{
       username(){
-        return this.$store.getters.getInfo.username;
+        return this.$store.getters.getInfo.name;
       },
       passwordChanged(){
         return this.$store.getters.getInfo.passwordChanged

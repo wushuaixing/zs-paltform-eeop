@@ -29,7 +29,7 @@ export default new Vuex.Store({
       state.isLogin = false;
       window.localStorage.token = '';
     },
-	  ruleInfo:(state,roleName,deploy)=>{
+	  ruleInfo:(state,{roleName,config:deploy})=>{
 			state.roleName = roleName;
 			state.roleConfig = deploy;
 	  },
