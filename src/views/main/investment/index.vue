@@ -2,7 +2,7 @@
   <div class="frame-wrapper">
     <Breadcrumb :source="navData" icon="environment">
       <template slot="suffix">
-        <a-button @click="showModal" >
+        <a-button @click="showModal" v-if="this.projectManage === 1">
           <a-icon type="snippets"/>项目上传
         </a-button>
       </template>
@@ -84,6 +84,7 @@
 import Breadcrumb from '@/components/bread-crumb';
 import { projectFind,upFiles} from "@/plugin/api/investment-center";
 import { disabledDate } from "@/plugin/tools";
+import store from '@/plugin/store';
 //提交代码
 const columns = (sortedInfo) =>{
   return  [
@@ -182,7 +183,8 @@ export default {
       field:{
         startTime:'',
         endTime:'',
-      }
+      },
+      projectManage:"",//权限管理
     };
   },
   components: {
@@ -196,6 +198,8 @@ export default {
     }
   },
   created() {
+    const {config} = store.getters.getInfo;
+    this.projectManage = config.projectManage
     this.requestInquire()
   },
   watch:{

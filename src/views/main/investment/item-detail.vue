@@ -67,7 +67,7 @@
         </div>
         <!--项目招商信息-->
         <div>
-          <h3 @click="showModal" class="title2">项目招商信息 <a-icon type="form" /></h3>
+          <h3  class="title2">项目招商信息 <a-icon v-if="projectManage === 1" @click="showModal" type="form" /></h3>
           <a-row type="flex">
             <a-col :span="8">
               报名截止日期：<span>{{ detailInfo.deadline|show_ }}</span>
@@ -269,6 +269,7 @@ import {collateralTypeData} from "./source"
 import {getArea} from "@/plugin/tools"
 import Breadcrumb from "@/components/bread-crumb";
 import {getDownLoadToken} from "@/plugin/api/base";
+import store from '@/plugin/store';
 //报名服务商表数据
 const columns = [
   {
@@ -519,6 +520,7 @@ export default {
           },
         },
       },
+      projectManage:"",//权限管理
     };
   },
   computed:{
@@ -693,11 +695,6 @@ export default {
     area:(params) => {
       return getArea(params.provinceCode,params.cityCode,params.areaCode);
     },
-    strSplit(val){
-      if(!val)return '-';
-      let codeArr = val.split('/');
-      return getArea(codeArr[0],codeArr[1],codeArr[2])
-    },
     collateralType:(val)=>{
       if(!val)return"-";
       return collateralTypeData.list.find(i=>val === i.value).label;
@@ -719,14 +716,17 @@ export default {
       }else{
         this.$message.error("获取服务商提交方案列表失败,请重新加载")
       }
-    })
+    });
     serviceCaseSubmit({caseType:2,id,page:1,size:10}).then(res=>{
       if(res.code = 20000){
         this.planCount.invalidCount = res.data.total;
       }else{
         return false;
       }
-    })
+    });
+    //权限控制
+    const {config} = store.getters.getInfo;
+    this.projectManage = config.projectManage
   },
 };
 </script>
