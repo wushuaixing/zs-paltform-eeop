@@ -500,21 +500,7 @@ export default {
         //报名服务商列表
         applyServeTable: {
           columns,
-          dataSource: [
-            {
-              applyDate: "2020-12-03",
-              areasOfGoodCases: "11,11/1101,14/1401",
-              caseFileStatus: 0,
-              gmtModify: "2021-09-6",
-              goodCases: 1,
-              id: 0,
-              identity: 1,
-              name: "画虎",
-              orgOfficeName: "机构",
-              phone: "1384767567",
-              workingTime: 0
-            }
-          ],
+          dataSource: [],
           pagination: {
             total: 40,
             pageSizeOptions: ["10", "20", "30", "40"],
@@ -573,7 +559,7 @@ export default {
         console.log(res);
         if(res.code === 20000){
           this.tableSource.applyServeTable.pagination.total = res.data.total;
-          // this.tableSource.applyServeTable.dataSource = res.data.list;
+          this.tableSource.applyServeTable.dataSource = res.data.list;
         }else{
           this.$message.error("获取报名服务商列表失败,请重新加载")
         }
@@ -598,7 +584,7 @@ export default {
     },
     goAvatar(v){
       console.log("跳转到画像页面",v);
-      // this.$router.push({name: 'investment/item-detail', query: {id: v.id}})
+      this.$router.push({path:'/provider/storage/detail', query: {id: v}})
     },
     //报名服务商列表分页,排序操作
     applyServeTableChange(pagination, filters, sorter){
