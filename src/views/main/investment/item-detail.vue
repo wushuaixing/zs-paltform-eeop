@@ -580,7 +580,8 @@ export default {
       this.getServiceCaseSubmitList();
     },
     goAvatar(v){
-      console.log(v);
+      console.log("跳转到画像页面",v);
+      // this.$router.push({name: 'investment/item-detail', query: {id: v.id}})
     },
     //报名服务商列表分页,排序操作
     applyServeTableChange(pagination, filters, sorter){
@@ -613,6 +614,10 @@ export default {
     },
     showModal(){
       this.visible = true;
+      this.editInfo.signDeadline = this.detailInfo.deadline;
+      this.editInfo.submitDeadline = this.detailInfo.submitDeadline;
+      this.editInfo.dateLimit = this.detailInfo.targetYearUpperLimit;
+      this.editInfo.aimedPriceBack = this.detailInfo.targetAmountLowerLimit;
     },
     handleOk(){
       this.$refs.ruleForm.validate( validate => {

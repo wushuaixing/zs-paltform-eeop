@@ -157,6 +157,8 @@ export default {
         dataSource:[],
         pagination: {
           total: 0,
+          pageSizeOptions: ["10", "20", "30", "40"],
+          showSizeChanger: true,
           showQuickJumper: true,
           showTotal:(val)=>`共${val}条`
         },
