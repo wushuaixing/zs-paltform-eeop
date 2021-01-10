@@ -233,7 +233,6 @@
 		},
 		computed:{
 			normal(){
-				console.log(this.auditStatus);
 				const res = !(this.activeKey === 1) && !this.auditStatus;
 				return {
 					icon: res ? 'file-text' : 'audit',
