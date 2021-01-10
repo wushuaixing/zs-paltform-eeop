@@ -47,7 +47,7 @@ export default {
     },
     fixed:{
       type: Boolean,
-      default: true,
+      default: false,
     }
   }
 }
