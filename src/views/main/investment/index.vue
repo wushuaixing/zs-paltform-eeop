@@ -158,7 +158,7 @@ export default {
         pagination: {
           total: 0,
           showQuickJumper: true,
-          showTotal:(val)=>`共${val}多少条`
+          showTotal:(val)=>`共${val}条`
         },
       },
       sortedInfo:null,
@@ -220,9 +220,9 @@ export default {
     },
     reset(){
       this.findAll.debtor = "";
-      this.findAll.endDate = "";
+      this.findAll.endDate = this.field.endTime = '';
+      this.findAll.startDate = this.field.startTime = '';
       this.sortedInfo = null;
-      this.findAll.startDate = "";
       this.requestInquire()
     },
     tableHanges(pagination, filters, sorter,) {

@@ -92,7 +92,7 @@
           <h3 class="title2">债权清收情况</h3>
           <a-row type="flex">
             <a-col :span="8">
-              是否有代理律师：<span>{{ detailInfo.isHaveProxyLawyer|show_ }}</span>
+              是否有代理律师：<span>{{ detailInfo.isHaveProxyLawyer|whether }}</span>
             </a-col>
             <a-col :span="8">
               代理律师联系方式：<span>{{ detailInfo.proxyLawyerContact|show_ }}</span>
@@ -137,7 +137,7 @@
             债务人现状：<span>{{ detailInfo.debtorStatus }}</span>
           </div>
           <div class="creditor-condition">
-            保证人现状：<span>{{ detailInfo.guarantorStatus }}</span>
+            保证人现状：<span>{{ detailInfo.guarantorStatus|show_ }}</span>
           </div>
           <div class="creditor-condition">
             抵质押人现状：<span>{{ detailInfo.mortgagorStatus }}</span>
@@ -158,7 +158,7 @@
                 <div v-else>-</div>
               </template>
               <template slot="workingTime" slot-scope="workingTime">{{workingTime|workingTimeText}}</template>
-              <template slot="areasOfGoodCases" slot-scope="areasOfGoodCases">{{areasOfGoodCases|show_}}</template>
+              <template slot="areasOfGoodCases" slot-scope="areasOfGoodCases">{{areasOfGoodCases|strSplit}}</template>
               <template slot="goodCases" slot-scope="goodCases">{{goodCases|goodCasesType}}</template>
               <template slot="applyDate" slot-scope="applyDate">{{applyDate|show_}}</template>
               <template slot="gmtModify" slot-scope="gmtModify">{{gmtModify|show_}}</template>
@@ -647,6 +647,9 @@ export default {
       if(!val)return '-';
       return val;
     },
+    whether(val){
+      return  val === 0 ? '否' : '是'
+    },
     guarantorsList: (arr = []) => {
       return arr.map((i) => i.guarantorName).join("、");
     },
@@ -684,6 +687,11 @@ export default {
     },
     area:(params) => {
       return getArea(params.provinceCode,params.cityCode,params.areaCode);
+    },
+    strSplit(val){
+      if(!val)return '-';
+      let codeArr = val.split('/');
+      return getArea(codeArr[0],codeArr[1],codeArr[2])
     },
     collateralType:(val)=>{
       if(!val)return"-";
