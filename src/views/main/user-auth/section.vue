@@ -141,7 +141,10 @@ export default {
     },
     handleResetFields(flag) {
       if (flag === 'form') {
-        this.form.departmentName = '';
+        this.form = {
+          departmentName: '',
+          id: '',
+        }
       } else {
         this.queryParams = {
           ...this.queryParams,
