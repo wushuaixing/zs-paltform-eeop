@@ -67,7 +67,7 @@
         </div>
         <!--项目招商信息-->
         <div>
-          <h3 @click="showModal" class="title2">项目招商信息 <a-icon type="form" /></h3>
+          <h3  class="title2">项目招商信息 <a-icon v-if="projectManage === 1" @click="showModal" type="form" /></h3>
           <a-row type="flex">
             <a-col :span="8">
               报名截止日期：<span>{{ detailInfo.deadline|show_ }}</span>
@@ -92,7 +92,7 @@
           <h3 class="title2">债权清收情况</h3>
           <a-row type="flex">
             <a-col :span="8">
-              是否有代理律师：<span>{{ detailInfo.isHaveProxyLawyer|show_ }}</span>
+              是否有代理律师：<span>{{ detailInfo.isHaveProxyLawyer|whether }}</span>
             </a-col>
             <a-col :span="8">
               代理律师联系方式：<span>{{ detailInfo.proxyLawyerContact|show_ }}</span>
@@ -137,7 +137,7 @@
             债务人现状：<span>{{ detailInfo.debtorStatus }}</span>
           </div>
           <div class="creditor-condition">
-            保证人现状：<span>{{ detailInfo.guarantorStatus }}</span>
+            保证人现状：<span>{{ detailInfo.guarantorStatus|show_ }}</span>
           </div>
           <div class="creditor-condition">
             抵质押人现状：<span>{{ detailInfo.mortgagorStatus }}</span>
@@ -158,7 +158,7 @@
                 <div v-else>-</div>
               </template>
               <template slot="workingTime" slot-scope="workingTime">{{workingTime|workingTimeText}}</template>
-              <template slot="areasOfGoodCases" slot-scope="areasOfGoodCases">{{areasOfGoodCases|show_}}</template>
+              <template slot="areasOfGoodCases" slot-scope="areasOfGoodCases">{{areasOfGoodCases|strSplit}}</template>
               <template slot="goodCases" slot-scope="goodCases">{{goodCases|goodCasesType}}</template>
               <template slot="applyDate" slot-scope="applyDate">{{applyDate|show_}}</template>
               <template slot="gmtModify" slot-scope="gmtModify">{{gmtModify|show_}}</template>
@@ -176,7 +176,7 @@
             <a-radio-button :value="2"> 末通过系统筛选 {{planCount.invalidCount}}</a-radio-button>
           </a-radio-group>
           <div class="table-block">
-            <a-table  v-bind="tableSource.submitPlanTable" @change="submitPlanTableChange" >
+            <a-table  v-bind="tableSource.submitPlanTable" @change="submitPlanTableChange" :columns="columns2">
               <template slot="gmtCreate" slot-scope="gmtCreate">{{gmtCreate|show_}}</template>
               <template slot="name" slot-scope="name,row">
                 <a-button type="link" @click="goAvatar(row.id)">{{ name }}</a-button>
@@ -268,7 +268,8 @@ import {projectDetail,signService,serviceCaseSubmit,updateProjectInfo} from "@/p
 import {collateralTypeData} from "./source"
 import {getArea} from "@/plugin/tools"
 import Breadcrumb from "@/components/bread-crumb";
-import {getDownLoadToken} from "@/plugin/api/base"
+import {getDownLoadToken} from "@/plugin/api/base";
+import store from '@/plugin/store';
 //报名服务商表数据
 const columns = [
   {
@@ -335,12 +336,13 @@ const columns = [
   },
 ];
 //服务商提交方案表数据
-const columns2 = [
+const columns2 = (sortOrder) =>[
   {
     title: "服务方案提交日期",
     dataIndex: "gmtCreate",
     width: 200,
     sorter: true, //排序
+    sortOrder: sortOrder || false,
     scopedSlots: { customRender: "gmtCreate" },
   },
   {
@@ -452,70 +454,33 @@ export default {
         id: this.$route.query.id,
         page: 1,
         size: 10,
-        sortField: 0,
+        sortField: '',
         sortOrder: "",
         startDate: ""
       },
       detailInfo: {
         alreadyCollectionStatus: "",
-        amcProjectCollaterals: [
-          {
-            amcProjectId: 0,
-            areaCode: 0,
-            cityCode: 0,
-            collateralName: "",
-            collateralType: 0,
-            gmtCreate: "",
-            gmtDeleted: "",
-            gmtModify: "",
-            id: 0,
-            isDeleted: "",
-            provinceCode: 0,
-          },
-        ],
-        amcProjectGuarantors: [
-          {
-            amcProjectId: 0,
-            gmtCreate: "",
-            gmtDeleted: "",
-            gmtModify: "",
-            guarantorCard: "",
-            guarantorName: "张三",
-            guarantorPhone: "",
-            id: 0,
-            isDeleted: "",
-          },
-          {
-            amcProjectId: 0,
-            gmtCreate: "",
-            gmtDeleted: "",
-            gmtModify: "",
-            guarantorCard: "",
-            guarantorName: "李四",
-            guarantorPhone: "",
-            id: 0,
-            isDeleted: "",
-          }
-        ],
+        amcProjectCollaterals: [],
+        amcProjectGuarantors: [],
         assetPackage: "",
-        businessDepartmentRecoveryTime: 0,
-        businessDepartmentTarget: 0,
+        businessDepartmentRecoveryTime: '',
+        businessDepartmentTarget: '',
         businessTeam: "",
         capitalOrg: "",
         capitalProfitOrg: "",
         capitalPurchaseTime: "",
         contact: "",
         deadline: "",
-        debtCaptial: 0,
-        debtInterest: 0,
+        debtCaptial: '',
+        debtInterest: '',
         debtor: "",
         debtorStatus: "",
         disposeDescription: "",
         disposeDifficulty: "",
         guarantorStatus: "",
-        id: 0,
-        isHaveProxyLawyer: 0,
-        isLawsuit: 1,
+        id: '',
+        isHaveProxyLawyer: '',
+        isLawsuit: '',
         judicialProcess: "",
         mortgagorStatus: "",
         projectManager: "",
@@ -523,44 +488,18 @@ export default {
         proxyLawyerContact: "",
         proxyLawyerName: "",
         proxyLimit: "",
-        security: 0,
+        security: '',
         submitDeadline: "",
-        targetAmountLowerLimit: 0,
-        targetYearUpperLimit: 0,
+        targetAmountLowerLimit: '',
+        targetYearUpperLimit: '',
       },
+      sortOrder:'',
       //table表格数据
       tableSource: {
         //报名服务商列表
         applyServeTable: {
           columns,
-          dataSource: [
-            {
-              applyDate: "2021-01-05",
-              areasOfGoodCases: "杭州市",
-              caseFileStatus: 1,
-              gmtModify: "2020-12-31",
-              goodCases: "1",
-              id: 0,
-              identity: 0,
-              name: "蔡徐坤",
-              orgOfficeName: "阿里",
-              phone: "123456",
-              workingTime: 1,
-            },
-            {
-              applyDate: "2021-01-05",
-              areasOfGoodCases: "西湖区",
-              caseFileStatus: 0,
-              gmtModify: "2020-12-31",
-              goodCases: "1",
-              id: 0,
-              identity: 0,
-              name: "王千岁",
-              orgOfficeName: "小米",
-              phone: "6789876543",
-              workingTime: 0,
-            },
-          ],
+          dataSource: [],
           pagination: {
             total: 40,
             pageSizeOptions: ["10", "20", "30", "40"],
@@ -571,69 +510,9 @@ export default {
         },
         //服务方案提交列表
         submitPlanTable: {
-          columns: columns2,
-          dataSource: [
-            {
-              aimBackPrice: "111.11",
-              aimBackPriceInvalid: 0,
-              bidId: 0,
-              caseFileAddress: "www.baidu.com",
-              gmtCreate: "2021-01-05",
-              id: 1,
-              identity: 0,
-              name: "武帅兴",
-              orgOfficeName: "小米",
-              phone: "1234345",
-              projectId: 0,
-              scheduleManagements: [
-                {
-                  amcBidId: 0,
-                  amcServiceUserId: 0,
-                  dateDay: "",
-                  dateMatters: "短信催收",
-                  dateMonth: 1,
-                  gmtCreate: "",
-                  gmtDelete: "",
-                  gmtModify: "",
-                  id: 0,
-                  isDelete: "",
-                },
-              ],
-              serviceTime: 0,
-              serviceTimeInvalid: 0,
-            },
-            {
-              aimBackPrice: "123.12",
-              aimBackPriceInvalid: 0,
-              bidId: 0,
-              caseFileAddress: "www.baidu.com",
-              gmtCreate: "2021-01-05",
-              id: 2,
-              identity: 0,
-              name: "王千岁",
-              orgOfficeName: "美团",
-              phone: "543456",
-              projectId: 0,
-              scheduleManagements: [
-                {
-                  amcBidId: 0,
-                  amcServiceUserId: 0,
-                  dateDay: "",
-                  dateMatters: "打死",
-                  dateMonth: 2,
-                  gmtCreate: "",
-                  gmtDelete: "",
-                  gmtModify: "",
-                  id: 0,
-                  isDelete: "",
-                },
-              ],
-              serviceTime: 0,
-              serviceTimeInvalid: 0,
-            }
-          ],
+          dataSource: [],
           pagination: {
-            total: 40,
+            total: 0,
             pageSizeOptions: ["10", "20", "30", "40"],
             showSizeChanger: true,
             showQuickJumper: true,
@@ -641,7 +520,13 @@ export default {
           },
         },
       },
+      projectManage:"",//权限管理
     };
+  },
+  computed:{
+    columns2(){
+      return columns2(this.sortOrder)
+    },
   },
   methods: {
     bit(val){
@@ -693,10 +578,12 @@ export default {
     },
     //有效方案&未通过系统筛选切换
     changType(){
+      this.sortOrder = false;
       this.getServiceCaseSubmitList();
     },
     goAvatar(v){
-      console.log(v);
+      console.log("跳转到画像页面",v);
+      // this.$router.push({name: 'investment/item-detail', query: {id: v.id}})
     },
     //报名服务商列表分页,排序操作
     applyServeTableChange(pagination, filters, sorter){
@@ -712,9 +599,11 @@ export default {
     },
     //服务商提交方案列表分页,排序操作
     submitPlanTableChange(pagination, filters, sorter){
+      console.log(sorter)
       this.params.page = pagination.current;
       this.params.size = pagination.pageSize;
       this.params.sortField = sorter.field;
+      this.sortOrder = sorter.order;
       this.params.sortOrder = sorter.order
         ? sorter.order === "ascend"
           ? "ASC"
@@ -727,6 +616,10 @@ export default {
     },
     showModal(){
       this.visible = true;
+      this.editInfo.signDeadline = this.detailInfo.deadline;
+      this.editInfo.submitDeadline = this.detailInfo.submitDeadline;
+      this.editInfo.dateLimit = this.detailInfo.targetYearUpperLimit;
+      this.editInfo.aimedPriceBack = this.detailInfo.targetAmountLowerLimit;
     },
     handleOk(){
       this.$refs.ruleForm.validate( validate => {
@@ -760,6 +653,9 @@ export default {
     show_(val){
       if(!val)return '-';
       return val;
+    },
+    whether(val){
+      return  val === 0 ? '否' : '是'
     },
     guarantorsList: (arr = []) => {
       return arr.map((i) => i.guarantorName).join("、");
@@ -820,14 +716,17 @@ export default {
       }else{
         this.$message.error("获取服务商提交方案列表失败,请重新加载")
       }
-    })
+    });
     serviceCaseSubmit({caseType:2,id,page:1,size:10}).then(res=>{
       if(res.code = 20000){
         this.planCount.invalidCount = res.data.total;
       }else{
         return false;
       }
-    })
+    });
+    //权限控制
+    const {config} = store.getters.getInfo;
+    this.projectManage = config.projectManage
   },
 };
 </script>
