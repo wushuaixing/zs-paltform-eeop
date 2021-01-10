@@ -83,7 +83,7 @@
 	};
 
 	export default {
-		name: 'ToReview',
+		name: 'BeStorage',
 		data() {
 		  const { roleConfig } = this.$store.getters.getRole;
 		  // console.log(roleConfig.managePermission);

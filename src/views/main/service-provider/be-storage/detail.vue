@@ -104,6 +104,8 @@
 					this.elementStatus = elementStatus;
 					this.source = source;
 					this.spinning = false;
+				}else if(res.code === 80001){
+					this.$message.error('数据请求错误，请稍后再试！',1,this.$router.replace('/provider/storage'))
 				} else{
 					this.$message.error('网络请求异常，请稍后再试！')
 				}

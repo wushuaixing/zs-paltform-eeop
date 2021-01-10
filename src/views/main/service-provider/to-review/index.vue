@@ -87,11 +87,10 @@
 	import { clearProto, disabledDate,clearObject,areaAnalysis } from "@/plugin/tools";
 	import { toReview } from "@/plugin/api/provider";
 	import { columns } from './deploy';
-	const auditStatus = false;
-
 	export default {
 		name: 'ToReview',
 		data() {
+			const { roleConfig } = this.$store.getters.getRole;
 			return {
 				navData:[
 					{id:1,title:'服务商管理',path:'/provider/review'},
@@ -137,7 +136,7 @@
 				sortField:"",
 				disabledDate,
 				areaAnalysis,
-				auditStatus,
+				auditStatus:roleConfig.managePermission === 1,
 				checkUnread:false,
 			};
 		},
@@ -146,7 +145,9 @@
 			ReadStatus,
 		},
 		created(){
-			this.toQuery();
+
+
+				this.toQuery();
 			this.toQueryUnread();
 		},
 		methods:{
@@ -236,7 +237,6 @@
 			},
 			// link 跳转
 			toLink(item){
-				console.log(item);
 				this.$router.push({
 					path:'/provider/review/detail',
 					query: clearObject({
