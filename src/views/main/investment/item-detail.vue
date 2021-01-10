@@ -49,7 +49,7 @@
             抵押物类型：
             <div>
               <p style="margin:0" v-for="(i, index) in detailInfo.amcProjectCollaterals" :key="index">
-                {{index+1}}. {{i.collateralType|collateralType}}、{{i|area}}、{{i.collateralName}}
+                {{index+1}}. {{i.collateralType|collateralType}}、{{i|areas}}、{{i.collateralName}}
               </p>
             </div>
           </div>
@@ -158,7 +158,7 @@
                 <div v-else>-</div>
               </template>
               <template slot="workingTime" slot-scope="workingTime">{{workingTime|workingTimeText}}</template>
-              <template slot="areasOfGoodCases" slot-scope="areasOfGoodCases">{{areasOfGoodCases|strSplit}}</template>
+              <template slot="areasOfGoodCases">{{areaAnalysis("11,1101,110101")|area}}</template>
               <template slot="goodCases" slot-scope="goodCases">{{goodCases|goodCasesType}}</template>
               <template slot="applyDate" slot-scope="applyDate">{{applyDate|show_}}</template>
               <template slot="gmtModify" slot-scope="gmtModify">{{gmtModify|show_}}</template>
@@ -266,7 +266,7 @@
 /*eslint-disable*/
 import {projectDetail,signService,serviceCaseSubmit,updateProjectInfo} from "@/plugin/api/investment-center";
 import {collateralTypeData} from "./source"
-import {getArea} from "@/plugin/tools"
+import {getArea,areaAnalysis} from "@/plugin/tools"
 import Breadcrumb from "@/components/bread-crumb";
 import {getDownLoadToken} from "@/plugin/api/base";
 import store from '@/plugin/store';
@@ -406,6 +406,7 @@ export default {
     return {
       exhibit:false,
       visible:false,
+      areaAnalysis,
       labelCol: { span: 8 },
       wrapperCol: { span: 14 },
       navData,
@@ -499,7 +500,21 @@ export default {
         //报名服务商列表
         applyServeTable: {
           columns,
-          dataSource: [],
+          dataSource: [
+            {
+              applyDate: "2020-12-03",
+              areasOfGoodCases: "11,11/1101,14/1401",
+              caseFileStatus: 0,
+              gmtModify: "2021-09-6",
+              goodCases: 1,
+              id: 0,
+              identity: 1,
+              name: "画虎",
+              orgOfficeName: "机构",
+              phone: "1384767567",
+              workingTime: 0
+            }
+          ],
           pagination: {
             total: 40,
             pageSizeOptions: ["10", "20", "30", "40"],
@@ -558,7 +573,7 @@ export default {
         console.log(res);
         if(res.code === 20000){
           this.tableSource.applyServeTable.pagination.total = res.data.total;
-          this.tableSource.applyServeTable.dataSource = res.data.list;
+          // this.tableSource.applyServeTable.dataSource = res.data.list;
         }else{
           this.$message.error("获取报名服务商列表失败,请重新加载")
         }
@@ -692,7 +707,7 @@ export default {
       };
       return isLawsuitObj[val]
     },
-    area:(params) => {
+    areas:(params) => {
       return getArea(params.provinceCode,params.cityCode,params.areaCode);
     },
     collateralType:(val)=>{
