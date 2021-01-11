@@ -241,7 +241,7 @@
 			toAuditSubmit(){
 				this.audit.loading = true;
 				const { elementAudit, qualifyAudit, elementNotPassReason, qualifyNotPassReason } = this.audit.form;
-				if(elementAudit !== "" || qualifyAudit !== ""){
+				if(elementAudit !== "" && qualifyAudit !== ""){
 					if(qualifyAudit !== "" && qualifyAudit === 0 && !qualifyNotPassReason){
 						this.audit.loading = false;
 						return 	this.$message.error('请填写资质审核不通过原因');
