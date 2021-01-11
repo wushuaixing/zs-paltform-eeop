@@ -227,7 +227,7 @@
 					children:[
 						{ label:"擅长业务类型", field:"goodCases",f:_multi, other:'otherGoodCases', origin:"lawAdvType" },
 						{ label:"经典案例 ", field:"classicCase" ,slot:'file'},
-						{ label:"擅长业务区域", field:"areasOfGoodCases" },
+						{ label:"擅长业务区域", field:"areasOfGoodCases",f:_areas  },
 						{ label:"主要代理案件管辖法院 ", field:"competentCourt" },
 						{ label:"熟悉法院 ", field:"familiarCourts" },
 						{ label:"其他社会资源优势", field:"otherResourcesAdvantage" },

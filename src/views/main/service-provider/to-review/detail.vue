@@ -34,7 +34,7 @@
 			<a-affix :offset-bottom="0" v-if="status.code === 1">
 				<div class="review-audit-wrapper">
 					<a-button @click="toIntAdd">{{interview.status?"查看/编辑面谈印象":"添加面谈印象"}}</a-button>
-					<a-button type="primary" @click="toAuditAdd">添加审核结果</a-button>
+					<a-button type="primary" @click="toAuditAdd" v-if="auditStatus">添加审核结果</a-button>
 				</div>
 			</a-affix>
 		</div>
@@ -142,6 +142,7 @@
 	export default {
 		name: 'ToReview',
 		data() {
+			const { roleConfig } = this.$store.getters.getRole;
 			return {
 				spinning: true,
 				isLawyer:true,
@@ -180,6 +181,7 @@
 				},
 				resultVisible: true,
 				resultStatus: 1,
+				auditStatus:roleConfig.managePermission === 1,
 				modal:{
 					width:'800px',
 					centered:true,
@@ -312,7 +314,9 @@
 								this.status = _status;
 								this.isLawyer = this.source.identity === 1;
 								this.spinning = false;
-							}else{
+							}else if(res.code === 80001){
+								this.$message.error('数据请求错误，请稍后再试！',1,this.$router.replace('/provider/review'))
+							} else{
 								this.$message.error('网络请求异常，请稍后再试！')
 							}
 						})

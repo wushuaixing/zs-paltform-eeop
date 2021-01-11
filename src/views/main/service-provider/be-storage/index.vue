@@ -83,7 +83,7 @@
 	};
 
 	export default {
-		name: 'ToReview',
+		name: 'BeStorage',
 		data() {
 		  const { roleConfig } = this.$store.getters.getRole;
 		  // console.log(roleConfig.managePermission);
@@ -233,7 +233,6 @@
 		},
 		computed:{
 			normal(){
-				console.log(this.auditStatus);
 				const res = !(this.activeKey === 1) && !this.auditStatus;
 				return {
 					icon: res ? 'file-text' : 'audit',

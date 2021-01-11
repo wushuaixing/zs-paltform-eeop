@@ -2,7 +2,7 @@
   <div class="frame-wrapper">
     <Breadcrumb :source="navData" icon="environment">
       <template slot="suffix">
-        <a-button @click="showModal" >
+        <a-button @click="showModal" v-if="this.projectManage === 1">
           <a-icon type="snippets"/>项目上传
         </a-button>
       </template>
@@ -84,6 +84,7 @@
 import Breadcrumb from '@/components/bread-crumb';
 import { projectFind,upFiles} from "@/plugin/api/investment-center";
 import { disabledDate } from "@/plugin/tools";
+import store from '@/plugin/store';
 //提交代码
 const columns = (sortedInfo) =>{
   return  [
@@ -157,10 +158,10 @@ export default {
         dataSource:[],
         pagination: {
           total: 0,
-          pageSizeOptions: [ '10', '20', '30',],
+          pageSizeOptions: ["10", "20", "30", "40"],
           showSizeChanger: true,
           showQuickJumper: true,
-          showTotal:(val)=>`共${val}多少条`
+          showTotal:(val)=>`共${val}条`
         },
       },
       sortedInfo:null,
@@ -182,7 +183,8 @@ export default {
       field:{
         startTime:'',
         endTime:'',
-      }
+      },
+      projectManage:"",//权限管理
     };
   },
   components: {
@@ -196,6 +198,8 @@ export default {
     }
   },
   created() {
+    const {config} = store.getters.getInfo;
+    this.projectManage = config.projectManage
     this.requestInquire()
   },
   watch:{
@@ -219,13 +223,13 @@ export default {
     },
     inquire(){
       this.requestInquire()
-      console.log(this.findAll)
     },
     reset(){
       this.findAll.debtor = "";
-      this.findAll.endDate = "";
+      this.findAll.endDate = this.field.endTime = '';
+      this.findAll.startDate = this.field.startTime = '';
       this.sortedInfo = null;
-      this.findAll.startDate = "";
+      this.findAll.sortOrder = '';
       this.requestInquire()
     },
     tableHanges(pagination, filters, sorter,) {
@@ -239,18 +243,16 @@ export default {
     },
     viewDetails(v) {
       this.$router.push({name: 'investment/item-detail', query: {id: v.id}})
-      console.log(v.id)
     },
     showModal() {
       this.visible = true;
     },
     handleOk(e) {
-      console.log(e);
+      console.log(e)
       this.visible = false;
     },
     //上传文件
     fileIntercept(file){
-      // console.log(file,fileList)
       const isLimit16M = file.size / 1024 / 1024 <= 16;
       const isSheet = file.type === "application/vnd.ms-excel" || file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
       if(!isLimit16M) this.$message.error("文件大小不能超过16M,请重新上传");

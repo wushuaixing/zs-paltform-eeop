@@ -154,7 +154,7 @@ export const processData = (source, coo = false) => {
 		isLawyer: source.identity === 1,
 		user:{
 			identity: source.identity,
-			name:identity === 2 ? organizationQualify.name : source.name,
+			name:identity === 2 ? (organizationQualify || {}).name : source.name,
 			contact:source.name,
 			lawOffice:(lawyerQualify || {}).lawOffice,
 			phone:source.phone,

@@ -49,7 +49,7 @@
             抵押物类型：
             <div>
               <p style="margin:0" v-for="(i, index) in detailInfo.amcProjectCollaterals" :key="index">
-                {{index+1}}. {{i.collateralType|collateralType}}、{{i|area}}、{{i.collateralName}}
+                {{index+1}}. {{i.collateralType|collateralType}}、{{i|areas}}、{{i.collateralName}}
               </p>
             </div>
           </div>
@@ -67,7 +67,7 @@
         </div>
         <!--项目招商信息-->
         <div>
-          <h3 @click="showModal" class="title2">项目招商信息 <a-icon type="form" /></h3>
+          <h3  class="title2">项目招商信息 <a-icon v-if="projectManage === 1" @click="showModal" type="form" /></h3>
           <a-row type="flex">
             <a-col :span="8">
               报名截止日期：<span>{{ detailInfo.deadline|show_ }}</span>
@@ -92,7 +92,7 @@
           <h3 class="title2">债权清收情况</h3>
           <a-row type="flex">
             <a-col :span="8">
-              是否有代理律师：<span>{{ detailInfo.isHaveProxyLawyer|show_ }}</span>
+              是否有代理律师：<span>{{ detailInfo.isHaveProxyLawyer|whether }}</span>
             </a-col>
             <a-col :span="8">
               代理律师联系方式：<span>{{ detailInfo.proxyLawyerContact|show_ }}</span>
@@ -137,7 +137,7 @@
             债务人现状：<span>{{ detailInfo.debtorStatus }}</span>
           </div>
           <div class="creditor-condition">
-            保证人现状：<span>{{ detailInfo.guarantorStatus }}</span>
+            保证人现状：<span>{{ detailInfo.guarantorStatus|show_ }}</span>
           </div>
           <div class="creditor-condition">
             抵质押人现状：<span>{{ detailInfo.mortgagorStatus }}</span>
@@ -158,7 +158,7 @@
                 <div v-else>-</div>
               </template>
               <template slot="workingTime" slot-scope="workingTime">{{workingTime|workingTimeText}}</template>
-              <template slot="areasOfGoodCases" slot-scope="areasOfGoodCases">{{areasOfGoodCases|show_}}</template>
+              <template slot="areasOfGoodCases">{{areaAnalysis("11,1101,110101")|area}}</template>
               <template slot="goodCases" slot-scope="goodCases">{{goodCases|goodCasesType}}</template>
               <template slot="applyDate" slot-scope="applyDate">{{applyDate|show_}}</template>
               <template slot="gmtModify" slot-scope="gmtModify">{{gmtModify|show_}}</template>
@@ -266,9 +266,10 @@
 /*eslint-disable*/
 import {projectDetail,signService,serviceCaseSubmit,updateProjectInfo} from "@/plugin/api/investment-center";
 import {collateralTypeData} from "./source"
-import {getArea} from "@/plugin/tools"
+import {getArea,areaAnalysis} from "@/plugin/tools"
 import Breadcrumb from "@/components/bread-crumb";
-import {getDownLoadToken} from "@/plugin/api/base"
+import {getDownLoadToken} from "@/plugin/api/base";
+import store from '@/plugin/store';
 //报名服务商表数据
 const columns = [
   {
@@ -405,6 +406,7 @@ export default {
     return {
       exhibit:false,
       visible:false,
+      areaAnalysis,
       labelCol: { span: 8 },
       wrapperCol: { span: 14 },
       navData,
@@ -519,6 +521,7 @@ export default {
           },
         },
       },
+      projectManage:"",//权限管理
     };
   },
   computed:{
@@ -580,7 +583,8 @@ export default {
       this.getServiceCaseSubmitList();
     },
     goAvatar(v){
-      console.log(v);
+      console.log("跳转到画像页面",v);
+      this.$router.push({path:'/provider/storage/detail', query: {id: v}})
     },
     //报名服务商列表分页,排序操作
     applyServeTableChange(pagination, filters, sorter){
@@ -613,6 +617,10 @@ export default {
     },
     showModal(){
       this.visible = true;
+      this.editInfo.signDeadline = this.detailInfo.deadline;
+      this.editInfo.submitDeadline = this.detailInfo.submitDeadline;
+      this.editInfo.dateLimit = this.detailInfo.targetYearUpperLimit;
+      this.editInfo.aimedPriceBack = this.detailInfo.targetAmountLowerLimit;
     },
     handleOk(){
       this.$refs.ruleForm.validate( validate => {
@@ -646,6 +654,9 @@ export default {
     show_(val){
       if(!val)return '-';
       return val;
+    },
+    whether(val){
+      return  val === 0 ? '否' : '是'
     },
     guarantorsList: (arr = []) => {
       return arr.map((i) => i.guarantorName).join("、");
@@ -682,7 +693,7 @@ export default {
       };
       return isLawsuitObj[val]
     },
-    area:(params) => {
+    areas:(params) => {
       return getArea(params.provinceCode,params.cityCode,params.areaCode);
     },
     collateralType:(val)=>{
@@ -706,14 +717,17 @@ export default {
       }else{
         this.$message.error("获取服务商提交方案列表失败,请重新加载")
       }
-    })
+    });
     serviceCaseSubmit({caseType:2,id,page:1,size:10}).then(res=>{
       if(res.code = 20000){
         this.planCount.invalidCount = res.data.total;
       }else{
         return false;
       }
-    })
+    });
+    //权限控制
+    const {config} = store.getters.getInfo;
+    this.projectManage = config.projectManage
   },
 };
 </script>

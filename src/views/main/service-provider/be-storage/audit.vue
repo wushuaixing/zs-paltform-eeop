@@ -13,7 +13,7 @@
 			</a-affix>
 			<QualifyInfo v-bind="info" :source="source.qualify" v-if="type === 2" />
 			<FactorInfo v-bind="info" :source="source.factor" v-if="type === 3"/>
-			<a-affix :offset-bottom="0">
+			<a-affix :offset-bottom="0" v-if="auditStatus">
 				<div class="review-audit-wrapper">
 					<a-button type="primary" @click="visible = true">添加审核结果</a-button>
 				</div>
@@ -52,7 +52,9 @@
 	export default {
 		name: 'Audit',
 		data() {
+			const { roleConfig } = this.$store.getters.getRole;
 			return {
+				auditStatus:roleConfig.managePermission === 1,
 				source:{
 					isLawyer: true,
 					user:{},

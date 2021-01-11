@@ -23,9 +23,9 @@
 			<div class="custom-card-container custom-card-container_hidden">
 				<a-tabs type="card" :active-key="activeKey">
 					<a-tab-pane key="1" tab="资质信息">
-						<div class="detail-audit-wrapper" v-if="qualifyStatus.isUpadate">
+						<div class="detail-audit-wrapper" v-if="qualifyStatus.isUpdate">
 							<p>存在资质认证修改申请！</p>
-							<a-button type="primary">去看看</a-button>
+							<a-button type="primary" @click="toAudit(2)">去看看</a-button>
 						</div>
 						<div class="audit-info-wrapper">
 							<span style="width: 230px;">资质信息最后更新时间：<i>{{qualifyStatus.lastUpdateTime||'-'}}</i></span>
@@ -35,9 +35,9 @@
 						<QualifyInfo :isLawyer="source.isLawyer" :source="source.qualify"/>
 					</a-tab-pane>
 					<a-tab-pane key="2" tab="要素信息">
-						<div class="detail-audit-wrapper" v-if="elementStatus.isUpadate">
+						<div class="detail-audit-wrapper" v-if="elementStatus.isUpdate">
 							<p>存在要素认证修改申请！</p>
-							<a-button type="primary">去看看</a-button>
+							<a-button type="primary" @click="toAudit(3)">去看看</a-button>
 						</div>
 						<div class="audit-info-wrapper">
 							<span style="width: 230px;">要素信息最后更新时间：<i>{{elementStatus.lastUpdateTime||'-'}}</i></span>
@@ -104,6 +104,8 @@
 					this.elementStatus = elementStatus;
 					this.source = source;
 					this.spinning = false;
+				}else if(res.code === 80001){
+					this.$message.error('数据请求错误，请稍后再试！',1,this.$router.replace('/provider/storage'))
 				} else{
 					this.$message.error('网络请求异常，请稍后再试！')
 				}
@@ -113,6 +115,12 @@
 			onEffectChange(status){
 				console.log(status);
 			},
+			toAudit(type){
+				this.$router.push({
+					path:'/provider/storage/audit',
+					query: { type,id:this.userId }
+				})
+			}
 		},
 		computed:{
 			impSource(){
@@ -140,7 +148,7 @@
 	}
 	.detail-audit-wrapper{
 		height: 115px;
-		background-color: #086DD9;
+		background: rgba(8, 109, 217, 0.05);
 		padding: 15px;
 		text-align: center;
 		p{

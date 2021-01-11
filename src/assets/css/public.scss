@@ -223,3 +223,20 @@ button:focus{
     }
   }
 }
+
+.ant-upload-list-item:hover{
+  .ant-upload-list-item-info{
+    background: none;
+    > span{
+      cursor: pointer;
+      border-bottom: 1px solid $text-link-hover;
+      color: $text-link-hover;
+    }
+  }
+}
+
+.ant-upload-list-item .ant-upload-list-item-info > span {
+  .ant-upload-list-item-name{
+    color: $text-link
+  }
+}
