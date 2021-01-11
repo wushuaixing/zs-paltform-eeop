@@ -196,8 +196,10 @@
                 <span style="color: #008CB0; margin-left: 60%" @click="bit(row)" v-if="scheduleManagements.length >= 4" >{{exhibit === row.id ? '收起' :'展开'}}</span>
               </template>
               <template slot="caseFileAddress" slot-scope="caseFileAddress">
-                <a-button type="link" v-if="caseFileAddress" @click="downLoad(caseFileAddress)">服务方案.pdf</a-button>
-                <div v-else>-</div>
+
+              <!-- <a-button type="link" v-if="caseFileAddress" @click="downLoad(caseFileAddress)">服务方案</a-button>-->
+              <!--<div v-else>-</div>-->
+                <FileList :file-list="caseFileAddress"></FileList>
               </template>
             </a-table>
           </div>
@@ -264,6 +266,9 @@ import {getArea,areaAnalysis} from "@/plugin/tools"
 import Breadcrumb from "@/components/bread-crumb";
 import {getDownLoadToken} from "@/plugin/api/base";
 import store from '@/plugin/store';
+import  FileList  from '@/components/file-list'
+
+
 //报名服务商表数据
 const columns = [
   {
@@ -388,7 +393,6 @@ const columns2 = (sortOrder) =>[
     scopedSlots: { customRender: "caseFileAddress" }
   },
 ];
-
 const navData = [
   { id: 1, title: "招商管理", path: "/investment/list" },
   { id: 2, title: "招商项目管理", path: "/investment/list" },
@@ -636,9 +640,11 @@ export default {
       })
     },
     downLoad(v){
+      //"1343910260376604672_1610357458470_周报.docx"
       getDownLoadToken(v).then(res=>{
         if(res.code === 20000){
-          console.log(res)
+          console.log(res.data)
+          window.open(res.data)
         }
       })
     }
@@ -699,6 +705,7 @@ export default {
   },
   components: {
     Breadcrumb,
+    FileList
   },
   created() {
     let id = this.$route.query.id
