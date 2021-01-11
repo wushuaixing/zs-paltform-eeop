@@ -47,7 +47,7 @@
             抵押物类型：
             <div>
               <p style="margin:0" v-for="(i, index) in detailInfo.amcProjectCollaterals" :key="index">
-                {{index+1}}. {{i.collateralType|collateralType}}、{{i|areas}}、{{i.collateralName}}
+                {{index+1}}. {{i.collateralType|collateralType}}、{{i|arease}}、{{i.collateralName}}
               </p>
             </div>
           </div>
@@ -152,8 +152,9 @@
                 <div v-else>-</div>
               </template>
               <template slot="workingTime" slot-scope="workingTime">{{workingTime|workingTimeText}}</template>
-              <template slot="areasOfGoodCases" slot-scope="areasOfGoodCases">{{areaAnalysis(areasOfGoodCases)|area}}</template>
-              <template slot="goodCases" slot-scope="goodCases">{{goodCases|goodCasesType}}</template>
+             <template slot="areasOfGoodCases" slot-scope="areasOfGoodCases">{{areaAnalysis(areasOfGoodCases,false)|areas|fill}}</template>
+<!--              <template slot="areasOfGoodCases" >{{areaAnalysis("11,11/1101,14/1401",false)|areas|fill}}</template>-->
+
               <template slot="applyDate" slot-scope="applyDate">{{applyDate|show_}}</template>
               <template slot="gmtModify" slot-scope="gmtModify">{{gmtModify|show_}}</template>
               <template slot="caseFileStatus" slot-scope="caseFileStatus">
@@ -196,9 +197,6 @@
                 <span style="color: #008CB0; margin-left: 60%" @click="bit(row)" v-if="scheduleManagements.length >= 4" >{{exhibit === row.id ? '收起' :'展开'}}</span>
               </template>
               <template slot="caseFileAddress" slot-scope="caseFileAddress">
-
-              <!-- <a-button type="link" v-if="caseFileAddress" @click="downLoad(caseFileAddress)">服务方案</a-button>-->
-              <!--<div v-else>-</div>-->
                 <FileList :file-list="caseFileAddress"></FileList>
               </template>
             </a-table>
@@ -264,7 +262,7 @@ import {projectDetail,signService,serviceCaseSubmit,updateProjectInfo} from "@/p
 import {collateralTypeData} from "./source"
 import {getArea,areaAnalysis} from "@/plugin/tools"
 import Breadcrumb from "@/components/bread-crumb";
-import {getDownLoadToken} from "@/plugin/api/base";
+// import {getDownLoadToken} from "@/plugin/api/base";
 import store from '@/plugin/store';
 import  FileList  from '@/components/file-list'
 
@@ -639,15 +637,15 @@ export default {
         }
       })
     },
-    downLoad(v){
-      //"1343910260376604672_1610357458470_周报.docx"
-      getDownLoadToken(v).then(res=>{
-        if(res.code === 20000){
-          console.log(res.data)
-          window.open(res.data)
-        }
-      })
-    }
+    // downLoad(v){
+    //   //"1343910260376604672_1610357458470_周报.docx"
+    //   getDownLoadToken(v).then(res=>{
+    //     if(res.code === 20000){
+    //       console.log(res.data)
+    //       window.open(res.data)
+    //     }
+    //   })
+    // }
   },
   filters:{
     //没有值展示'-'
@@ -695,7 +693,7 @@ export default {
       };
       return isLawsuitObj[val]
     },
-    areas:(params) => {
+  arease:(params) => {
       return getArea(params.provinceCode,params.cityCode,params.areaCode);
     },
     collateralType:(val)=>{
