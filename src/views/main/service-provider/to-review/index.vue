@@ -106,7 +106,7 @@
 				],
 				props:{
 					size:'middle',
-					rowKey:'id',
+					rowKey:(i,index)=>`${index}_${i.id}`,
 					class:'frame-content-table',
 					pagination:{
 						current:1,
