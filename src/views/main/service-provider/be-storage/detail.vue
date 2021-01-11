@@ -25,7 +25,7 @@
 					<a-tab-pane key="1" tab="资质信息">
 						<div class="detail-audit-wrapper" v-if="qualifyStatus.isUpdate">
 							<p>存在资质认证修改申请！</p>
-							<a-button type="primary" @click="toAudit(2)">去看看</a-button>
+							<a-button type="primary" @click="toAudit(2)">去查看</a-button>
 						</div>
 						<div class="audit-info-wrapper">
 							<span style="width: 230px;">资质信息最后更新时间：<i>{{qualifyStatus.lastUpdateTime||'-'}}</i></span>
@@ -37,7 +37,7 @@
 					<a-tab-pane key="2" tab="要素信息">
 						<div class="detail-audit-wrapper" v-if="elementStatus.isUpdate">
 							<p>存在要素认证修改申请！</p>
-							<a-button type="primary" @click="toAudit(3)">去看看</a-button>
+							<a-button type="primary" @click="toAudit(3)">去查看</a-button>
 						</div>
 						<div class="audit-info-wrapper">
 							<span style="width: 230px;">要素信息最后更新时间：<i>{{elementStatus.lastUpdateTime||'-'}}</i></span>
@@ -67,6 +67,7 @@
 	export default {
 		name: 'ToReview',
 		data() {
+			const { roleConfig } = this.$store.getters.getRole;
 			return {
 				navData:[
 					{id:1,title:'服务商管理',path:'/provider/review'},
@@ -84,6 +85,7 @@
 				userId:'',
 				elementStatus:{},
 				qualifyStatus:{},
+				auditStatus:roleConfig.managePermission === 1,
 			};
 		},
 		components:{
