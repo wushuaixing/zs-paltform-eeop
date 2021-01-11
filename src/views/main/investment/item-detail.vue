@@ -158,7 +158,7 @@
                 <div v-else>-</div>
               </template>
               <template slot="workingTime" slot-scope="workingTime">{{workingTime|workingTimeText}}</template>
-              <template slot="areasOfGoodCases">{{areaAnalysis("11,1101,110101")|area}}</template>
+              <template slot="areasOfGoodCases" slot-scope="areasOfGoodCases">{{areaAnalysis(areasOfGoodCases)|area}}</template>
               <template slot="goodCases" slot-scope="goodCases">{{goodCases|goodCasesType}}</template>
               <template slot="applyDate" slot-scope="applyDate">{{applyDate|show_}}</template>
               <template slot="gmtModify" slot-scope="gmtModify">{{gmtModify|show_}}</template>
