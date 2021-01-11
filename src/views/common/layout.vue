@@ -62,7 +62,7 @@
         this.$confirm({
           title:"为了您的账号和安全,请及时修改密码",
           centered:true,
-          iconType:"exclamation-circle",
+          icon:"exclamation-circle",
           onOk(){
             _this.$refs.modifyPwd.showModal()
           }
