@@ -200,6 +200,7 @@
 		created() {},
 		methods:{
 			toIntAdd(){
+				console.log(this.interview);
 				this.interview.form = {
 					...this.interview.backup
 				};
@@ -209,20 +210,22 @@
 			},
 			toIntSubmit(){
 				this.interview.loading = true;
-				const {serviceUserId,...form} = this.interview.form;
+				const { id } = this.$route.query;
+				const form = this.interview.form;
 				if(JSON.stringify(clearObject(form)) === '{}'){
 					this.$message.error('请至少输入一项面谈印象');
 					this.interview.loading = false;
 				}else {
 					toReview.impression({
-						serviceUserId,
 						...form,
+						serviceUserId:id,
 					}).then(res=>{
 						this.interview.loading = false;
 						if(res.code === 20000){
 							this.interview.visible = false;
 							this.interview.status = true;
-							this.interview.backup = { ...form,serviceUserId };
+							this.interview.backup = { ...form };
+							this.$message.success('操作成功！');
 						}else{
 							this.$message.error('添加/编辑面谈印象失败');
 						}
@@ -297,12 +300,12 @@
 						toReview.detail(params).then(_res=>{
 							if(_res.code === 20000){
 								const { interviewImpression} = _res.data;
+								this.interview.serviceUserId = id;
 								if(interviewImpression){
 									this.interview.status = true;
 									this.interview.form = {
 										...this.interview.form,
 										...(interviewImpression || {}),
-										serviceUserId:id,
 									};
 									this.interview.backup = {
 										...this.interview.form
@@ -310,6 +313,8 @@
 								}else{
 									this.interview.status = false;
 								}
+								console.log(this.interview);
+
 								this.source = processData(_res.data);
 								this.status = _status;
 								this.isLawyer = this.source.identity === 1;
