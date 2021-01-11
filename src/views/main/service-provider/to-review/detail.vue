@@ -6,35 +6,35 @@
 			<a-spin class="spin-wrapper" tip="Loading......" size="large"/>
 		</div>
 		<div class="frame-wrapper-content" v-else style="padding-top: 0">
-			<UserInfo :info="source.user" :isLawyer="isLawyer" />
-			<div class="custom-card-position">
-				<div class="custom-card-container-remark">
-					<a-affix :offset-top="64">
+			<a-affix :offset-top="64">
+				<div class="custom-card-position">
+					<UserInfo :info="source.user" :isLawyer="isLawyer" />
+					<div class="custom-card-container-remark">
 						<div class="custom-card-container custom-card-container_normal">
 							<a-tabs type="card" :active-key="activeKey" @change="val=>activeKey=val">
 								<a-tab-pane key="1" tab="资质信息"></a-tab-pane>
 								<a-tab-pane key="2" tab="要素信息" v-if="status.code !== 2"></a-tab-pane>
 							</a-tabs>
 						</div>
-					</a-affix>
+					</div>
 				</div>
-				<div class="custom-card-container">
-					<a-tabs type="card" :active-key="activeKey" @change="val=>activeKey=val">
-						<a-tab-pane key="1" tab="资质信息">
-							<LastAudit type-text="资质" :source="source.qualifyCondition"/>
-							<QualifyInfo :isLawyer="isLawyer" :source="source.qualify"/>
-						</a-tab-pane>
-						<a-tab-pane key="2" tab="要素信息" v-if="status.code !== 2">
-							<LastAudit type-text="要素" :source="source.elementCondition" />
-							<FactorInfo :isLawyer="isLawyer" :source="source.factor"/>
-						</a-tab-pane>
-					</a-tabs>
-				</div>
+			</a-affix>
+			<div class="custom-card-container">
+				<a-tabs type="card" :active-key="activeKey" @change="val=>activeKey=val">
+					<a-tab-pane key="1" tab="资质信息">
+						<LastAudit type-text="资质" :source="source.qualifyCondition"/>
+						<QualifyInfo :isLawyer="isLawyer" :source="source.qualify"/>
+					</a-tab-pane>
+					<a-tab-pane key="2" tab="要素信息" v-if="status.code !== 2">
+						<LastAudit type-text="要素" :source="source.elementCondition" />
+						<FactorInfo :isLawyer="isLawyer" :source="source.factor"/>
+					</a-tab-pane>
+				</a-tabs>
 			</div>
 			<a-affix :offset-bottom="0" v-if="status.code === 1">
-				<div class="review-audit-wrapper">
+				<div class="review-audit-wrapper" v-if="auditStatus">
 					<a-button @click="toIntAdd">{{interview.status?"查看/编辑面谈印象":"添加面谈印象"}}</a-button>
-					<a-button type="primary" @click="toAuditAdd" v-if="auditStatus">添加审核结果</a-button>
+					<a-button type="primary" @click="toAuditAdd" >添加审核结果</a-button>
 				</div>
 			</a-affix>
 		</div>
@@ -334,7 +334,7 @@
 		.custom-card-container-remark{
 			position: absolute;
 			z-index: 1;
-			top: 0;
+			bottom: -40px;
 			width: 100%;
 		}
 		.custom-card-container_normal .ant-tabs-tabpane{
