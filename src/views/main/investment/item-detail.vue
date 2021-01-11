@@ -9,12 +9,10 @@
           <h3 class="title2">债权基本信息</h3>
           <a-row type="flex">
             <a-col :span="8">
-              资产包所属机构：<span>{{ detailInfo.capitalOrg }}</span>
+              资产包所属机构：<span>{{ detailInfo.capitalOrg  |show_}}</span>
             </a-col>
             <a-col :span="8">
-              资产包收益权所属机构：<span>{{
-                detailInfo.capitalProfitOrg
-              }}</span>
+              资产包收益权所属机构：<span>{{detailInfo.capitalProfitOrg |show_}}</span>
             </a-col>
             <a-col :span="8">
               当前诉讼状态：<span>{{ detailInfo.isLawsuit|isLawsuitType }}</span>
@@ -22,7 +20,7 @@
           </a-row>
           <a-row type="flex">
             <a-col :span="8">
-              资产包名称：<span>{{ detailInfo.assetPackage }}</span>
+              资产包名称：<span>{{ detailInfo.assetPackage |show_}}</span>
             </a-col>
             <a-col :span="8">
               资产包收购时间：<span>{{ detailInfo.capitalPurchaseTime|show_ }}</span>
@@ -33,7 +31,7 @@
           </a-row>
           <a-row type="flex">
             <a-col :span="8">
-              债务人名称：<span>{{ detailInfo.debtor }}</span>
+              债务人名称：<span>{{ detailInfo.debtor |show_}}</span>
             </a-col>
             <a-col :span="8"> 保证人：<span>{{detailInfo.amcProjectGuarantors|guarantorsList}}</span> </a-col>
           </a-row>
@@ -55,10 +53,10 @@
           </div>
           <a-row type="flex">
             <a-col :span="8">
-              所属业务团队：<span>{{ detailInfo.businessTeam }}</span>
+              所属业务团队：<span>{{ detailInfo.businessTeam |show_}}</span>
             </a-col>
             <a-col :span="8">
-              项目经理：<span>{{ detailInfo.projectManager }}</span>
+              项目经理：<span>{{ detailInfo.projectManager |show_}}</span>
             </a-col>
             <a-col :span="8">
               联系方式：<span>{{ detailInfo.contact|show_ }}</span>
@@ -107,47 +105,43 @@
             </a-col>
           </a-row>
           <div class="creditor-condition">
-            已请收情况：<span>{{ detailInfo.alreadyCollectionStatus }}</span>
+            已请收情况：<span>{{ detailInfo.alreadyCollectionStatus|show_ }}</span>
           </div>
           <div class="creditor-condition">
-            司法进展情况：<span>{{ detailInfo.judicialProcess }}</span>
+            司法进展情况：<span>{{ detailInfo.judicialProcess |show_}}</span>
           </div>
           <div class="creditor-condition">
-            财产线索情况：<span>{{ detailInfo.propertyClue }}</span>
+            财产线索情况：<span>{{ detailInfo.propertyClue |show_}}</span>
           </div>
           <div class="creditor-condition">
-            处置简述：<span>{{ detailInfo.disposeDescription }}</span>
+            处置简述：<span>{{ detailInfo.disposeDescription |show_}}</span>
           </div>
           <a-row type="flex">
             <a-col :span="8">
-              业务部门计划清收目标：<span>{{
-                detailInfo.businessDepartmentTarget
-              }}</span>
+              业务部门计划清收目标：<span>{{detailInfo.businessDepartmentTarget |show_}}</span>
             </a-col>
             <a-col :span="8">
-              业务部门计划清收时间：<span>{{
-                detailInfo.businessDepartmentRecoveryTime
-              }}</span>
+              业务部门计划清收时间：<span>{{detailInfo.businessDepartmentRecoveryTime |show_}}</span>
             </a-col>
           </a-row>
           <div class="creditor-condition">
-            处置难点：<span>{{ detailInfo.disposeDifficulty }}</span>
+            处置难点：<span>{{ detailInfo.disposeDifficulty |show_}}</span>
           </div>
           <div class="creditor-condition">
-            债务人现状：<span>{{ detailInfo.debtorStatus }}</span>
+            债务人现状：<span>{{ detailInfo.debtorStatus |show_}}</span>
           </div>
           <div class="creditor-condition">
             保证人现状：<span>{{ detailInfo.guarantorStatus|show_ }}</span>
           </div>
           <div class="creditor-condition">
-            抵质押人现状：<span>{{ detailInfo.mortgagorStatus }}</span>
+            抵质押人现状：<span>{{ detailInfo.mortgagorStatus |show_}}</span>
           </div>
         </div>
         <!--报名服务商列表-->
         <div>
           <h3 class="title-table">报名服务商列表</h3>
           <div class="table-block">
-            <a-table v-bind="tableSource.applyServeTable" @change="applyServeTableChange">
+            <a-table v-bind="tableSource.applyServeTable" @change="applyServeTableChange" rowKey=id >
               <template slot="name" slot-scope="name,row">
                 <a-button type="link" @click="goAvatar(row.id)">{{ name|show_ }}</a-button>
               </template>
@@ -176,7 +170,7 @@
             <a-radio-button :value="2"> 末通过系统筛选 {{planCount.invalidCount}}</a-radio-button>
           </a-radio-group>
           <div class="table-block">
-            <a-table  v-bind="tableSource.submitPlanTable" @change="submitPlanTableChange" :columns="columns2">
+            <a-table  v-bind="tableSource.submitPlanTable" @change="submitPlanTableChange" :columns="columns2" rowKey=id>
               <template slot="gmtCreate" slot-scope="gmtCreate">{{gmtCreate|show_}}</template>
               <template slot="name" slot-scope="name,row">
                 <a-button type="link" @click="goAvatar(row.id)">{{ name }}</a-button>
@@ -656,12 +650,13 @@ export default {
       return val;
     },
     whether(val){
-      return  val === 0 ? '否' : '是'
+      return  val === 0 ? '否' : val === 1 ? '是' :'-'
     },
     guarantorsList: (arr = []) => {
       return arr.map((i) => i.guarantorName).join("、");
     },
     workingTimeText(val){
+      if(val === null) return '-';
       let workingTimeObj = {
         0:'无',
         1:'一年以内',
@@ -671,6 +666,7 @@ export default {
       return workingTimeObj[val];
     },
     goodCasesType(val){
+      if(val === "") return '-';
       let goodCasesObj = {
         1:'工业',
         2:'商业',
