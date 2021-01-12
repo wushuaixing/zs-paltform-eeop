@@ -89,7 +89,7 @@ export const columns = ({ type = 1, sortOrder}) =>{
 			},
 			{
 				title: '联系方式',
-				dataIndex: 'age',
+				dataIndex: 'phone',
 				key: 'age',
 				customRender:val=>val || '-',
 			},

@@ -30,7 +30,7 @@
 							<span>合作印象：<i>{{item.impression||'-'}}</i></span>
 						</div>
 					</a-timeline-item>
-					<a-timeline-item color="#008CB0">
+					<a-timeline-item color="#008CB0" v-if="auditStatus">
 						<a-button @click="toAddEffect" icon="plus" size="large"
 											style="width: 200px;margin-left: 20px"
 						>添加合作印象</a-button>
@@ -40,7 +40,7 @@
 			<div class="info-item_img" v-else>
 				<img :src="noFinished" alt="" style="width: 265px;"/>
 				<div class="title">暂无合作印象</div>
-				<a-button type="primary" @click="toAddEffect">添加第一条合作印象</a-button>
+				<a-button type="primary" @click="toAddEffect" v-if="auditStatus">添加第一条合作印象</a-button>
 			</div>
 		</div>
 		<EffectModal ref="effect" @change="onEffectChange"></EffectModal>
@@ -63,9 +63,12 @@
 			userId:String
 		},
 		data(){
+			const { roleConfig } = this.$store.getters.getRole;
 			return{
 				noFinished,
 				data:'',
+				auditStatus:roleConfig.managePermission === 1,
+
 			}
 		},
 		methods:{

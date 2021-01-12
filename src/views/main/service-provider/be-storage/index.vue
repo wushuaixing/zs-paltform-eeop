@@ -53,7 +53,7 @@
 					<template slot="auction" slot-scope="item">
 						<template v-if="activeKey === 1">
 							<a-button type="link" icon="file-text" @click="toLink(item)">详情</a-button>
-							<a-button type="link" icon="audit" @click="toEffect(item)">印象添加</a-button>
+							<a-button type="link" icon="audit" @click="toEffect(item)" v-if="auditStatus">印象添加</a-button>
 						</template>
 						<a-button type="link" :icon="normal.icon" @click="toLink(item,true)" v-else>{{normal.text}}</a-button>
 					</template>

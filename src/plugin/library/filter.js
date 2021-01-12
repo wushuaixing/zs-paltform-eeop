@@ -1,6 +1,11 @@
 import Vue from 'vue';
 import * as source from '@/assets/js/source';
-import area from '@/assets/js/area.json';
+import axios from 'axios';
+
+let AREA_JSON = '';
+axios.get('https://zsamc-public.zsamc.com/address.json').then(({status,data})=>{
+	if(status === 200)AREA_JSON = data;
+});
 
 Vue.filter('capitalize', function (value) {
 	if (!value) return '';
@@ -67,8 +72,8 @@ Vue.filter('fill', val=>!val ? '-' : val);
 // 地区省市区展示
 const areaArray = val=>{
 	let result = [];
-	if(area[val[0]]) {
-		const i = area[val[0]];
+	if(AREA_JSON[val[0]]) {
+		const i = AREA_JSON[val[0]];
 		result[0] = i.name;
 		if(i.child[val[1]]){
 			const item = i.child[val[1]];

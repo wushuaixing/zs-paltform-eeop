@@ -1,5 +1,5 @@
 import { getDownLoadToken } from "@/plugin/api/base";
-import area from "@/assets/js/address"
+const area = global.FIELD_ADDRESS || [];
 
 /**
  * 清空原型链内容

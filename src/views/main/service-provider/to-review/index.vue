@@ -16,7 +16,7 @@
 							<div class="query-item-prefix" slot="prefix">机构名称/挂靠律所</div>
 						</a-input>
 					</a-form-model-item>
-					<a-form-model-item label="服务商类型：" v-if="status(124)">
+					<a-form-model-item label="服务商类型：" v-if="status(1245)">
 						<a-select v-model="query.identity" placeholder="请选择服务商身份类型" style="width: 200px" allowClear>
 							<a-select-option :value="1">律师</a-select-option>
 							<a-select-option :value="2">机构</a-select-option>
@@ -106,7 +106,7 @@
 				],
 				props:{
 					size:'middle',
-					rowKey:'id',
+					rowKey:(i,index)=>`${index}_${i.id}`,
 					class:'frame-content-table',
 					pagination:{
 						current:1,

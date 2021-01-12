@@ -6,35 +6,35 @@
 			<a-spin class="spin-wrapper" tip="Loading......" size="large"/>
 		</div>
 		<div class="frame-wrapper-content" v-else style="padding-top: 0">
-			<UserInfo :info="source.user" :isLawyer="isLawyer" />
-			<div class="custom-card-position">
-				<div class="custom-card-container-remark">
-					<a-affix :offset-top="64">
+			<a-affix :offset-top="64">
+				<div class="custom-card-position">
+					<UserInfo :info="source.user" :isLawyer="isLawyer" />
+					<div class="custom-card-container-remark">
 						<div class="custom-card-container custom-card-container_normal">
 							<a-tabs type="card" :active-key="activeKey" @change="val=>activeKey=val">
 								<a-tab-pane key="1" tab="资质信息"></a-tab-pane>
 								<a-tab-pane key="2" tab="要素信息" v-if="status.code !== 2"></a-tab-pane>
 							</a-tabs>
 						</div>
-					</a-affix>
+					</div>
 				</div>
-				<div class="custom-card-container">
-					<a-tabs type="card" :active-key="activeKey" @change="val=>activeKey=val">
-						<a-tab-pane key="1" tab="资质信息">
-							<LastAudit type-text="资质" :source="source.qualifyCondition"/>
-							<QualifyInfo :isLawyer="isLawyer" :source="source.qualify"/>
-						</a-tab-pane>
-						<a-tab-pane key="2" tab="要素信息" v-if="status.code !== 2">
-							<LastAudit type-text="要素" :source="source.elementCondition" />
-							<FactorInfo :isLawyer="isLawyer" :source="source.factor"/>
-						</a-tab-pane>
-					</a-tabs>
-				</div>
+			</a-affix>
+			<div class="custom-card-container">
+				<a-tabs type="card" :active-key="activeKey" @change="val=>activeKey=val">
+					<a-tab-pane key="1" tab="资质信息">
+						<LastAudit type-text="资质" :source="source.qualifyCondition"/>
+						<QualifyInfo :isLawyer="isLawyer" :source="source.qualify"/>
+					</a-tab-pane>
+					<a-tab-pane key="2" tab="要素信息" v-if="status.code !== 2">
+						<LastAudit type-text="要素" :source="source.elementCondition" />
+						<FactorInfo :isLawyer="isLawyer" :source="source.factor"/>
+					</a-tab-pane>
+				</a-tabs>
 			</div>
 			<a-affix :offset-bottom="0" v-if="status.code === 1">
-				<div class="review-audit-wrapper">
+				<div class="review-audit-wrapper" v-if="auditStatus">
 					<a-button @click="toIntAdd">{{interview.status?"查看/编辑面谈印象":"添加面谈印象"}}</a-button>
-					<a-button type="primary" @click="toAuditAdd" v-if="auditStatus">添加审核结果</a-button>
+					<a-button type="primary" @click="toAuditAdd" >添加审核结果</a-button>
 				</div>
 			</a-affix>
 		</div>
@@ -200,6 +200,7 @@
 		created() {},
 		methods:{
 			toIntAdd(){
+				console.log(this.interview);
 				this.interview.form = {
 					...this.interview.backup
 				};
@@ -209,20 +210,22 @@
 			},
 			toIntSubmit(){
 				this.interview.loading = true;
-				const {serviceUserId,...form} = this.interview.form;
+				const { id } = this.$route.query;
+				const form = this.interview.form;
 				if(JSON.stringify(clearObject(form)) === '{}'){
 					this.$message.error('请至少输入一项面谈印象');
 					this.interview.loading = false;
 				}else {
 					toReview.impression({
-						serviceUserId,
 						...form,
+						serviceUserId:id,
 					}).then(res=>{
 						this.interview.loading = false;
 						if(res.code === 20000){
 							this.interview.visible = false;
 							this.interview.status = true;
-							this.interview.backup = { ...form,serviceUserId };
+							this.interview.backup = { ...form };
+							this.$message.success('操作成功！');
 						}else{
 							this.$message.error('添加/编辑面谈印象失败');
 						}
@@ -238,7 +241,7 @@
 			toAuditSubmit(){
 				this.audit.loading = true;
 				const { elementAudit, qualifyAudit, elementNotPassReason, qualifyNotPassReason } = this.audit.form;
-				if(elementAudit !== "" || qualifyAudit !== ""){
+				if(elementAudit !== "" && qualifyAudit !== ""){
 					if(qualifyAudit !== "" && qualifyAudit === 0 && !qualifyNotPassReason){
 						this.audit.loading = false;
 						return 	this.$message.error('请填写资质审核不通过原因');
@@ -297,12 +300,12 @@
 						toReview.detail(params).then(_res=>{
 							if(_res.code === 20000){
 								const { interviewImpression} = _res.data;
+								this.interview.serviceUserId = id;
 								if(interviewImpression){
 									this.interview.status = true;
 									this.interview.form = {
 										...this.interview.form,
 										...(interviewImpression || {}),
-										serviceUserId:id,
 									};
 									this.interview.backup = {
 										...this.interview.form
@@ -310,6 +313,8 @@
 								}else{
 									this.interview.status = false;
 								}
+								console.log(this.interview);
+
 								this.source = processData(_res.data);
 								this.status = _status;
 								this.isLawyer = this.source.identity === 1;
@@ -334,7 +339,7 @@
 		.custom-card-container-remark{
 			position: absolute;
 			z-index: 1;
-			top: 0;
+			bottom: -40px;
 			width: 100%;
 		}
 		.custom-card-container_normal .ant-tabs-tabpane{

@@ -497,7 +497,7 @@ export default {
           columns,
           dataSource: [],
           pagination: {
-            total: 40,
+            total: 0,
             pageSizeOptions: ["10", "20", "30", "40"],
             showSizeChanger: true,
             showQuickJumper: true,
