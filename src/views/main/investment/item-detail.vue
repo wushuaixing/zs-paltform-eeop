@@ -677,14 +677,11 @@ export default {
         0:'其他'
       };
       let arr = val.split(",")
-      for(var i = 0; i < arr.length; i++){
-        if(arr[i] > 3 || arr[i] < 0){
-          continue
-        }
-        arr[i] = goodCasesObj[i] || ''
-      }
+      arr.forEach((v,i)=>{
+        arr[i] = goodCasesObj[v] || ''
+      });
       console.log(arr)
-      return arr.join("/");
+      return arr.join("、");
     },
     caseFileText(val){
       return val === 0 ? "未提交" : "已提交";
