@@ -9,12 +9,10 @@
           <h3 class="title2">债权基本信息</h3>
           <a-row type="flex">
             <a-col :span="8">
-              资产包所属机构：<span>{{ detailInfo.capitalOrg }}</span>
+              资产包所属机构：<span>{{ detailInfo.capitalOrg  |show_}}</span>
             </a-col>
             <a-col :span="8">
-              资产包收益权所属机构：<span>{{
-                detailInfo.capitalProfitOrg
-              }}</span>
+              资产包收益权所属机构：<span>{{detailInfo.capitalProfitOrg |show_}}</span>
             </a-col>
             <a-col :span="8">
               当前诉讼状态：<span>{{ detailInfo.isLawsuit|isLawsuitType }}</span>
@@ -22,7 +20,7 @@
           </a-row>
           <a-row type="flex">
             <a-col :span="8">
-              资产包名称：<span>{{ detailInfo.assetPackage }}</span>
+              资产包名称：<span>{{ detailInfo.assetPackage |show_}}</span>
             </a-col>
             <a-col :span="8">
               资产包收购时间：<span>{{ detailInfo.capitalPurchaseTime|show_ }}</span>
@@ -33,7 +31,7 @@
           </a-row>
           <a-row type="flex">
             <a-col :span="8">
-              债务人名称：<span>{{ detailInfo.debtor }}</span>
+              债务人名称：<span>{{ detailInfo.debtor |show_}}</span>
             </a-col>
             <a-col :span="8"> 保证人：<span>{{detailInfo.amcProjectGuarantors|guarantorsList}}</span> </a-col>
           </a-row>
@@ -49,16 +47,16 @@
             抵押物类型：
             <div>
               <p style="margin:0" v-for="(i, index) in detailInfo.amcProjectCollaterals" :key="index">
-                {{index+1}}. {{i.collateralType|collateralType}}、{{i|areas}}、{{i.collateralName}}
+                {{index+1}}. {{i.collateralType|collateralType}}、{{i|arease}}、{{i.collateralName}}
               </p>
             </div>
           </div>
           <a-row type="flex">
             <a-col :span="8">
-              所属业务团队：<span>{{ detailInfo.businessTeam }}</span>
+              所属业务团队：<span>{{ detailInfo.businessTeam |show_}}</span>
             </a-col>
             <a-col :span="8">
-              项目经理：<span>{{ detailInfo.projectManager }}</span>
+              项目经理：<span>{{ detailInfo.projectManager |show_}}</span>
             </a-col>
             <a-col :span="8">
               联系方式：<span>{{ detailInfo.contact|show_ }}</span>
@@ -107,47 +105,43 @@
             </a-col>
           </a-row>
           <div class="creditor-condition">
-            已请收情况：<span>{{ detailInfo.alreadyCollectionStatus }}</span>
+            已请收情况：<span>{{ detailInfo.alreadyCollectionStatus|show_ }}</span>
           </div>
           <div class="creditor-condition">
-            司法进展情况：<span>{{ detailInfo.judicialProcess }}</span>
+            司法进展情况：<span>{{ detailInfo.judicialProcess |show_}}</span>
           </div>
           <div class="creditor-condition">
-            财产线索情况：<span>{{ detailInfo.propertyClue }}</span>
+            财产线索情况：<span>{{ detailInfo.propertyClue |show_}}</span>
           </div>
           <div class="creditor-condition">
-            处置简述：<span>{{ detailInfo.disposeDescription }}</span>
+            处置简述：<span>{{ detailInfo.disposeDescription |show_}}</span>
           </div>
           <a-row type="flex">
             <a-col :span="8">
-              业务部门计划清收目标：<span>{{
-                detailInfo.businessDepartmentTarget
-              }}</span>
+              业务部门计划清收目标：<span>{{detailInfo.businessDepartmentTarget |show_}}</span>
             </a-col>
             <a-col :span="8">
-              业务部门计划清收时间：<span>{{
-                detailInfo.businessDepartmentRecoveryTime
-              }}</span>
+              业务部门计划清收时间：<span>{{detailInfo.businessDepartmentRecoveryTime |show_}}</span>
             </a-col>
           </a-row>
           <div class="creditor-condition">
-            处置难点：<span>{{ detailInfo.disposeDifficulty }}</span>
+            处置难点：<span>{{ detailInfo.disposeDifficulty |show_}}</span>
           </div>
           <div class="creditor-condition">
-            债务人现状：<span>{{ detailInfo.debtorStatus }}</span>
+            债务人现状：<span>{{ detailInfo.debtorStatus |show_}}</span>
           </div>
           <div class="creditor-condition">
             保证人现状：<span>{{ detailInfo.guarantorStatus|show_ }}</span>
           </div>
           <div class="creditor-condition">
-            抵质押人现状：<span>{{ detailInfo.mortgagorStatus }}</span>
+            抵质押人现状：<span>{{ detailInfo.mortgagorStatus |show_}}</span>
           </div>
         </div>
         <!--报名服务商列表-->
         <div>
           <h3 class="title-table">报名服务商列表</h3>
           <div class="table-block">
-            <a-table v-bind="tableSource.applyServeTable" @change="applyServeTableChange">
+            <a-table v-bind="tableSource.applyServeTable" @change="applyServeTableChange" rowKey=id >
               <template slot="name" slot-scope="name,row">
                 <a-button type="link" @click="goAvatar(row.id)">{{ name|show_ }}</a-button>
               </template>
@@ -158,7 +152,7 @@
                 <div v-else>-</div>
               </template>
               <template slot="workingTime" slot-scope="workingTime">{{workingTime|workingTimeText}}</template>
-              <template slot="areasOfGoodCases">{{areaAnalysis("11,1101,110101")|area}}</template>
+             <template slot="areasOfGoodCases" slot-scope="areasOfGoodCases">{{areaAnalysis(areasOfGoodCases,false)|areas|fill}}</template>
               <template slot="goodCases" slot-scope="goodCases">{{goodCases|goodCasesType}}</template>
               <template slot="applyDate" slot-scope="applyDate">{{applyDate|show_}}</template>
               <template slot="gmtModify" slot-scope="gmtModify">{{gmtModify|show_}}</template>
@@ -176,7 +170,7 @@
             <a-radio-button :value="2"> 末通过系统筛选 {{planCount.invalidCount}}</a-radio-button>
           </a-radio-group>
           <div class="table-block">
-            <a-table  v-bind="tableSource.submitPlanTable" @change="submitPlanTableChange" :columns="columns2">
+            <a-table  v-bind="tableSource.submitPlanTable" @change="submitPlanTableChange" :columns="columns2" rowKey=id>
               <template slot="gmtCreate" slot-scope="gmtCreate">{{gmtCreate|show_}}</template>
               <template slot="name" slot-scope="name,row">
                 <a-button type="link" @click="goAvatar(row.id)">{{ name }}</a-button>
@@ -202,8 +196,7 @@
                 <span style="color: #008CB0; margin-left: 60%" @click="bit(row)" v-if="scheduleManagements.length >= 4" >{{exhibit === row.id ? '收起' :'展开'}}</span>
               </template>
               <template slot="caseFileAddress" slot-scope="caseFileAddress">
-                <a-button type="link" v-if="caseFileAddress" @click="downLoad(caseFileAddress)">服务方案.pdf</a-button>
-                <div v-else>-</div>
+                <FileList :file-list="caseFileAddress"></FileList>
               </template>
             </a-table>
           </div>
@@ -268,8 +261,11 @@ import {projectDetail,signService,serviceCaseSubmit,updateProjectInfo} from "@/p
 import {collateralTypeData} from "./source"
 import {getArea,areaAnalysis} from "@/plugin/tools"
 import Breadcrumb from "@/components/bread-crumb";
-import {getDownLoadToken} from "@/plugin/api/base";
+// import {getDownLoadToken} from "@/plugin/api/base";
 import store from '@/plugin/store';
+import  FileList  from '@/components/file-list'
+
+
 //报名服务商表数据
 const columns = [
   {
@@ -394,7 +390,6 @@ const columns2 = (sortOrder) =>[
     scopedSlots: { customRender: "caseFileAddress" }
   },
 ];
-
 const navData = [
   { id: 1, title: "招商管理", path: "/investment/list" },
   { id: 2, title: "招商项目管理", path: "/investment/list" },
@@ -641,13 +636,15 @@ export default {
         }
       })
     },
-    downLoad(v){
-      getDownLoadToken(v).then(res=>{
-        if(res.code === 20000){
-          console.log(res)
-        }
-      })
-    }
+    // downLoad(v){
+    //   //"1343910260376604672_1610357458470_周报.docx"
+    //   getDownLoadToken(v).then(res=>{
+    //     if(res.code === 20000){
+    //       console.log(res.data)
+    //       window.open(res.data)
+    //     }
+    //   })
+    // }
   },
   filters:{
     //没有值展示'-'
@@ -656,12 +653,13 @@ export default {
       return val;
     },
     whether(val){
-      return  val === 0 ? '否' : '是'
+      return  val === 0 ? '否' : val === 1 ? '是' :'-'
     },
     guarantorsList: (arr = []) => {
       return arr.map((i) => i.guarantorName).join("、");
     },
     workingTimeText(val){
+      if(val === null) return '-';
       let workingTimeObj = {
         0:'无',
         1:'一年以内',
@@ -671,13 +669,22 @@ export default {
       return workingTimeObj[val];
     },
     goodCasesType(val){
+      if(val === "") return '-';
       let goodCasesObj = {
         1:'工业',
         2:'商业',
         3:'住宅',
         0:'其他'
       };
-      return goodCasesObj[val];
+      let arr = val.split(",")
+      for(var i = 0; i < arr.length; i++){
+        if(arr[i] > 3 || arr[i] < 0){
+          continue
+        }
+        arr[i] = goodCasesObj[i] || ''
+      }
+      console.log(arr)
+      return arr.join("/");
     },
     caseFileText(val){
       return val === 0 ? "未提交" : "已提交";
@@ -693,7 +700,7 @@ export default {
       };
       return isLawsuitObj[val]
     },
-    areas:(params) => {
+  arease:(params) => {
       return getArea(params.provinceCode,params.cityCode,params.areaCode);
     },
     collateralType:(val)=>{
@@ -703,6 +710,7 @@ export default {
   },
   components: {
     Breadcrumb,
+    FileList
   },
   created() {
     let id = this.$route.query.id

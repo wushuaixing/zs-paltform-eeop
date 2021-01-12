@@ -136,6 +136,6 @@ Vue.filter('guarantyType', (val)=>{
 });
 
 Vue.filter('identityType', (val)=>{
-	return  val === 1 ? '律师' : '机构'
+	return  val === 1 ? '律师' :  '机构'
 });
 export default Vue

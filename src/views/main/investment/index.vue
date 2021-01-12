@@ -67,7 +67,7 @@
             </a-button>
           </a-upload>
           <a class="upSucceed" v-else>{{fileName}}&nbsp;<a-icon type="close" @click="showUploadList=true"></a-icon></a>
-          <a class="download">导入模板下载</a>
+          <a class="download" href="https://zsamc-public.zsamc.com/%E6%9C%8D%E5%8A%A1%E6%8B%9B%E5%95%86%E9%A1%B9%E7%9B%AE%E5%AF%BC%E5%85%A5%E6%A8%A1%E6%9D%BF20210111.xlsx">导入模板下载</a>
         </div>
         <div class="caution">
           <span>*支持导入单笔及多笔招商服务项目；</span><br>
