@@ -57,6 +57,7 @@
       }
     },
     created() {
+			if(!window.localStorage.token) return this.$router.push('/login');
       if(this.passwordChanged === 0){
         const _this = this;
         this.$confirm({

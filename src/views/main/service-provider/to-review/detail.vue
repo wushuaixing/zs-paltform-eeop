@@ -75,7 +75,8 @@
 					<div class="text-dangerous">*资质信息与要素信息均审核通过后，该服务商将进入已入库名单，并获得已入库服务商权限。</div>
 					<div class="common-text-subtitle" style="margin-top: 20px">资质信息审核</div>
 					<a-form-model-item label="资质信息审核结果" v-if="audit.form.qualifyAudit !== 3">
-						<a-radio-group v-model="audit.form.qualifyAudit">
+						<span class="text-success" v-if="audit.form.qualifyAudit === 2">已通过</span>
+						<a-radio-group v-model="audit.form.qualifyAudit" v-else>
 							<a-radio :value="1" style="margin-right: 50px">通过</a-radio>
 							<a-radio :value="0">不通过</a-radio>
 						</a-radio-group>
