@@ -11,10 +11,10 @@
                       :getPopupContainer="e=>e.parentElement" >
             <a-menu slot="overlay" >
               <a-menu-item key="1">
-                <div @click="handleModifyPwd"><a-icon type="lock" />修改登录密码</div>
+                <div @click="handleModifyPwd"><a-icon class="personal-icon" type="lock" />修改登录密码</div>
               </a-menu-item>
               <a-menu-item key="2">
-                <div @click="backLogin"><a-icon type="poweroff" />退出登录</div>
+                <div @click="backLogin"><a-icon class="personal-icon" type="poweroff" />退出登录</div>
               </a-menu-item>
             </a-menu>
             <a-button type="link" icon="down" style="color:#fff;">Hi，{{username}}</a-button>
@@ -119,6 +119,9 @@
       }
     }
   }
+}
+.personal-icon{
+  padding-right: 6px;
 }
 .ant-modal-confirm-btns{
   margin-right:50%;
