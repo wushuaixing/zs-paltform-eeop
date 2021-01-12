@@ -58,8 +58,12 @@ export const columns = ({ type = 1, sortOrder}) =>{
 				dataIndex: 'gmtCreate',
 				key: 'address41',
 				customRender:val=>val || '-',
+				width:100,
 			},
-			auction
+			{
+				...auction,
+				width:230,
+			}
 		];
 	}
 	if(type === 2){
@@ -72,6 +76,7 @@ export const columns = ({ type = 1, sortOrder}) =>{
 				dataIndex: 'elementConfirmDate',
 				key: 'address41',
 				customRender:val=>val || '-',
+				width:100,
 			},
 			auction
 		];
@@ -86,6 +91,7 @@ export const columns = ({ type = 1, sortOrder}) =>{
 				dataIndex: 'elementConfirmDate',
 				key: 'address41',
 				customRender:val=>val || '-',
+				width:100,
 			},
 			auction
 		];

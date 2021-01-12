@@ -47,8 +47,10 @@
 						id:this.id,
 						impression:this.textarea
 					}).then(res=>{
+						this.loading = false;
 						if(res.code === 20000){
 							this.$emit('change',this.textarea);
+							this.textarea = '';
 							this.visible = false;
 							this.$message.success('合作印象添加成功！');
 						}else{
