@@ -4,7 +4,7 @@
       <template slot="suffix">
         <a-button class="addAccount" @click="handleSection('add')">
           <a-icon type="user"/>
-          添加部门
+          新建部门
         </a-button>
       </template>
     </Breadcrumb>
@@ -221,13 +221,14 @@ export default {
           userAuthApi.addSection(params).then((res) => {
             if (res.code === 20000) {
               this.$message.success('保存成功');
+              this.handleResetFields('form');
+              this.modalVisible = false
               this.getTableList();
+            } else if (res.code === 30008) {
+              this.$message.warning('部门已存在');
             } else {
               this.$message.warning(res.message);
             }
-          }).finally(() => {
-            this.handleResetFields('form');
-            this.modalVisible = false
           });
         } else {
           return false;
