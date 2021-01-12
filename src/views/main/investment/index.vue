@@ -37,7 +37,7 @@
         </a-col>
       </a-row>
       <!--展示招商项目表格-->
-        <a-table   @change="tableHanges" v-bind="tableSource" rowKey=id :columns="columns">
+        <a-table   @change="tableHanges" v-bind="tableSource" rowKey=id :columns="columns"  >
           <a slot="name" slot-scope="text">{{ text }}</a>
           <template slot="security" slot-scope="text,row">{{row.security|guarantyType}}</template>
           <template slot="debtCaptial" slot-scope="text,row">{{row.debtCaptial|amountTh}}</template>
@@ -65,21 +65,6 @@
         </template>
         <div class="pop-up">
           <span>招商服务项目信息:</span>
-<!--          <a-upload-->
-<!--              name="file"-->
-<!--              :showUploadList="false"-->
-<!--              :action="upFiles"-->
-<!--              :headers="headers"-->
-<!--              :beforeUpload="fileIntercept"-->
-<!--              @change="fileChange"-->
-<!--              v-if="showUploadList"-->
-<!--          >-->
-<!--            <a-button>-->
-<!--              <a-icon type="upload"/>-->
-<!--              点的上传-->
-<!--            </a-button>-->
-<!--          </a-upload>-->
-<!--          <a class="upSucceed" v-else>{{fileName}}&nbsp;<a-icon type="close" @click="showUploadList=true"></a-icon></a>-->
          <div class="file-conent">
             <a-upload :showUploadList="false" v-if="showUploadList" :file-list="fileList" :before-upload="beforeUpload">
               <a-button> <a-icon type="upload" /> 点的上传 </a-button>
@@ -180,8 +165,7 @@ export default {
         dataSource:[],
         pagination: {
           total: 0,
-          pageSizeOptions: ["10", "20", "30", "40"],
-          showSizeChanger: true,
+          current:1,
           showQuickJumper: true,
           showTotal:(val)=>`共${val}条`
         },
@@ -287,27 +271,6 @@ export default {
       });
     },
 
-
-    //上传文件
-    // fileIntercept(file){
-    //   const isLimit16M = file.size / 1024 / 1024 <= 16;
-    //   const isSheet = file.type === "application/vnd.ms-excel" || file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-    //   if(!isLimit16M) this.$message.error("文件大小不能超过16M,请重新上传");
-    //   if(!isSheet) this.$message.error("请上传.xls/.xlsx文件");
-    //   return isSheet && isLimit16M;
-    // },
-    //
-    // fileChange(info) {
-    //   if(info.file.status === "done"){
-    //     this.showUploadList = false;
-    //     this.fileName = info.file.name;
-    //     if(info.file.response.code === 20000) this.$message.success('文件上传成功');
-    //     if(info.file.response.code === 20001) this.$message.success('文件上传失败');
-    //     if(info.file.response.code === 20003) this.$message.success('文件上传失败');
-    //     console.log(info.file.response)
-    //   }
-    // },
-
     // 请求封装
     requestInquire(){
       projectFind(this.findAll).then((res)=>{
@@ -319,9 +282,13 @@ export default {
     },
     inquire(){
       this.sortedInfo = null;
+      this.findAll.page = 1;
+      this.tableSource.pagination.current = 1;
       this.requestInquire()
     },
     reset(){
+      this.findAll.page = 1;
+      this.tableSource.pagination.current = 1;
       this.findAll.debtor = "";
       this.findAll.endDate = this.field.endTime = '';
       this.findAll.startDate = this.field.startTime = '';
@@ -335,6 +302,7 @@ export default {
       this.sortedInfo = sorter;
       this.findAll.sortOrder = sorter.order ? sorter.order === "ascend" ? "ASC" : "DESC" : "";
       this.findAll.page = pagination.current;
+      this.tableSource.pagination.current = pagination.current;
       this.findAll.size = pagination.pageSize;
       this.requestInquire()
     },
