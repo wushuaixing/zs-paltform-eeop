@@ -22,14 +22,12 @@
           <a-date-picker
               v-model="field.startTime"
               placeholder="搜索范围起始日期"
-              :disabled-date="val=>disabledDate(val,field.endTime,'start')"
-          />
+              :disabled-date="val=>disabledDate(val,field.endTime,'start')"></a-date-picker>
           <span style="margin: 0 6px">至</span>
           <a-date-picker
               v-model="field.endTime"
               placeholder="搜索范围截止日期"
-              :disabled-date="val=>disabledDate(field.startTime,val)"
-          />
+              :disabled-date="val=>disabledDate(field.startTime,val)"></a-date-picker>
         </a-col>
         <a-col :span="3" style="text-align: right" >
           <a-button class="reset-but" @click="reset" type="primary">重置</a-button>
@@ -199,7 +197,7 @@ export default {
   },
   created() {
     const {config} = store.getters.getInfo;
-    this.projectManage = config.projectManage
+    this.projectManage = config.projectManage;
     this.requestInquire()
   },
   watch:{
@@ -215,8 +213,7 @@ export default {
     //请求封装
     requestInquire(){
       projectFind(this.findAll).then((res)=>{
-        console.log(res)
-        if(res.code !== 20000 ) return this.$message.error('出问题了')
+        if(res.code !== 20000 ) return this.$message.error('出问题了');
         this.tableSource.dataSource = res.data.list;
         this.tableSource.pagination.total = res.data.total;
       })
@@ -248,7 +245,7 @@ export default {
       this.visible = true;
     },
     handleOk(e) {
-      console.log(e)
+      console.log(e);
       this.visible = false;
     },
     //上传文件
