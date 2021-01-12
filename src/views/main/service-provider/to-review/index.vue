@@ -44,8 +44,18 @@
 														 :disabled-date="val=>disabledDate(field.startTime,val)"></a-date-picker>
 						</a-form-model-item>
 					</a-form-model-item>
-					<a-form-model-item>
+
+					<a-form-model-item style="visibility: hidden">
+						<a-space>
+							<a-button style="width: 80px">重置</a-button>
+							<a-button type="primary" style="width: 80px">查询</a-button>
+						</a-space>
+					</a-form-model-item>
+					<a-form-model-item style="float: right;margin-right: 0;">
+						<a-space>
+							<a-button style="width: 80px" @click="toResetQuery">重置</a-button>
 							<a-button type="primary" html-type="submit" style="width: 80px">查询</a-button>
+						</a-space>
 					</a-form-model-item>
 				</a-form-model>
 				<a-tabs @change="handleTabChange" :activeKey="activeKey" :animated="false">
@@ -145,9 +155,7 @@
 			ReadStatus,
 		},
 		created(){
-
-
-				this.toQuery();
+			this.toQuery();
 			this.toQueryUnread();
 		},
 		methods:{
@@ -180,6 +188,22 @@
 			status(rule){
 				const activeKey = this.activeKey.toString();
 				return rule.toString() ? new RegExp(activeKey).test(rule) : false;
+			},
+			toResetQuery(){
+				this.query = {
+					...this.query,
+					userName:"",
+					officeName:"",
+					startTime:'',
+					endTime:'',
+					identity:undefined,
+				};
+				this.field = {
+					startTime:'',
+					endTime:'',
+				};
+				this.sortOrder = false;
+				this.sortField = '';
 			},
 			// 初始化条件
 			toResetCondition(){
