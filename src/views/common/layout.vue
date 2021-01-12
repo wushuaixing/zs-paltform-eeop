@@ -50,8 +50,8 @@
           title:"是否退出登录?",
           centered:true,
 					onOk:()=>{
-						this.$router.push('/login');
 						logout()
+						this.$router.push('/login');
 					}
         })
       }
