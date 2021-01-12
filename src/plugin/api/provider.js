@@ -38,6 +38,5 @@ export const beStorage = {
 	// 已入库——服务商画像详情
 	detail:params => request.post('/operator/serviceUserManage/storage/userDetail',params),
 	// 已入库服务商导
-	export:()=>request.post('/operator/serviceUserManage/storage/export')
-
+	export:()=>request({method: 'post', url: '/operator/serviceUserManage/storage/export', responseType: 'blob'})
 };

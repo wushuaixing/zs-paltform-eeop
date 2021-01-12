@@ -256,17 +256,23 @@
 			},
 
 			toExport() {
-				beStorage.export().then((res) => {
-					this.exportFile(res);
+				beStorage.export().then(({dis,data}) => {
+					if(dis){
+						const filename = dis.split('filename=')[1];
+						this.exportFile(data,filename);
+					}else{
+						this.$message.error("文件导出失败");
+					}
+					// this.exportFile(res);
 				});
 			},
 			// 把文件流转为excel的方法
-			exportFile(res) {
+			exportFile(res,filename) {
 				const url = window.URL.createObjectURL(new Blob([res]));
 				const link = document.createElement("a");
 				link.style.display = "none";
 				link.href = url;
-				link.setAttribute("download", "导出文件名字.xlsx");
+				link.setAttribute("download", filename);
 				document.body.appendChild(link);
 				link.click();
 				document.body.removeChild(link);
