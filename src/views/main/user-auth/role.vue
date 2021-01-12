@@ -262,7 +262,7 @@ export default {
       this.pagination.current = pgt.current;
       params.page = pgt.current;
       params.sortOrder = SORTER_TYPE[sorter.order];
-      params.sortColumn = SORTER_TYPE[sorter.field];
+      params.sortColumn = sorter.order ? SORTER_TYPE[sorter.field] : '';
       this.queryParams = params;
       this.getTableList();
     },
