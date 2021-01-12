@@ -53,7 +53,7 @@ export const columns = ({ type = 1, sortOrder}) =>{
 			},
 			{
 				title: '入库时间',
-				sort: true,
+				sorter: true,
 				sortOrder: sortOrder || false,
 				dataIndex: 'gmtCreate',
 				key: 'address41',
@@ -71,12 +71,12 @@ export const columns = ({ type = 1, sortOrder}) =>{
 			...baseColumns,
 			{
 				title: '资质修改提交日期',
-				sort: true,
+				sorter: true,
 				sortOrder: sortOrder || false,
 				dataIndex: 'elementConfirmDate',
 				key: 'address41',
 				customRender:val=>val || '-',
-				width:100,
+				width:150,
 			},
 			auction
 		];
@@ -86,12 +86,12 @@ export const columns = ({ type = 1, sortOrder}) =>{
 			...baseColumns,
 			{
 				title: '要素修改提交日期',
-				sort: true,
+				sorter: true,
 				sortOrder: sortOrder || false,
 				dataIndex: 'elementConfirmDate',
 				key: 'address41',
 				customRender:val=>val || '-',
-				width:100,
+				width:150,
 			},
 			auction
 		];

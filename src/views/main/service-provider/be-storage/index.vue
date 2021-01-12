@@ -2,7 +2,7 @@
 	<div class="frame-wrapper">
 		<Breadcrumb :source="navData" icon="environment" />
 		<div class="frame-wrapper-content">
-			<div class="frame-query">
+			<div class="frame-query frame-query-position">
 				<a-form-model layout="inline" @submit="handleSubmit" @submit.native.prevent>
 					<a-form-model-item>
 						<a-input v-model="query.name" placeholder="请输入联络人姓名" class="custom-prefix-6"
@@ -39,6 +39,9 @@
 						<a-badge :dot="i.dot" class="dot-badge" slot="tab">{{i.title}}</a-badge>
 					</a-tab-pane>
 				</a-tabs>
+				<div class="export-template">
+					<a-button type="primary" icon="export">名单一键导出</a-button>
+				</div>
 			</div>
 			<div class="frame-content">
 				<a-table v-bind="props" @change="handleTableChange" :dataSource="dataSource" :columns="columns" :loading="loading">
@@ -184,7 +187,7 @@
 			// 表格变化事件
 			handleTableChange(row,obs,col){
 				this.props.pagination.current = row.current;
-				this.sortOrder = col.order;
+				this.sortOrder = col.field ? col.order : "";
 				this.sortField = col.field;
 				this.toQuery({ page:row.current });
 			},
@@ -250,6 +253,15 @@
 	}
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+.frame-query-position{
+	position: relative;
+	.export-template{
+		position: absolute;
+		bottom: 30px;
+		right: 0;
+		z-index: 1;
 
+	}
+}
 </style>
