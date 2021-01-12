@@ -48,8 +48,8 @@
 						<a-badge :dot="i.dot" class="dot-badge" slot="tab">{{i.title}}</a-badge>
 					</a-tab-pane>
 				</a-tabs>
-				<div class="export-template">
-					<a-button icon="export">名单一键导出</a-button>
+				<div class="export-template" v-if="activeKey===1">
+					<a-button icon="export" @click="toExport">名单一键导出</a-button>
 				</div>
 			</div>
 			<div class="frame-content">
@@ -254,6 +254,24 @@
 					this.loading = false;
 				});
 			},
+
+			toExport() {
+				beStorage.export().then((res) => {
+					this.exportFile(res);
+				});
+			},
+			// 把文件流转为excel的方法
+			exportFile(res) {
+				const url = window.URL.createObjectURL(new Blob([res]));
+				const link = document.createElement("a");
+				link.style.display = "none";
+				link.href = url;
+				link.setAttribute("download", "导出文件名字.xlsx");
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+			},
+
 		},
 		computed:{
 			normal(){
