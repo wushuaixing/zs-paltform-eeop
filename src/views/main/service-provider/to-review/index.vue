@@ -78,7 +78,11 @@
 					<span slot="customAuction" style="padding-left: 15px">操作</span>
 					<ReadStatus slot="readStatus" slot-scope="item" :dot="item.isRead===0">
 						{{item.name}}
-						<!--<a-tag color="orange">重新提交</a-tag>-->
+						<template v-if="activeKey === 1">
+							<br>
+							<a-tag color="orange" v-if="(item||{}).reSubmit">重新提交</a-tag>
+							<a-tag color="orange" v-if="(item||{}).registerType">后台开户</a-tag>
+						</template>
 					</ReadStatus>
 					<template slot="auction" slot-scope="item">
 						<a-button type="link" :icon="normal.icon" @click="toLink(item)">{{normal.text}}</a-button>
