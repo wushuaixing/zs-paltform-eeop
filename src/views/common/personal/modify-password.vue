@@ -26,14 +26,16 @@
             />
           </a-form-model-item>
           <a-form-model-item class="new-pwd" label="新密码" prop="newPassword">
-            <div slot="help" :class="passwordCheck[0] ? 'help act' : 'help'">
-              • 长度6-20位
-            </div>
-            <div slot="help" :class="passwordCheck[1] ? 'help act' : 'help'">
-              • 同时包含字母和数字
-            </div>
-            <div slot="help" :class="passwordCheck[2] ? 'help act' : 'help'">
-              • 不支持空格
+            <div slot="help" v-if="helpMsg">
+              <div :class="passwordCheck[0] ? 'help act' : 'help'">
+                • 长度6-20位
+              </div>
+              <div :class="passwordCheck[1] ? 'help act' : 'help'">
+                • 同时包含字母和数字
+              </div>
+              <div :class="passwordCheck[2] ? 'help act' : 'help'">
+                • 不支持空格
+              </div>
             </div>
             <a-input
               placeholder="请输入长度6-20位，同时包含数字和字母密码"
@@ -71,6 +73,7 @@ export default {
         confirmPwd: "",
       },
       passwordCheck: [false, false, false],
+      helpMsg:false,
       rules: {
         oldPassword: [
           {
@@ -118,6 +121,7 @@ export default {
     visible:function(){
       if(this.visible === false) {
         this.$refs.ruleForm.resetFields();
+        this.helpMsg = false;
         for(let i = 0;i < this.passwordCheck.length;i ++){
           this.passwordCheck[i] = false;
         }
@@ -132,6 +136,7 @@ export default {
       this.visible = false;
     },
     check() {
+      this.helpMsg = true;
       //长度6-20位校验
       const lengthCheck = (value) => !(value.length < 6 || value.length > 20);
       //校验是否有数字

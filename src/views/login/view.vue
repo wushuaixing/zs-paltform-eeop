@@ -193,7 +193,7 @@ export default {
 	          this.$router.push("/");
           } else{
             this.params.pictureCode = "";
-            this.toGetImageCode();
+            if(this.imgCode.status) this.toGetImageCode();
             if (res.data && res.data.count >= 5) return this.$message.error(`账号或密码错误,您还可以尝试${10 - res.data.count}次`);
             if (res.code === 30001) return this.$message.error("账号或密码错误");
             if (res.code === 30006) return this.$warning({
