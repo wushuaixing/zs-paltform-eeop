@@ -153,8 +153,7 @@
               </template>
               <template slot="workingTime" slot-scope="workingTime">{{workingTime|workingTimeText}}</template>
              <template slot="areasOfGoodCases" slot-scope="areasOfGoodCases">{{areaAnalysis(areasOfGoodCases,false)|areas|fill}}</template>
-<!--              <template slot="areasOfGoodCases" >{{areaAnalysis("11,11/1101,14/1401",false)|areas|fill}}</template>-->
-
+              <template slot="goodCases" slot-scope="goodCases">{{goodCases|goodCasesType}}</template>
               <template slot="applyDate" slot-scope="applyDate">{{applyDate|show_}}</template>
               <template slot="gmtModify" slot-scope="gmtModify">{{gmtModify|show_}}</template>
               <template slot="caseFileStatus" slot-scope="caseFileStatus">
@@ -677,7 +676,15 @@ export default {
         3:'住宅',
         0:'其他'
       };
-      return goodCasesObj[val];
+      let arr = val.split(",")
+      for(var i = 0; i < arr.length; i++){
+        if(arr[i] > 3 || arr[i] < 0){
+          continue
+        }
+        arr[i] = goodCasesObj[i] || ''
+      }
+      console.log(arr)
+      return arr.join("/");
     },
     caseFileText(val){
       return val === 0 ? "未提交" : "已提交";
