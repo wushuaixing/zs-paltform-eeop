@@ -118,7 +118,7 @@
           </div>
           <a-row type="flex">
             <a-col :span="8">
-              业务部门计划清收目标：<span>{{detailInfo.businessDepartmentTarget |show_}}</span>
+              业务部门计划清收目标：<span>{{detailInfo.businessDepartmentTarget |show_}}万元</span>
             </a-col>
             <a-col :span="8">
               业务部门计划清收时间：<span>{{detailInfo.businessDepartmentRecoveryTime |show_}}</span>
@@ -153,7 +153,15 @@
               </template>
               <template slot="workingTime" slot-scope="workingTime">{{workingTime|workingTimeText}}</template>
              <template slot="areasOfGoodCases" slot-scope="areasOfGoodCases">{{areaAnalysis(areasOfGoodCases,false)|areas|fill}}</template>
-              <template slot="goodCases" slot-scope="goodCases">{{goodCases|goodCasesType}}</template>
+              //擅长业务类型
+              <!--<template slot="goodCases" slot-scope="goodCases"  slot-scope="text,row">-->
+              <template slot="goodCases"   slot-scope="text,row">
+                <span v-if="row.identity === 1">
+                  {{row.goodCases|goodCasesType}}
+                </span>
+                <span v-else>{{row.goodCases|attorneyBes}}</span>
+              </template>
+
               <template slot="applyDate" slot-scope="applyDate">{{applyDate|show_}}</template>
               <template slot="gmtModify" slot-scope="gmtModify">{{gmtModify|show_}}</template>
               <template slot="caseFileStatus" slot-scope="caseFileStatus">
@@ -196,7 +204,7 @@
                 <span style="color: #008CB0; margin-left: 60%" @click="bit(row)" v-if="scheduleManagements.length >= 4" >{{exhibit === row.id ? '收起' :'展开'}}</span>
               </template>
               <template slot="caseFileAddress" slot-scope="caseFileAddress">
-                <FileList :file-list="toGetList(caseFileAddress)"></FileList>
+                <FileList :file-list="caseFileAddress"></FileList>
               </template>
             </a-table>
           </div>
@@ -226,14 +234,16 @@
             valueFormat="YYYY-MM-DD"
             v-model="editInfo.signDeadline"
             :disabled-date="disabledDate"
-            :disabled="editInfo.signDeadline < $moment().format('YYYY-MM-DD')"></a-date-picker>
+            :disabled="editInfo.signDeadline >= $moment().format('YYYY-MM-DD')?false:true"
+          />
         </a-form-model-item>
         <a-form-model-item label="方案提交截止日期" prop="submitDeadline" >
           <a-date-picker
             class="editIpt"
             valueFormat="YYYY-MM-DD"
             v-model="editInfo.submitDeadline"
-            :disabled-date="disabledDate"></a-date-picker>
+            :disabled-date="disabledDate"
+          />
         </a-form-model-item>
         <a-form-model-item label="期限上限" prop="dateLimit">
           <div class="editIpt">
@@ -259,7 +269,6 @@ import {projectDetail,signService,serviceCaseSubmit,updateProjectInfo} from "@/p
 import {collateralTypeData} from "./source"
 import {getArea,areaAnalysis} from "@/plugin/tools"
 import Breadcrumb from "@/components/bread-crumb";
-// import {getDownLoadToken} from "@/plugin/api/base";
 import store from '@/plugin/store';
 import  FileList  from '@/components/file-list'
 
@@ -496,8 +505,6 @@ export default {
           dataSource: [],
           pagination: {
             total: 0,
-            pageSizeOptions: ["10", "20", "30", "40"],
-            showSizeChanger: true,
             showQuickJumper: true,
             showTotal: (val) => `共${val}条信息`,
           },
@@ -507,8 +514,6 @@ export default {
           dataSource: [],
           pagination: {
             total: 0,
-            pageSizeOptions: ["10", "20", "30", "40"],
-            showSizeChanger: true,
             showQuickJumper: true,
             showTotal: (val) => `共${val}条信息`,
           },
@@ -523,14 +528,10 @@ export default {
     },
   },
   methods: {
-  	toGetList(val){
-  		if(!val)return '';
-  		return JSON.stringify([val])
-		},
-
     bit(val){
+      console.log(val)
       if(this.exhibit === val.id){
-        this.exhibit = false;
+        this.exhibit = false
         return false
       }
       this.exhibit = val.id
@@ -597,7 +598,7 @@ export default {
     },
     //服务商提交方案列表分页,排序操作
     submitPlanTableChange(pagination, filters, sorter){
-      console.log(sorter);
+      console.log(sorter)
       this.params.page = pagination.current;
       this.params.size = pagination.pageSize;
       this.params.sortField = sorter.field;
@@ -624,10 +625,10 @@ export default {
         if(validate) {
           updateProjectInfo(this.editInfo).then(res=>{
             if(res.code === 20000) {
-              this.$message.success("修改成功");
+              this.$message.success("修改成功")
               this.visible = false;
-              this.getProjectDetail();
-              this.getServiceCaseSubmitList();
+              this.getProjectDetail()
+              this.getServiceCaseSubmitList()
               this.getSignServiceList()
             }else{
               this.$message.error("修改失败")
@@ -638,15 +639,6 @@ export default {
         }
       })
     },
-    // downLoad(v){
-    //   //"1343910260376604672_1610357458470_周报.docx"
-    //   getDownLoadToken(v).then(res=>{
-    //     if(res.code === 20000){
-    //       console.log(res.data)
-    //       window.open(res.data)
-    //     }
-    //   })
-    // }
   },
   filters:{
     //没有值展示'-'
@@ -670,23 +662,55 @@ export default {
       };
       return workingTimeObj[val];
     },
+    //擅长业务类型服务商机构
     goodCasesType(val){
       if(val === "") return '-';
       let goodCasesObj = {
         1:'工业',
         2:'商业',
         3:'住宅',
+        4:'纯担保',
         0:'其他'
       };
-      let arr = val.split(",");
-      for(var i = 0; i < arr.length; i++){
-        if(arr[i] > 3 || arr[i] < 0){
-          continue
-        }
-        arr[i] = goodCasesObj[i] || ''
-      }
-      console.log(arr);
-      return arr.join("/");
+      let arr = val.split(",")
+      arr.forEach((v,i)=>{
+        arr[i] = goodCasesObj[v] || ''
+      });
+      console.log(arr)
+      return arr.join("、");
+    },
+    //擅长业务类型服务商律师
+    attorneyBes(val){
+      let goodCasesObj = {
+        1:'立案/保全',
+        2:'公诉',
+        3:'执行',
+        4:'财产发现',
+        5:'拍卖腾空',
+        6:'破产/重组',
+        7:'代位权/撤销权',
+        8:'担保合同纠纷',
+        9:'资管',
+        10:'境外追索',
+        11:'股东责任',
+        12:'公司法律纠纷',
+        13:'贸融',
+        14:'能矿',
+        15:'房地产',
+        16:'票据',
+        17:'刑事交叉',
+        18:'融资租赁',
+        19:'并购重组',
+        20:'资产推介',
+        21:'投行业务',
+        0:'其他'
+      };
+      let arr = val.split(",")
+      arr.forEach((v,i)=>{
+        arr[i] = goodCasesObj[v] || ''
+      });
+      console.log(arr)
+      return arr.join("、");
     },
     caseFileText(val){
       return val === 0 ? "未提交" : "已提交";
@@ -702,7 +726,7 @@ export default {
       };
       return isLawsuitObj[val]
     },
-  arease:(params) => {
+    arease:(params) => {
       return getArea(params.provinceCode,params.cityCode,params.areaCode);
     },
     collateralType:(val)=>{
@@ -715,11 +739,11 @@ export default {
     FileList
   },
   created() {
-    let id = this.$route.query.id;
+    let id = this.$route.query.id
     this.getProjectDetail();
     this.getSignServiceList();
     serviceCaseSubmit({caseType:1,id,page:1,size:10}).then(res=>{
-      console.log(res);
+      console.log(res)
       if(res.code === 20000){
         this.planCount.validCount = res.data.total;
         this.tableSource.submitPlanTable.pagination.total = res.data.total;

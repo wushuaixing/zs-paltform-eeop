@@ -22,12 +22,14 @@
           <a-date-picker
               v-model="field.startTime"
               placeholder="搜索范围起始日期"
-              :disabled-date="val=>disabledDate(val,field.endTime,'start')"></a-date-picker>
+              :disabled-date="val=>disabledDate(val,field.endTime,'start')"
+          />
           <span style="margin: 0 6px">至</span>
           <a-date-picker
               v-model="field.endTime"
               placeholder="搜索范围截止日期"
-              :disabled-date="val=>disabledDate(field.startTime,val)"></a-date-picker>
+              :disabled-date="val=>disabledDate(field.startTime,val)"
+          />
         </a-col>
         <a-col :span="3" style="text-align: right" >
           <a-button class="reset-but" @click="reset" type="primary">重置</a-button>
@@ -35,7 +37,7 @@
         </a-col>
       </a-row>
       <!--展示招商项目表格-->
-        <a-table   @change="tableHanges" v-bind="tableSource" rowKey=id :columns="columns">
+        <a-table   @change="tableHanges" v-bind="tableSource" rowKey=id :columns="columns"  >
           <a slot="name" slot-scope="text">{{ text }}</a>
           <template slot="security" slot-scope="text,row">{{row.security|guarantyType}}</template>
           <template slot="debtCaptial" slot-scope="text,row">{{row.debtCaptial|amountTh}}</template>
@@ -48,23 +50,27 @@
     <!--弹框对话框文件上传-->
     <div>
       <a-modal :centered="true" v-model="visible" title="发布新项目" @ok="handleOk">
+        <template  slot="footer">
+          <a-button @click="handleOk">取消</a-button>
+          <a-button
+              type="primary"
+              :disabled="fileList.length === 0"
+              :loading="uploading"
+              style="margin-top: 16px"
+              @click="handleUpload"
+              class="uplode-files"
+          >
+            {{ uploading ? '正在上传' : '确定' }}
+          </a-button>
+        </template>
         <div class="pop-up">
           <span>招商服务项目信息:</span>
-          <a-upload
-              name="file"
-              :showUploadList="false"
-              :action="upFiles"
-              :headers="headers"
-              :beforeUpload="fileIntercept"
-              @change="fileChange"
-              v-if="showUploadList"
-          >
-            <a-button>
-              <a-icon type="upload"/>
-              点的上传
-            </a-button>
-          </a-upload>
-          <a class="upSucceed" v-else>{{fileName}}&nbsp;<a-icon type="close" @click="showUploadList=true"></a-icon></a>
+         <div class="file-conent">
+            <a-upload :showUploadList="false" v-if="showUploadList" :file-list="fileList" :before-upload="beforeUpload">
+              <a-button> <a-icon type="upload" /> 点的上传 </a-button>
+            </a-upload>
+            <a  v-else>{{fileName}}&nbsp;<a-icon type="close" @click="offFil"></a-icon></a>
+         </div>
           <a class="download" href="https://zsamc-public.zsamc.com/%E6%9C%8D%E5%8A%A1%E6%8B%9B%E5%95%86%E9%A1%B9%E7%9B%AE%E5%AF%BC%E5%85%A5%E6%A8%A1%E6%9D%BF20210111.xlsx">导入模板下载</a>
         </div>
         <div class="caution">
@@ -83,6 +89,8 @@ import Breadcrumb from '@/components/bread-crumb';
 import { projectFind,upFiles} from "@/plugin/api/investment-center";
 import { disabledDate } from "@/plugin/tools";
 import store from '@/plugin/store';
+// import reqwest from 'reqwest';
+import reqest from 'axios';
 //提交代码
 const columns = (sortedInfo) =>{
   return  [
@@ -145,6 +153,8 @@ export default {
   name: "Investment",
   data() {
     return {
+      fileList: [],
+      uploading: false,//点击上传
       upFiles,
       navData,
       disabledDate,
@@ -156,8 +166,7 @@ export default {
         dataSource:[],
         pagination: {
           total: 0,
-          pageSizeOptions: ["10", "20", "30", "40"],
-          showSizeChanger: true,
+          current:1,
           showQuickJumper: true,
           showTotal:(val)=>`共${val}条`
         },
@@ -174,7 +183,7 @@ export default {
         id: "",
         page: 1,
         size: 10,
-        sortField: 0,
+        sortField: "",
         sortOrder: "",
         startDate: ""
       },
@@ -197,7 +206,7 @@ export default {
   },
   created() {
     const {config} = store.getters.getInfo;
-    this.projectManage = config.projectManage;
+    this.projectManage = config.projectManage
     this.requestInquire()
   },
   watch:{
@@ -210,18 +219,76 @@ export default {
     }
   },
   methods: {
-    //请求封装
+    offFil(){
+      this.showUploadList = true;
+      this.fileList = []
+    },
+    beforeUpload(file) {
+      this.fileList = [...this.fileList, file];
+      const isLimit16M = file.size / 1024 / 1024 <= 16;
+      console.log(file);
+      const isSheet = file.type === "application/vnd.ms-excel" || file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+      if(!isLimit16M) this.$message.error("文件大小不能超过16M,请重新上传");
+      if(!isSheet) this.$message.error("请上传.xls/.xlsx文件");
+      // console.log(isSheet && isLimit16M)
+      if(isSheet && isLimit16M){
+        this.showUploadList = false;
+        this.fileName = file.name;
+      }else {
+        this.fileList = []
+      }
+      return isSheet && isLimit16M;
+    },
+    handleUpload() {
+      const { fileList } = this;
+      const formData = new FormData();
+      fileList.forEach(file => {formData.append('file', file);
+      });
+      this.uploading = true;
+	    reqest({
+        url: this.upFiles,
+        method: 'post',
+        headers:this.headers,
+        processData: false,
+        data: formData,
+        success: (val) => {
+          const res =  JSON.parse(val);
+          this.fileList = [];
+          this.uploading = false;
+          if(res.code ===  60001){
+            this.$message.error(res.message);
+            return
+          }
+          if(res.code === 20000){
+            this.visible = false;
+            this.$message.success('上传成功');
+          }
+        },
+        error: () => {
+          this.uploading = false;
+          this.$message.error('上传失败');
+        },
+      });
+    },
+
+    // 请求封装
     requestInquire(){
       projectFind(this.findAll).then((res)=>{
-        if(res.code !== 20000 ) return this.$message.error('出问题了');
+        console.log(res)
+        if(res.code !== 20000 ) return this.$message.error('请求失败')
         this.tableSource.dataSource = res.data.list;
         this.tableSource.pagination.total = res.data.total;
       })
     },
     inquire(){
+      this.sortedInfo = null;
+      this.findAll.page = 1;
+      this.tableSource.pagination.current = 1;
       this.requestInquire()
     },
     reset(){
+      this.findAll.page = 1;
+      this.tableSource.pagination.current = 1;
       this.findAll.debtor = "";
       this.findAll.endDate = this.field.endTime = '';
       this.findAll.startDate = this.field.startTime = '';
@@ -235,6 +302,7 @@ export default {
       this.sortedInfo = sorter;
       this.findAll.sortOrder = sorter.order ? sorter.order === "ascend" ? "ASC" : "DESC" : "";
       this.findAll.page = pagination.current;
+      this.tableSource.pagination.current = pagination.current;
       this.findAll.size = pagination.pageSize;
       this.requestInquire()
     },
@@ -243,28 +311,12 @@ export default {
     },
     showModal() {
       this.visible = true;
+      this.showUploadList = true
+      this.fileList = []
     },
     handleOk(e) {
-      console.log(e);
+      console.log(e)
       this.visible = false;
-    },
-    //上传文件
-    fileIntercept(file){
-      const isLimit16M = file.size / 1024 / 1024 <= 16;
-      const isSheet = file.type === "application/vnd.ms-excel" || file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-      if(!isLimit16M) this.$message.error("文件大小不能超过16M,请重新上传");
-      if(!isSheet) this.$message.error("请上传.xls/.xlsx文件");
-      return isSheet && isLimit16M;
-    },
-    fileChange(info) {
-      if(info.file.status === "done"){
-        this.showUploadList = false;
-        this.fileName = info.file.name;
-        if(info.file.response.code === 20000) this.$message.success('文件上传成功');
-        if(info.file.response.code === 20001) this.$message.success('文件上传失败');
-        if(info.file.response.code === 20003) this.$message.success('文件上传失败');
-        console.log(info.file.response)
-      }
     },
   }
 };
@@ -294,9 +346,7 @@ export default {
   button {
     margin: 0 20px;
   }
-  .upSucceed{
-    margin: 0 20px;
-  }
+
   .download{
     text-decoration:underline;
   }
@@ -317,5 +367,9 @@ export default {
   background-color: #fff;
   color: #666666;
   border: 1px solid #dddddd;
+}
+.file-conent{
+  width: 200px;
+  margin: 0  10px;
 }
 </style>
