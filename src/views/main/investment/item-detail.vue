@@ -196,7 +196,7 @@
                 <span style="color: #008CB0; margin-left: 60%" @click="bit(row)" v-if="scheduleManagements.length >= 4" >{{exhibit === row.id ? '收起' :'展开'}}</span>
               </template>
               <template slot="caseFileAddress" slot-scope="caseFileAddress">
-                <FileList :file-list="caseFileAddress"></FileList>
+                <FileList :file-list="toGetList(caseFileAddress)"></FileList>
               </template>
             </a-table>
           </div>
@@ -205,16 +205,16 @@
     </div>
     <div>
     <!-- 修改项目招商信息弹窗 -->
-    <a-modal 
-      v-model="visible" 
-      title="修改项目招商信息" 
-      @ok="handleOk" 
+    <a-modal
+      v-model="visible"
+      title="修改项目招商信息"
+      @ok="handleOk"
       dialogClass="edit-modal"
-      :centered="true" 
+      :centered="true"
       :maskClosable="false"
     >
-      <a-form-model 
-        :model="editInfo" 
+      <a-form-model
+        :model="editInfo"
         :label-col="labelCol"
         ref="ruleForm"
         :wrapper-col="wrapperCol"
@@ -226,16 +226,14 @@
             valueFormat="YYYY-MM-DD"
             v-model="editInfo.signDeadline"
             :disabled-date="disabledDate"
-            :disabled="editInfo.signDeadline >= $moment().format('YYYY-MM-DD')?false:true"
-          />
+            :disabled="editInfo.signDeadline < $moment().format('YYYY-MM-DD')"></a-date-picker>
         </a-form-model-item>
         <a-form-model-item label="方案提交截止日期" prop="submitDeadline" >
           <a-date-picker
             class="editIpt"
             valueFormat="YYYY-MM-DD"
             v-model="editInfo.submitDeadline"
-            :disabled-date="disabledDate"
-          />
+            :disabled-date="disabledDate"></a-date-picker>
         </a-form-model-item>
         <a-form-model-item label="期限上限" prop="dateLimit">
           <div class="editIpt">
@@ -525,10 +523,14 @@ export default {
     },
   },
   methods: {
+  	toGetList(val){
+  		if(!val)return '';
+  		return JSON.stringify([val])
+		},
+
     bit(val){
-      console.log(val)
       if(this.exhibit === val.id){
-        this.exhibit = false
+        this.exhibit = false;
         return false
       }
       this.exhibit = val.id
@@ -595,7 +597,7 @@ export default {
     },
     //服务商提交方案列表分页,排序操作
     submitPlanTableChange(pagination, filters, sorter){
-      console.log(sorter)
+      console.log(sorter);
       this.params.page = pagination.current;
       this.params.size = pagination.pageSize;
       this.params.sortField = sorter.field;
@@ -622,10 +624,10 @@ export default {
         if(validate) {
           updateProjectInfo(this.editInfo).then(res=>{
             if(res.code === 20000) {
-              this.$message.success("修改成功")
+              this.$message.success("修改成功");
               this.visible = false;
-              this.getProjectDetail()
-              this.getServiceCaseSubmitList()
+              this.getProjectDetail();
+              this.getServiceCaseSubmitList();
               this.getSignServiceList()
             }else{
               this.$message.error("修改失败")
@@ -676,14 +678,14 @@ export default {
         3:'住宅',
         0:'其他'
       };
-      let arr = val.split(",")
+      let arr = val.split(",");
       for(var i = 0; i < arr.length; i++){
         if(arr[i] > 3 || arr[i] < 0){
           continue
         }
         arr[i] = goodCasesObj[i] || ''
       }
-      console.log(arr)
+      console.log(arr);
       return arr.join("/");
     },
     caseFileText(val){
@@ -713,11 +715,11 @@ export default {
     FileList
   },
   created() {
-    let id = this.$route.query.id
+    let id = this.$route.query.id;
     this.getProjectDetail();
     this.getSignServiceList();
     serviceCaseSubmit({caseType:1,id,page:1,size:10}).then(res=>{
-      console.log(res)
+      console.log(res);
       if(res.code === 20000){
         this.planCount.validCount = res.data.total;
         this.tableSource.submitPlanTable.pagination.total = res.data.total;
