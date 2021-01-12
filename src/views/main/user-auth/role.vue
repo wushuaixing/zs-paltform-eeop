@@ -330,13 +330,14 @@ export default {
             userAuthApi.saveRole(params).then((res) => {
               if (res.code === 20000) {
                 this.$message.success('保存成功');
+                this.handleResetFields('form');
+                this.modalVisible = false
                 this.getTableList();
+              } else if (res.code === 30008) {
+                this.$message.warning('角色已存在');
               } else {
                 this.$message.warning(res.message);
               }
-            }).finally(() => {
-              this.handleResetFields('form');
-              this.modalVisible = false
             });
           } else {
             return false;
