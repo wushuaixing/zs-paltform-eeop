@@ -10,8 +10,10 @@ import './assets/css/public.scss';
 import './version';
 import './plugin/element';
 import moment from "moment"
+import Ellipsis from './components/ellipsis';
 
 Vue.use(Antd);
+Vue.component('Ellipsis', Ellipsis);
 Vue.use(install, filter);
 Vue.prototype.$form = Form;
 Vue.config.productionTip = false;

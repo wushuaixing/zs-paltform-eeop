@@ -46,13 +46,13 @@
 			<div class="frame-content">
 				<a-table v-bind="props" @change="handleTableChange" :dataSource="dataSource" :columns="columns" :loading="loading">
 					<span slot="customAuction" style="padding-left: 15px">操作</span>
-					<ReadStatus slot="readStatus" slot-scope="item" :dot="item.isRead">
-						{{item.name}}
-						<!--<a-tag color="orange">重新提交</a-tag>-->
-					</ReadStatus>
+					<ReadStatus slot="readStatus" slot-scope="item" :dot="item.isRead">{{item.name}}</ReadStatus>
 					<span slot="workingTime" slot-scope="item">{{item|single('expOption')}}</span>
 					<span slot="coo" slot-scope="item">{{item|multi('cooIntent')}}</span>
 					<span slot="address" slot-scope="item">{{areaAnalysis(item,false)|areas|fill}}</span>
+					<Ellipsis slot="address" slot-scope="item" :width="160" :title="areaAnalysis(item,false)|areas|fill">
+						{{areaAnalysis(item,false)|areas|fill}}
+					</Ellipsis>
 					<template slot="auction" slot-scope="item">
 						<template v-if="activeKey === 1">
 							<a-button type="link" icon="file-text" @click="toLink(item)">详情</a-button>

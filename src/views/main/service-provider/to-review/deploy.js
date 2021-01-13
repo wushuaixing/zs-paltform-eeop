@@ -11,6 +11,7 @@ export const columns = ({ type = 1, sortOrder}) =>{
 		{
 			title: '联络人姓名',
 			key: 'name',
+			width:'17%',
 			scopedSlots: { customRender: 'readStatus' },
 		},
 		{
@@ -29,6 +30,7 @@ export const columns = ({ type = 1, sortOrder}) =>{
 			title: '机构名称/挂靠律师',
 			dataIndex: 'orgOfficeName',
 			key: 'address 2',
+			width:'17%',
 			customRender:val=>val || '-',
 		},
 	];
@@ -46,6 +48,7 @@ export const columns = ({ type = 1, sortOrder}) =>{
 				dataIndex: 'address',
 				key: 'add31',
 				// customRender:val=>val || '-',
+				width:'17%',
 				scopedSlots: { customRender: 'address' },
 
 			},

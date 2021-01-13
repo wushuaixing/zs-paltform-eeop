@@ -240,3 +240,33 @@ button:focus{
     color: rgba(0, 140, 176, 0.73)
   }
 }
+
+
+.frame-content-table{
+  .ant-table-body{
+    tr > th, tr > td {
+      border-bottom: none;
+      &:first-child{
+        padding-left: 16px;
+      }
+      &:last-child{
+        padding-right: 16px;
+      }
+    }
+  }
+  .ant-table-thead > tr > th{
+    background-color: #F5F5F5;
+    //background: #FAFAFA;
+  }
+  .ant-table-tbody > tr:nth-child(2n){
+    background: #FAFAFA;
+  }
+  .ant-table-placeholder{
+    border: none;
+  }
+  .frame-table-bold{
+    font-weight: bold;
+    color: #333333;
+  }
+
+}
