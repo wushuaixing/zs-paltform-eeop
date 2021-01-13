@@ -51,25 +51,27 @@
     <div>
       <a-modal :centered="true" v-model="visible" title="发布新项目" @ok="handleOk">
         <template  slot="footer">
-          <a-button @click="handleOk">取消</a-button>
-          <a-button
-              type="primary"
-              :disabled="fileList.length === 0"
-              :loading="uploading"
-              style="margin-top: 16px"
-              @click="handleUpload"
-              class="uplode-files"
-          >
-            {{ uploading ? '正在上传' : '确定' }}
-          </a-button>
+          <div style="text-align: center">
+            <a-button @click="handleOk">取消</a-button>
+            <a-button
+                type="primary"
+                :disabled="fileList.length === 0"
+                :loading="uploading"
+                style="margin-top: 16px"
+                @click="handleUpload"
+                class="uplode-files"
+            >
+              {{ uploading ? '正在上传' : '确定' }}
+            </a-button>
+          </div>
         </template>
         <div class="pop-up">
-          <span>招商服务项目信息:</span>
+          <span style="margin-left: 18px">招商服务项目信息:</span>
          <div class="file-conent">
             <a-upload :showUploadList="false" v-if="showUploadList" :file-list="fileList" :before-upload="beforeUpload">
               <a-button> <a-icon type="upload" /> 点击上传 </a-button>
             </a-upload>
-            <a  v-else>{{fileName}}&nbsp;<a-icon type="close" @click="offFil"></a-icon></a>
+            <a style="margin:0 18px;display:block"  v-else>{{fileName}}&nbsp;<a-icon type="close" @click="offFil"></a-icon></a>
          </div>
           <a class="download" href="https://zsamc-public.zsamc.com/%E6%9C%8D%E5%8A%A1%E6%8B%9B%E5%95%86%E9%A1%B9%E7%9B%AE%E5%AF%BC%E5%85%A5%E6%A8%A1%E6%9D%BF20210111.xlsx">导入模板下载</a>
         </div>
@@ -337,15 +339,14 @@ export default {
   button {
     margin: 0 20px;
   }
-
   .download{
     text-decoration:underline;
   }
 }
 .caution {
   width: 260px;
-  margin-top: 20px;
-  margin-left: 50%;
+  margin-top: 12px;
+  margin-left: 60%;
   transform: translateX(-50%);
   color: #999999;
 }
@@ -360,7 +361,6 @@ export default {
   border: 1px solid #dddddd;
 }
 .file-conent{
-  width: 200px;
-  margin: 0  10px;
+  width: 160px;
 }
 </style>
