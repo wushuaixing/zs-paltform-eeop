@@ -290,6 +290,18 @@ export default {
       this.requestInquire()
     },
     tableHanges(pagination, filters, sorter,) {
+      //排序字段默认请求
+      if(!sorter.order){
+        this.findAll.sortField = sorter.field;
+        this.sortedInfo = sorter;
+        this.findAll.sortOrder = sorter.order ? sorter.order === "ascend" ? "ASC" : "DESC" : "";
+        projectFind({page: 1, size: 10,}).then((res)=>{
+          if(res.code !== 20000 ) return this.$message.error('请求失败')
+          this.tableSource.dataSource = res.data.list;
+          this.tableSource.pagination.total = res.data.total;
+        })
+        return
+      }
       //排序
       this.findAll.sortField = sorter.field;
       this.sortedInfo = sorter;
