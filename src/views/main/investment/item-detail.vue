@@ -143,12 +143,12 @@
           <div class="table-block">
             <a-table v-bind="tableSource.applyServeTable" @change="applyServeTableChange" rowKey=id >
               <template slot="name" slot-scope="name,row">
-                <a-button type="link" @click="goAvatar(row.id)">{{ name|show_ }}</a-button>
+                <a type="link" @click="goAvatar(row.id)">{{ name|show_ }}</a>
               </template>
               <template slot="phone" slot-scope="phone">{{ phone|show_ }}</template>
               <template slot="identity" slot-scope="identity">{{identity|identityType}}</template>
               <template slot="orgOfficeName" slot-scope="orgOfficeName,row">
-                <a-button v-if="orgOfficeName" type="link" @click="goAvatar(row.id)">{{orgOfficeName}}</a-button>
+                <a v-if="orgOfficeName"  @click="goAvatar(row.id)">{{orgOfficeName}}</a>
                 <div v-else>-</div>
               </template>
               <template slot="workingTime" slot-scope="workingTime">{{workingTime|workingTimeText}}</template>
@@ -179,12 +179,12 @@
             <a-table  v-bind="tableSource.submitPlanTable" @change="submitPlanTableChange" :columns="columns2" rowKey=id>
               <template slot="gmtCreate" slot-scope="gmtCreate">{{gmtCreate|show_}}</template>
               <template slot="name" slot-scope="name,row">
-                <a-button type="link" @click="goAvatar(row.id)">{{ name }}</a-button>
+                <a  @click="goAvatar(row.id)">{{ name }}</a>
               </template>
               <template slot="phone" slot-scope="phone">{{phone|show_}}</template>
               <template slot="identity" slot-scope="identity">{{identity|identityType}}</template>
               <template slot="orgOfficeName" slot-scope="orgOfficeName,row">
-                <a-button v-if="orgOfficeName" type="link" @click="goAvatar(row.id)">{{orgOfficeName}}</a-button>
+                <a v-if="orgOfficeName" type="link" @click="goAvatar(row.id)">{{orgOfficeName}}</a>
                 <div v-else>-</div>
               </template>
               <template slot="serviceTime" slot-scope="serviceTime,row">
@@ -197,7 +197,7 @@
               </template>
               <template slot="scheduleManagements" slot-scope="scheduleManagements,row">
                 <div :class="exhibit === row.id ? 'plans' : 'plan'" >
-                  <p v-for="(item,index) in scheduleManagements" :key="index">{{item.dateMonth}}个月内完成{{item.dateMatters}}</p>
+                    <p v-for="(item,index) in scheduleManagements" :key="index">{{item.dateMonth}}个月内完成{{item.dateMatters}}</p>
                 </div>
                 <span style="color: #008CB0; margin-left: 60%" @click="bit(row)" v-if="scheduleManagements.length >= 4" >{{exhibit === row.id ? '收起' :'展开'}}</span>
               </template>
@@ -574,6 +574,7 @@ export default {
       this.getServiceCaseSubmitList();
     },
     goAvatar(v){
+      console.log("跳转到画像页面",v);
       this.$router.push({path:'/provider/storage/detail', query: {id: v}})
     },
     //报名服务商列表分页,排序操作
@@ -590,6 +591,7 @@ export default {
     },
     //服务商提交方案列表分页,排序操作
     submitPlanTableChange(pagination, filters, sorter){
+      console.log(sorter)
       this.params.page = pagination.current;
       this.params.size = pagination.pageSize;
       this.params.sortField = sorter.field;
@@ -716,7 +718,6 @@ export default {
         5:'破产'
       };
       return isLawsuitObj[val]
-
     },
     arease:(params) => {
       return getArea(params.provinceCode,params.cityCode,params.areaCode);
