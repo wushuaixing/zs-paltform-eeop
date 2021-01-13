@@ -147,21 +147,14 @@
 			EffectModal
 		},
 		created(){
-			console.log(this.$store.getters.getRole);
-
+			// console.log(this.$store.getters.getRole);
 			this.toQuery();
 		},
 		methods:{
 			toResetQuery(){
-				this.query = {
-					...this.query,
-					name:undefined,
-					orgOfficeName:undefined,
-					identity:undefined,
-					areaGoodCases:undefined,
-					goodCases:undefined,
-					cooperationIntention:undefined,
-				};
+				this.toResetCondition();
+				this.toQuery();
+				this.toQueryUnread();
 			},
 			// 初始化条件
 			toResetCondition(){
