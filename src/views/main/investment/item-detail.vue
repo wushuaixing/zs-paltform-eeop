@@ -574,7 +574,6 @@ export default {
       this.getServiceCaseSubmitList();
     },
     goAvatar(v){
-      console.log("跳转到画像页面",v);
       this.$router.push({path:'/provider/storage/detail', query: {id: v}})
     },
     //报名服务商列表分页,排序操作
@@ -591,7 +590,6 @@ export default {
     },
     //服务商提交方案列表分页,排序操作
     submitPlanTableChange(pagination, filters, sorter){
-      console.log(sorter)
       this.params.page = pagination.current;
       this.params.size = pagination.pageSize;
       this.params.sortField = sorter.field;
@@ -725,7 +723,6 @@ export default {
     },
     collateralType:(val)=>{
       if(!val)return"-";
-      console.log(collateralTypeData.list.find(i=>val === i.value))
       return collateralTypeData.list.find(i=>val === i.value).label;
     }
   },
@@ -738,7 +735,6 @@ export default {
     this.getProjectDetail();
     this.getSignServiceList();
     serviceCaseSubmit({caseType:1,id,page:1,size:10}).then(res=>{
-      console.log(res)
       if(res.code === 20000){
         this.planCount.validCount = res.data.total;
         this.tableSource.submitPlanTable.pagination.total = res.data.total;
