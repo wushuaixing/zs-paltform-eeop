@@ -6,11 +6,11 @@
 				<a-form-model layout="inline" @submit="handleSubmit" @submit.native.prevent>
 					<a-form-model-item style="float: right;margin-right: 0;">
 						<a-space>
-							<a-button style="width: 80px" @click="toResetQuery">重置</a-button>
-							<a-button type="primary" html-type="submit" style="width: 80px">查询</a-button>
+							<a-button style="width: 60px" @click="toResetQuery">重置</a-button>
+							<a-button type="primary" html-type="submit" style="width: 60px">查询</a-button>
 						</a-space>
 					</a-form-model-item>
-					<div style="padding-right: 180px">
+					<div style="padding-right: 150px">
 						<a-form-model-item label="联络人姓名">
 							<a-input v-model="query.name" placeholder="请输入联络人姓名" style="width: 200px"></a-input>
 						</a-form-model-item>
