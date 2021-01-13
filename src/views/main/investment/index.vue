@@ -18,6 +18,7 @@
           </a-input>
         </a-col>
         <a-col :span="10">
+          <div style="width: 586px;">
           <span>报名截止日期：</span>
           <a-date-picker
               v-model="field.startTime"
@@ -30,10 +31,11 @@
               placeholder="搜索范围截止日期"
               :disabled-date="val=>disabledDate(field.startTime,val)"
           />
+          </div>
         </a-col>
-        <a-col :span="3" style="text-align: right" >
-          <a-button class="reset-but" @click="reset" type="primary">重置</a-button>
-          <a-button @click="inquire" type="primary">查询</a-button>
+        <a-col  style="text-align: right;margin-left: auto;" >
+             <a-button class="reset-but" @click="reset" type="primary">重置</a-button>
+             <a-button @click="inquire" type="primary">查询</a-button>
         </a-col>
       </a-row>
       <!--展示招商项目表格-->
