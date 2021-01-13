@@ -1,5 +1,5 @@
 <template>
-	<div class="wrapper">
+	<div class="frame-wrapper">
 		<Breadcrumb :source="navData" icon="environment" />
 		<div class="frame-wrapper-content">
 			<div class="frame-query">
