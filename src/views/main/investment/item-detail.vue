@@ -160,7 +160,6 @@
                 </span>
                 <span v-else>{{row.goodCases|goodCasesType}}</span>
               </template>
-
               <template slot="applyDate" slot-scope="applyDate">{{applyDate|show_}}</template>
               <template slot="gmtModify" slot-scope="gmtModify">{{gmtModify|show_}}</template>
               <template slot="caseFileStatus" slot-scope="caseFileStatus">
@@ -203,7 +202,7 @@
                 <span style="color: #008CB0; margin-left: 60%" @click="bit(row)" v-if="scheduleManagements.length >= 4" >{{exhibit === row.id ? '收起' :'展开'}}</span>
               </template>
               <template slot="caseFileAddress" slot-scope="caseFileAddress">
-                <FileList :file-list="caseFileAddress"></FileList>
+                <FileList :file-list="JSON.stringify([caseFileAddress])"></FileList>
               </template>
             </a-table>
           </div>
@@ -679,6 +678,7 @@ export default {
     },
     //擅长业务类型服务商律师
     attorneyBes(val){
+      if(val === "") return '-';
       let goodCasesObj = {
         1:'立案/保全',
         2:'公诉',
