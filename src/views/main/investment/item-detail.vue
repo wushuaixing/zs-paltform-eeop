@@ -718,6 +718,7 @@ export default {
         5:'破产'
       };
       return isLawsuitObj[val]
+      
     },
     arease:(params) => {
       return getArea(params.provinceCode,params.cityCode,params.areaCode);
