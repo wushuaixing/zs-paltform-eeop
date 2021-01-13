@@ -201,8 +201,9 @@ button:focus{
       margin:22px 0;
       display: flex;
       line-height: 25px;
+      padding-right: 40px;
       &-title{
-        width: 33.3%;
+        width: 25%;
         font-size: 14px;
         color: $text-title;
         text-align: right;
