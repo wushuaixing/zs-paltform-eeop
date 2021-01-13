@@ -266,7 +266,6 @@ export default {
     // 请求封装
     requestInquire(){
       projectFind(this.findAll).then((res)=>{
-        console.log(res)
         if(res.code !== 20000 ) return this.$message.error('请求失败')
         this.tableSource.dataSource = res.data.list;
         this.tableSource.pagination.total = res.data.total;

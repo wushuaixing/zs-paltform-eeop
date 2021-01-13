@@ -526,7 +526,6 @@ export default {
   },
   methods: {
     bit(val){
-      console.log(val)
       if(this.exhibit === val.id){
         this.exhibit = false
         return false
@@ -536,7 +535,6 @@ export default {
     //获取项目基本信息
     getProjectDetail(){
       projectDetail(this.params.id).then(res=>{
-        console.log(res);
         if(res.code === 20000){
           this.editInfo.aimedPriceBack = res.data.targetAmountLowerLimit;
           this.editInfo.dateLimit = res.data.targetYearUpperLimit;
@@ -551,7 +549,6 @@ export default {
     //获取报名服务商列表
     getSignServiceList(){
       signService(this.params).then(res=>{
-        console.log(res);
         if(res.code === 20000){
           this.tableSource.applyServeTable.pagination.total = res.data.total;
           this.tableSource.applyServeTable.dataSource = res.data.list;
@@ -563,7 +560,6 @@ export default {
     //获取服务商提交方案列表
     getServiceCaseSubmitList(){
       serviceCaseSubmit(this.params).then(res=>{
-        console.log(res);
         if(res.code === 20000){
           this.tableSource.submitPlanTable.pagination.total = res.data.total;
           this.tableSource.submitPlanTable.dataSource = res.data.list;
@@ -647,7 +643,7 @@ export default {
       return  val === 0 ? '否' : val === 1 ? '是' :'-'
     },
     guarantorsList: (arr = []) => {
-      if(arr.length == 0) return  '-'
+      if(arr.length == 0) return '-'
       return arr.map((i) => i.guarantorName).join("、");
     },
     workingTimeText(val){
@@ -674,7 +670,6 @@ export default {
       arr.forEach((v,i)=>{
         arr[i] = goodCasesObj[v] || ''
       });
-      console.log(arr)
       return arr.join("、");
     },
     //擅长业务类型服务商律师
@@ -708,7 +703,6 @@ export default {
       arr.forEach((v,i)=>{
         arr[i] = goodCasesObj[v] || ''
       });
-      console.log(arr)
       return arr.join("、");
     },
     caseFileText(val){
@@ -730,6 +724,7 @@ export default {
     },
     collateralType:(val)=>{
       if(!val)return"-";
+      console.log(collateralTypeData.list.find(i=>val === i.value))
       return collateralTypeData.list.find(i=>val === i.value).label;
     }
   },
