@@ -271,7 +271,6 @@ import Breadcrumb from "@/components/bread-crumb";
 import store from '@/plugin/store';
 import  FileList  from '@/components/file-list'
 
-
 //报名服务商表数据
 const columns = [
   {

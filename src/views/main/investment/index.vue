@@ -226,11 +226,9 @@ export default {
     beforeUpload(file) {
       this.fileList = [...this.fileList, file];
       const isLimit16M = file.size / 1024 / 1024 <= 16;
-      console.log(file);
-      const isSheet = file.type === "application/vnd.ms-excel" || file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+      const  isSheet  = /\.(xlsx|xls)$/.test(file.name);
       if(!isLimit16M) this.$message.error("文件大小不能超过16M,请重新上传");
       if(!isSheet) this.$message.error("请上传.xls/.xlsx文件");
-      // console.log(isSheet && isLimit16M)
       if(isSheet && isLimit16M){
         this.showUploadList = false;
         this.fileName = file.name;
