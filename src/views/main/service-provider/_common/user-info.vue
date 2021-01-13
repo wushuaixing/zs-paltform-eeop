@@ -1,8 +1,7 @@
 <template>
 	<div class="user-info-wrapper">
 		<div class="info-icon">
-			<a-icon type="user" style="font-size: 80px" v-if="isLawyer"/>
-			<a-icon type="bank" style="font-size: 80px" v-else/>
+			<img :src="icon" alt="" style="width: 80px;">
 		</div>
 		<div class="info-detail">
 			<div class="info-detail_name">{{info.name}}</div>
@@ -30,6 +29,10 @@
 </template>
 
 <script>
+
+	import IconLaw from '@/assets/img/lawyer.png';
+	import IconOrg from '@/assets/img/org.png';
+
 	export default {
 		name:'UserInfo',
 		props:{
@@ -47,6 +50,9 @@
 			}
 		},
 		computed:{
+			icon(){
+				return this.isLawyer ? IconLaw : IconOrg;
+			},
 			identity(){
 				if(this.info.identity){
 					return (this.info.identity).toString() === '1' ? "律师" : "机构"
