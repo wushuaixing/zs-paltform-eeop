@@ -251,8 +251,8 @@ export default {
         headers:this.headers,
         processData: false,
         data: formData,
-        success: (val) => {
-          const res =  JSON.parse(val);
+      }).then((val)=>{
+          const res =  val.data
           this.fileList = [];
           this.uploading = false;
           if(res.code ===  60001){
@@ -260,15 +260,10 @@ export default {
             return
           }
           if(res.code === 20000){
-            this.visible = false;
-            this.$message.success('上传成功');
+              this.visible = false;
+              this.$message.success('上传成功');
           }
-        },
-        error: () => {
-          this.uploading = false;
-          this.$message.error('上传失败');
-        },
-      });
+      })
     },
 
     // 请求封装

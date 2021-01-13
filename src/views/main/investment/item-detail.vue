@@ -154,12 +154,11 @@
               <template slot="workingTime" slot-scope="workingTime">{{workingTime|workingTimeText}}</template>
              <template slot="areasOfGoodCases" slot-scope="areasOfGoodCases">{{areaAnalysis(areasOfGoodCases,false)|areas|fill}}</template>
               //擅长业务类型
-              <!--<template slot="goodCases" slot-scope="goodCases"  slot-scope="text,row">-->
               <template slot="goodCases"   slot-scope="text,row">
                 <span v-if="row.identity === 1">
-                  {{row.goodCases|goodCasesType}}
+                  {{row.goodCases|attorneyBes}}
                 </span>
-                <span v-else>{{row.goodCases|attorneyBes}}</span>
+                <span v-else>{{row.goodCases|goodCasesType}}</span>
               </template>
 
               <template slot="applyDate" slot-scope="applyDate">{{applyDate|show_}}</template>
