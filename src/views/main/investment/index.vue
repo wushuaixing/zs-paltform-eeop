@@ -3,7 +3,7 @@
     <Breadcrumb :source="navData" icon="environment">
       <template slot="suffix">
         <a-button @click="showModal" v-if="this.projectManage === 1">
-          <a-icon type="snippets"/>项目上传
+          <a-icon type="snippets"/>发布新项目
         </a-button>
       </template>
     </Breadcrumb>
@@ -67,7 +67,7 @@
           <span>招商服务项目信息:</span>
          <div class="file-conent">
             <a-upload :showUploadList="false" v-if="showUploadList" :file-list="fileList" :before-upload="beforeUpload">
-              <a-button> <a-icon type="upload" /> 点的上传 </a-button>
+              <a-button> <a-icon type="upload" /> 点击上传 </a-button>
             </a-upload>
             <a  v-else>{{fileName}}&nbsp;<a-icon type="close" @click="offFil"></a-icon></a>
          </div>
@@ -89,9 +89,8 @@ import Breadcrumb from '@/components/bread-crumb';
 import { projectFind,upFiles} from "@/plugin/api/investment-center";
 import { disabledDate } from "@/plugin/tools";
 import store from '@/plugin/store';
-// import reqwest from 'reqwest';
 import reqest from 'axios';
-//提交代码
+
 const columns = (sortedInfo) =>{
   return  [
   {
