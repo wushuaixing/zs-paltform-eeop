@@ -19,12 +19,12 @@ Vue.filter('evolveType', (val)=>{
 
 Vue.filter('amountTh', (val)=>{
 	if (!val) return '-';
-	return Number(val).toFixed(1);
+	return Number(val).toFixed(2);
 });
 
 Vue.filter('guarantyType', (val)=>{
 	if (!val) return '-';
-	return val === 1 ? '担保' : '抵押+担保';
+	return val === 1 ? '抵押' : val === 2 ? '担保' : '抵押+担保';
 });
 
 Vue.filter('timeFilter', (val)=>{
@@ -124,15 +124,6 @@ Vue.filter('typeCooperation',(val)=>{
 });
 Vue.filter('isLawsuitType', (val)=>{
 	return val === '0' ? '未诉讼' : '诉讼'
-});
-
-
-
-
-
-
-Vue.filter('guarantyType', (val)=>{
-	return  val === 1 ? '担保' : '担保+抵押'
 });
 
 Vue.filter('identityType', (val)=>{
