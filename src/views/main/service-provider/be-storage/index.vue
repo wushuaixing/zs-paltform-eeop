@@ -3,45 +3,36 @@
 		<Breadcrumb :source="navData" icon="environment" />
 		<div class="frame-wrapper-content">
 			<div class="frame-query frame-query-position">
-				<a-form-model layout="inline" @submit="handleSubmit" @submit.native.prevent>
-					<a-form-model-item>
-						<a-input v-model="query.name" placeholder="请输入联络人姓名" class="custom-prefix-6"
-										 style="width: 320px">
-							<div class="query-item-prefix" slot="prefix" >联络人姓名</div>
-						</a-input>
-					</a-form-model-item>
-					<a-form-model-item>
-						<a-input v-model="query.orgOfficeName" placeholder="请输入机构名称/挂靠律所名称" class="custom-prefix-11"
-										 style="width: 400px">
-							<div class="query-item-prefix" slot="prefix">机构名称/挂靠律所</div>
-						</a-input>
-					</a-form-model-item>
-					<a-form-model-item label="服务商类型：">
-						<a-select v-model="query.identity" placeholder="请选择身份类型" style="width: 150px" allowClear>
-							<a-select-option :value="1">律师</a-select-option>
-							<a-select-option :value="2">机构</a-select-option>
-						</a-select>
-					</a-form-model-item>
-					<a-form-model-item label="擅长业务区域："  v-if="activeKey===1">
-						<a-cascader v-model="query.areaGoodCases" v-bind="areaProps" style="width: 230px" />
-					</a-form-model-item>
-					<a-form-model-item label="合作意向：" v-if="activeKey===1">
-						<a-select v-model="query.cooperationIntention" placeholder="请选择合作意向" style="width: 150px" allowClear >
-							<a-select-option v-for="i in cooIntent" :key="i.id" :value="i.value">{{i.label}}</a-select-option>
-						</a-select>
-					</a-form-model-item>
-					<a-form-model-item style="visibility: hidden">
-						<a-space>
-							<a-button style="width: 80px">重置</a-button>
-							<a-button type="primary" style="width: 80px">查询</a-button>
-						</a-space>
-					</a-form-model-item>
+				<a-form-model layout="inline" @submit="handleSubmit" @submit.native.prevent >
 					<a-form-model-item style="float: right;margin-right: 0;">
 						<a-space>
 							<a-button style="width: 80px" @click="toResetQuery">重置</a-button>
 							<a-button type="primary" html-type="submit" style="width: 80px">查询</a-button>
 						</a-space>
 					</a-form-model-item>
+					<div style="padding-right: 180px">
+						<a-form-model-item label="联络人姓名">
+							<a-input v-model="query.name" placeholder="请输入联络人姓名" style="width: 200px"></a-input>
+						</a-form-model-item>
+						<a-form-model-item label="机构名称/挂靠律所">
+							<a-input v-model="query.orgOfficeName" placeholder="请输入机构名称/挂靠律所名称" style="width: 270px">
+							</a-input>
+						</a-form-model-item>
+						<a-form-model-item label="服务商类型：">
+							<a-select v-model="query.identity" placeholder="请选择身份类型" style="width: 150px" allowClear>
+								<a-select-option :value="1">律师</a-select-option>
+								<a-select-option :value="2">机构</a-select-option>
+							</a-select>
+						</a-form-model-item>
+						<a-form-model-item label="擅长业务区域："  v-if="activeKey===1">
+							<a-cascader v-model="query.areaGoodCases" v-bind="areaProps" style="width: 230px" />
+						</a-form-model-item>
+						<a-form-model-item label="合作意向：" v-if="activeKey===1">
+							<a-select v-model="query.cooperationIntention" placeholder="请选择合作意向" style="width: 150px" allowClear >
+								<a-select-option v-for="i in cooIntent" :key="i.id" :value="i.value">{{i.label}}</a-select-option>
+							</a-select>
+						</a-form-model-item>
+					</div>
 				</a-form-model>
 				<a-tabs @change="handleTabChange" :activeKey="activeKey">
 					<a-tab-pane v-for="i in tabPane" :key="i.id">
