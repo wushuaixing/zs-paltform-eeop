@@ -309,9 +309,9 @@
 						this.tabPane = [
 							{ id:1, title:'待审核', dot:elementUnRead === 0,},
 							{ id:2, title:'仅提交资质', dot:qualifyUnRead === 0,},
-							{ id:3, title:'仅注册', dot:false, },
-							{ id:4, title:'开户待确认', dot:registerUnRead === 0, },
-							{ id:5, title:'审核未通过', dot:inConfirmUnRead === 0, },
+							{ id:3, title:'仅注册', dot:registerUnRead === 0, },
+							{ id:4, title:'开户待确认', dot:inConfirmUnRead === 0 },
+							{ id:5, title:'审核未通过', dot:false },
 						]
 					}
 				})
