@@ -182,8 +182,8 @@ export default {
         id: "",
         page: 1,
         size: 10,
-        sortField: "",
-        sortOrder: "",
+        sortField: "gmtCreate",
+        sortOrder: "DESC",
         startDate: ""
       },
       field:{
@@ -204,6 +204,7 @@ export default {
     }
   },
   created() {
+
     const {config} = store.getters.getInfo;
     this.projectManage = config.projectManage
     this.requestInquire()
