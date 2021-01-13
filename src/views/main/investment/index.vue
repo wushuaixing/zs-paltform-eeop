@@ -11,13 +11,12 @@
       <!--收索框-->
       <a-row class="search_box" type="flex" >
         <a-col :span="11">
-          <a-input  v-model="findAll.debtor"  style="width: 90%" placeholder="请输入债务人的名称" class="custom-prefix-6">
-            <template slot="prefix" >
-              <div class="query-item-prefix">债务人名称</div>
-            </template>
+          <span>债务人名称：</span>
+          <a-input  v-model="findAll.debtor"  style="width: 80%" placeholder="请输入债务人的名称" class="custom-prefix-6">
           </a-input>
         </a-col>
         <a-col :span="10">
+          <div style="width: 586px;">
           <span>报名截止日期：</span>
           <a-date-picker
               v-model="field.startTime"
@@ -30,10 +29,11 @@
               placeholder="搜索范围截止日期"
               :disabled-date="val=>disabledDate(field.startTime,val)"
           />
+          </div>
         </a-col>
-        <a-col :span="3" style="text-align: right" >
-          <a-button class="reset-but" @click="reset" type="primary">重置</a-button>
-          <a-button @click="inquire" type="primary">查询</a-button>
+        <a-col  style="text-align: right;margin-left: auto;" >
+             <a-button class="reset-but" @click="reset" type="primary">重置</a-button>
+             <a-button @click="inquire" type="primary">查询</a-button>
         </a-col>
       </a-row>
       <!--展示招商项目表格-->
@@ -87,7 +87,7 @@
 <script>
 import Breadcrumb from '@/components/bread-crumb';
 import { projectFind,upFiles} from "@/plugin/api/investment-center";
-import { disabledDate } from "@/plugin/tools";
+import { disabledDate,clearObject } from "@/plugin/tools";
 import store from '@/plugin/store';
 import reqest from 'axios';
 
@@ -265,7 +265,7 @@ export default {
     },
     // 请求封装
     requestInquire(){
-      projectFind(this.findAll).then((res)=>{
+      projectFind(clearObject(this.findAll)).then((res)=>{
         if(res.code !== 20000 ) return this.$message.error('请求失败')
         this.tableSource.dataSource = res.data.list;
         this.tableSource.pagination.total = res.data.total;
@@ -289,7 +289,7 @@ export default {
     },
     tableHanges(pagination, filters, sorter,) {
       //排序
-      this.findAll.sortField = sorter.field;
+      this.findAll.sortField = sorter.order ? sorter.field : "";
       this.sortedInfo = sorter;
       this.findAll.sortOrder = sorter.order ? sorter.order === "ascend" ? "ASC" : "DESC" : "";
       this.findAll.page = pagination.current;
@@ -328,7 +328,7 @@ export default {
   margin: 20px 0;
 }
 .content {
-  padding: 20px;
+  padding: 0px 20px 20px 20px;
   background-color: #fff;
 }
 .pop-up {
