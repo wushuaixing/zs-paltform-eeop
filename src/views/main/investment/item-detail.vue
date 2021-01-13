@@ -143,7 +143,7 @@
           <div class="table-block">
             <a-table v-bind="tableSource.applyServeTable" @change="applyServeTableChange" rowKey=id >
               <template slot="name" slot-scope="name,row">
-                <a type="link" @click="goAvatar(row.id)">{{ name|show_ }}</a>
+                <a  @click="goAvatar(row.id)">{{ name|show_ }}</a>
               </template>
               <template slot="phone" slot-scope="phone">{{ phone|show_ }}</template>
               <template slot="identity" slot-scope="identity">{{identity|identityType}}</template>
@@ -275,63 +275,55 @@ const columns = [
   {
     title: "联络人",
     dataIndex: "name",
-    width: 200,
+    width: "6%",
     scopedSlots: { customRender: "name" },
   },
   {
     title: "联系方式",
     dataIndex: "phone",
-    width: 200,
     scopedSlots: { customRender: "phone" },
   },
   {
     title: "服务商类型",
     dataIndex: "identity",
-    width: 200,
     scopedSlots: { customRender: "identity" },
   },
   {
     title: "机构名称/挂靠律所",
     dataIndex: "orgOfficeName",
-    width: 200,
+    width: "10%",
     scopedSlots: { customRender: "orgOfficeName" },
   },
   {
     title: "从业不良时间",
     dataIndex: "workingTime",
-    width: 200,
     scopedSlots: { customRender: "workingTime" },
   },
   {
     title: "擅长业务区域",
     dataIndex: "areasOfGoodCases",
-    width: 200,
     scopedSlots: { customRender: "areasOfGoodCases" },
   },
   {
     title: "擅长业类型",
     dataIndex: "goodCases",
-    width: 200,
     scopedSlots: { customRender: "goodCases" },
   },
   {
     title: "报名日期",
     dataIndex: "applyDate",
     sorter: true,
-    width: 200,
     scopedSlots: { customRender: "applyDate" },
   },
   {
     title: "服务方案提交日期",
     dataIndex: "gmtModify",
     sorter: true,
-    width: 200,
     scopedSlots: { customRender: "gmtModify" },
   },
   {
     title: "方案提交情况",
     dataIndex: "caseFileStatus",
-    width: 200,
     scopedSlots: { customRender: "caseFileStatus" },
   },
 ];
