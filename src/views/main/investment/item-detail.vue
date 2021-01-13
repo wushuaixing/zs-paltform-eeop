@@ -647,6 +647,7 @@ export default {
       return  val === 0 ? '否' : val === 1 ? '是' :'-'
     },
     guarantorsList: (arr = []) => {
+      if(arr.length == 0) return  '-'
       return arr.map((i) => i.guarantorName).join("、");
     },
     workingTimeText(val){

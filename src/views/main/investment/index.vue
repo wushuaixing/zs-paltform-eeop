@@ -204,9 +204,8 @@ export default {
     }
   },
   created() {
-
     const {config} = store.getters.getInfo;
-    this.projectManage = config.projectManage
+    this.projectManage = config.projectManage;
     this.requestInquire()
   },
   watch:{
@@ -260,10 +259,10 @@ export default {
           if(res.code === 20000){
               this.visible = false;
               this.$message.success('上传成功');
+              this.requestInquire();
           }
       })
     },
-
     // 请求封装
     requestInquire(){
       projectFind(this.findAll).then((res)=>{
