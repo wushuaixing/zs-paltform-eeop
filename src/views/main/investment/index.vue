@@ -11,10 +11,8 @@
       <!--收索框-->
       <a-row class="search_box" type="flex" >
         <a-col :span="11">
-          <a-input  v-model="findAll.debtor"  style="width: 90%" placeholder="请输入债务人的名称" class="custom-prefix-6">
-            <template slot="prefix" >
-              <div class="query-item-prefix">债务人名称</div>
-            </template>
+          <span>债务人名称：</span>
+          <a-input  v-model="findAll.debtor"  style="width: 80%" placeholder="请输入债务人的名称" class="custom-prefix-6">
           </a-input>
         </a-col>
         <a-col :span="10">
@@ -89,7 +87,7 @@
 <script>
 import Breadcrumb from '@/components/bread-crumb';
 import { projectFind,upFiles} from "@/plugin/api/investment-center";
-import { disabledDate } from "@/plugin/tools";
+import { disabledDate,clearObject } from "@/plugin/tools";
 import store from '@/plugin/store';
 import reqest from 'axios';
 
@@ -267,7 +265,7 @@ export default {
     },
     // 请求封装
     requestInquire(){
-      projectFind(this.findAll).then((res)=>{
+      projectFind(clearObject(this.findAll)).then((res)=>{
         if(res.code !== 20000 ) return this.$message.error('请求失败')
         this.tableSource.dataSource = res.data.list;
         this.tableSource.pagination.total = res.data.total;
@@ -291,17 +289,23 @@ export default {
     },
     tableHanges(pagination, filters, sorter,) {
       //排序字段默认请求
-      if(!sorter.order){
-        this.sortedInfo = sorter;
-        projectFind({page: 1, size: 10,}).then((res)=>{
-          if(res.code !== 20000 ) return this.$message.error('请求失败')
-          this.tableSource.dataSource = res.data.list;
-          this.tableSource.pagination.total = res.data.total;
-        })
-        return
-      }
+      console.log(sorter.order,pagination.current)
+      // if(!sorter.order ){
+      //   this.findAll.sortField = sorter.field;
+      //   this.sortedInfo = sorter;
+      //   this.findAll.sortOrder = sorter.order ? sorter.order === "ascend" ? "ASC" : "DESC" : "";
+      //   this.tableSource.pagination.current = pagination.current;
+      //   this.findAll.size = pagination.pageSize;
+      //
+      //   projectFind({page: 1, size: 10,}).then((res)=>{
+      //     if(res.code !== 20000 ) return this.$message.error('请求失败')
+      //     this.tableSource.dataSource = res.data.list;
+      //     this.tableSource.pagination.total = res.data.total;
+      //   })
+      //   return
+      // }
       //排序
-      this.findAll.sortField = sorter.field;
+      this.findAll.sortField = sorter.order ? sorter.field : "";
       this.sortedInfo = sorter;
       this.findAll.sortOrder = sorter.order ? sorter.order === "ascend" ? "ASC" : "DESC" : "";
       this.findAll.page = pagination.current;
@@ -340,7 +344,7 @@ export default {
   margin: 20px 0;
 }
 .content {
-  padding: 20px;
+  padding: 0px 20px 20px 20px;
   background-color: #fff;
 }
 .pop-up {
