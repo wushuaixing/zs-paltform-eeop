@@ -54,10 +54,11 @@
 						{{areaAnalysis(item,false)|areas|fill}}
 					</Ellipsis>
 					<template slot="auction" slot-scope="item">
-						<template v-if="activeKey === 1">
+						<div v-if="activeKey === 1" class="frame-content-table_auction">
 							<a-button type="link" icon="file-text" @click="toLink(item)">详情</a-button>
+							<a-divider type="vertical" />
 							<a-button type="link" icon="audit" @click="toEffect(item)" v-if="auditStatus">印象添加</a-button>
-						</template>
+						</div>
 						<a-button type="link" :icon="normal.icon" @click="toLink(item,true)" v-else>{{normal.text}}</a-button>
 					</template>
 				</a-table>
