@@ -80,6 +80,10 @@
 				<div class="info-item_list-content">{{dataSource.orgSocialCreditCode||'-'}}</div>
 			</div>
 			<div class="info-item_list">
+				<div class="info-item_list-title">合伙人身份</div>
+				<div class="info-item_list-content">{{dataSource.partnerDetail||'-'}}</div>
+			</div>
+			<div class="info-item_list">
 				<div class="info-item_list-title">邮箱地址</div>
 				<div class="info-item_list-content">{{dataSource.email||'-'}}</div>
 			</div>

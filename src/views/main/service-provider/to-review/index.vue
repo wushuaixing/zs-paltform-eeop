@@ -198,6 +198,7 @@
 					startTime:'',
 					endTime:'',
 					identity:undefined,
+					isReadAll:"",
 				};
 				this.field = {
 					startTime:'',
