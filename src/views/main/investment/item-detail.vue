@@ -548,7 +548,7 @@ export default {
     //有效方案&未通过系统筛选切换
     changType(){
       this.params.page = 1;//改回来
-      this.params.size = 10;//改回来
+      this.params.size = 10;
       this.params.sortField = "";
       this.params.sortOrder = "";
       this.tableSource.submitPlanTable.pagination.current = 1;
