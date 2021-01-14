@@ -312,7 +312,7 @@
 				const res = !(this.activeKey === 1 && this.auditStatus);
 				return {
 					icon: res ? 'file-text' : 'audit',
-					text: res ? '查询详情' : '审核'
+					text: res ? '查看详情' : '审核'
 				};
 			},
 			columns(){

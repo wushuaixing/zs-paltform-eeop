@@ -1,10 +1,10 @@
 <template>
-	<div class="qualifies-info-wrapper qualify-detail-wrapper">
+	<div class="qualifies-info-wrapper qualify-detail-wrapper factor-info-view">
 		<slot name="title"/>
 		<!--律师详情展示-->
 		<div class="info-item" data-label="我的要素认证信息-律师" v-if="isLawyer">
 			<div class="info-item_auction">
-				<a-button @click="scrollIntoView('item_category_lawyer')" icon="solution" >律师信息</a-button>
+				<a-button @click="scrollIntoView()" icon="solution" >律师信息</a-button>
 				<a-button @click="scrollIntoView('item_category_office')" icon="bank">律所信息</a-button>
 			</div>
 			<div class="info-item_category" id="item_category_lawyer" data-lable="律师信息">
@@ -24,7 +24,8 @@
 					</div>
 				</div>
 			</div>
-			<div class="info-item_category" id="item_category_office" data-lable="律所信息">
+			<div class="info-item_category item_category_office-wrapper" data-lable="律所信息">
+				<div id="item_category_office"></div>
 				<span class="title">律所信息</span>
 			</div>
 			<div class="info-item_img" v-if="noOffice">
@@ -293,7 +294,7 @@
 						{ label:"投资偏好类型", field:"investmentPreferenceType",
 							m:_if, about:'hasInvestmentIntention', f:_multi, origin:"hisCoo"},
 						{ label:"标的金额范围", field:"startAmountOfSubject",m:_if, about:'hasInvestmentIntention',f:_range},
-						{ label:"投资区域", field:"investmentArea",m:_if, about:'hasInvestmentIntention',f:_area },
+						{ label:"投资区域", field:"investmentArea",m:_if, about:'hasInvestmentIntention',f:_areas },
 						{ label:"以往投资经历", field:"investmentExperience",m:_if, about:'hasInvestmentIntention' },
 					]
 				},
@@ -316,7 +317,12 @@
 			},
 			//锚点跳转
 			scrollIntoView(ele) {
-				document.getElementById(ele).scrollIntoView(true);
+				if(ele){
+					document.getElementById(ele).scrollIntoView(true);
+					const h = document.documentElement.scrollTop;
+					document.documentElement.scrollTo(0,h - 150);
+				}
+				document.activeElement.blur();
 			},
 		},
 		computed:{
@@ -353,6 +359,7 @@
 				justify-content: space-between;
 				border-bottom: 1px solid $border-base;
 				margin-bottom: 20px;
+				position: relative;
 				.title{
 					font-size: 16px;
 					font-weight: bold;
@@ -366,6 +373,18 @@
 					margin: 10px 0 20px 0;
 				}
 			}
+		}
+		.item_category_office-wrapper{
+			position: relative;
+			#item_category_office{
+				position: absolute;
+				top: -60px;
+				width: 1px;
+				height: 1px;
+				z-index: 1;
+				background-color: red;
+			}
+
 		}
 	}
 </style>

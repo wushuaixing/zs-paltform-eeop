@@ -32,7 +32,6 @@
 				}
 			},
 			tooltip(){
-				console.log(this.title.length,this.width);
 				return this.width ? this.title.length * 7 > this.width : false;
 			}
 		}

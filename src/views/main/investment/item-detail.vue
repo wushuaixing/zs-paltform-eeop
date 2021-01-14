@@ -44,7 +44,7 @@
             </a-col>
           </a-row>
           <div class="guarantee">
-            抵押物类型：
+            <span style="color:#666666">抵质押物清单：</span>
             <div>
               <p style="margin:0" v-for="(i, index) in detailInfo.amcProjectCollaterals" :key="index">
                 {{index+1}}. {{i.collateralType|collateralType}}、{{i|arease}}、{{i.collateralName}}
@@ -139,7 +139,7 @@
         </div>
         <!--报名服务商列表-->
         <div>
-          <h3 class="title-table">报名服务商列表</h3>
+          <h3 class="title-table">报名服务商列表 {{tableSource.applyServeTable.pagination.total}}</h3>
           <div class="table-block">
             <a-table v-bind="tableSource.applyServeTable" @change="applyServeTableChange" rowKey=id >
               <template slot="name" slot-scope="name,row">
@@ -199,7 +199,7 @@
                 <div :class="exhibit === row.id ? 'plans' : 'plan'" >
                     <p v-for="(item,index) in scheduleManagements" :key="index">{{item.dateMonth}}个月内完成{{item.dateMatters}}</p>
                 </div>
-                <span style="color: #008CB0; margin-left: 60%" @click="bit(row)" v-if="scheduleManagements.length >= 4" >{{exhibit === row.id ? '收起' :'展开'}}</span>
+                <a style="color: #008CB0; margin-left: 60%" @click="bit(row)" v-if="scheduleManagements.length >= 4" >{{exhibit === row.id ? '收起' :'展开'}}</a>
               </template>
               <template slot="caseFileAddress" slot-scope="caseFileAddress">
                 <FileList :file-list="JSON.stringify([caseFileAddress])"></FileList>
@@ -224,18 +224,17 @@
         :label-col="labelCol"
         ref="ruleForm"
         :wrapper-col="wrapperCol"
-        :rules="rules"
       >
-        <a-form-model-item label="报名截止日期" prop="signDeadline">
+        <a-form-model-item label="报名截止日期" >
           <a-date-picker
             class="editIpt"
             valueFormat="YYYY-MM-DD"
             v-model="editInfo.signDeadline"
             :disabled-date="disabledDate"
-            :disabled="editInfo.signDeadline >= $moment().format('YYYY-MM-DD')?false:true"
+            :disabled="detailInfo.deadline != '' ? detailInfo.deadline >= $moment().format('YYYY-MM-DD')?false:true : false"
           />
         </a-form-model-item>
-        <a-form-model-item label="方案提交截止日期" prop="submitDeadline" >
+        <a-form-model-item label="方案提交截止日期" >
           <a-date-picker
             class="editIpt"
             valueFormat="YYYY-MM-DD"
@@ -243,15 +242,15 @@
             :disabled-date="disabledDate"
           />
         </a-form-model-item>
-        <a-form-model-item label="期限上限" prop="dateLimit">
+        <a-form-model-item label="期限上限" >
           <div class="editIpt">
-            <a-input-number class="numberIpt"  v-model="editInfo.dateLimit" :min="1"/>
+            <a-input-number class="numberIpt"  v-model="editInfo.dateLimit" :min="0"/>
             <span>个月</span>
           </div>
         </a-form-model-item>
-        <a-form-model-item label="目标回款金额下限" prop="aimedPriceBack">
+        <a-form-model-item label="目标回款金额下限" >
            <div class="editIpt">
-             <a-input-number class="numberIpt" v-model="editInfo.aimedPriceBack" :min="1"  :precision="2"/>
+             <a-input-number class="numberIpt" v-model="editInfo.aimedPriceBack" :min="0"  :precision="2"/>
              <span>万元</span>
            </div>
         </a-form-model-item>
@@ -265,7 +264,7 @@
 /*eslint-disable*/
 import {projectDetail,signService,serviceCaseSubmit,updateProjectInfo} from "@/plugin/api/investment-center";
 import {collateralTypeData} from "./source"
-import {getArea,areaAnalysis} from "@/plugin/tools"
+import {getArea,areaAnalysis,clearObject} from "@/plugin/tools"
 import Breadcrumb from "@/components/bread-crumb";
 import store from '@/plugin/store';
 import  FileList  from '@/components/file-list'
@@ -275,55 +274,63 @@ const columns = [
   {
     title: "联络人",
     dataIndex: "name",
-    width: "6%",
+    width: "150px",
     scopedSlots: { customRender: "name" },
   },
   {
     title: "联系方式",
     dataIndex: "phone",
+    width: "200px",
     scopedSlots: { customRender: "phone" },
   },
   {
     title: "服务商类型",
     dataIndex: "identity",
+    width: "200px",
     scopedSlots: { customRender: "identity" },
   },
   {
     title: "机构名称/挂靠律所",
     dataIndex: "orgOfficeName",
-    width: "10%",
+    width: "200px",
     scopedSlots: { customRender: "orgOfficeName" },
   },
   {
     title: "从业不良时间",
     dataIndex: "workingTime",
+    width: "200px",
     scopedSlots: { customRender: "workingTime" },
   },
   {
     title: "擅长业务区域",
     dataIndex: "areasOfGoodCases",
+    width: 200,
     scopedSlots: { customRender: "areasOfGoodCases" },
   },
   {
     title: "擅长业类型",
     dataIndex: "goodCases",
+    width: 200,
     scopedSlots: { customRender: "goodCases" },
   },
   {
     title: "报名日期",
     dataIndex: "applyDate",
     sorter: true,
+    width: "200px",
     scopedSlots: { customRender: "applyDate" },
   },
   {
     title: "服务方案提交日期",
     dataIndex: "gmtModify",
     sorter: true,
+    width: "200px",
     scopedSlots: { customRender: "gmtModify" },
   },
   {
     title: "方案提交情况",
     dataIndex: "caseFileStatus",
+    width: "200px",
     scopedSlots: { customRender: "caseFileStatus" },
   },
 ];
@@ -413,32 +420,6 @@ export default {
         signDeadline: '',
         submitDeadline: ''
       },
-      rules:{
-        aimedPriceBack:[
-          {
-            required:true,
-            message:"请输入回款金额下限",
-          }
-        ],
-        dateLimit:[
-          {
-            required:true,
-            message:"请输入期限上限",
-          }
-        ],
-        signDeadline:[
-          {
-            required:true,
-            message:"请选择报名截止日期"
-          }
-        ],
-        submitDeadline:[
-          {
-            required:true,
-            message:"请选择方案提交截止日期"
-          }
-        ]
-      },
       params:{
         caseType: 1,
         debtor: "",
@@ -494,6 +475,7 @@ export default {
           dataSource: [],
           pagination: {
             total: 0,
+            pageSize:10,
             showQuickJumper: true,
             showTotal: (val) => `共${val}条信息`,
           },
@@ -503,6 +485,8 @@ export default {
           dataSource: [],
           pagination: {
             total: 0,
+            current:1,
+            pageSize:10,
             showQuickJumper: true,
             showTotal: (val) => `共${val}条信息`,
           },
@@ -540,7 +524,8 @@ export default {
     },
     //获取报名服务商列表
     getSignServiceList(){
-      signService(this.params).then(res=>{
+      signService(clearObject(this.params)).then(res=>{
+        console.log(res)
         if(res.code === 20000){
           this.tableSource.applyServeTable.pagination.total = res.data.total;
           this.tableSource.applyServeTable.dataSource = res.data.list;
@@ -551,7 +536,7 @@ export default {
     },
     //获取服务商提交方案列表
     getServiceCaseSubmitList(){
-      serviceCaseSubmit(this.params).then(res=>{
+      serviceCaseSubmit(clearObject(this.params)).then(res=>{
         if(res.code === 20000){
           this.tableSource.submitPlanTable.pagination.total = res.data.total;
           this.tableSource.submitPlanTable.dataSource = res.data.list;
@@ -562,6 +547,11 @@ export default {
     },
     //有效方案&未通过系统筛选切换
     changType(){
+      this.params.page = 1;//改回来
+      this.params.size = 10;
+      this.params.sortField = "";
+      this.params.sortOrder = "";
+      this.tableSource.submitPlanTable.pagination.current = 1;
       this.sortOrder = false;
       this.getServiceCaseSubmitList();
     },
@@ -573,7 +563,7 @@ export default {
     applyServeTableChange(pagination, filters, sorter){
       this.params.page = pagination.current;
       this.params.size = pagination.pageSize;
-      this.params.sortField = sorter.field;
+      this.params.sortField = sorter.order ?  sorter.field : "";
       this.params.sortOrder = sorter.order
         ? sorter.order === "ascend"
           ? "ASC"
@@ -583,11 +573,12 @@ export default {
     },
     //服务商提交方案列表分页,排序操作
     submitPlanTableChange(pagination, filters, sorter){
-      console.log(sorter)
       this.params.page = pagination.current;
+      this.tableSource.submitPlanTable.pagination.current = pagination.current;
       this.params.size = pagination.pageSize;
       this.params.sortField = sorter.field;
       this.sortOrder = sorter.order;
+      this.params.sortField = sorter.order ?  sorter.field : "";
       this.params.sortOrder = sorter.order
         ? sorter.order === "ascend"
           ? "ASC"

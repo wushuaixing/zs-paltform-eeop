@@ -39,14 +39,15 @@
 						<a-badge :dot="i.dot" class="dot-badge" slot="tab">{{i.title}}</a-badge>
 					</a-tab-pane>
 				</a-tabs>
-				<div class="export-template" v-if="activeKey===1">
+				<div class="export-template" v-if="activeKey===1 && exportPermission">
 					<a-button icon="export" @click="toExport">名单一键导出</a-button>
 				</div>
 			</div>
 			<div class="frame-content">
-				<a-table v-bind="props" @change="handleTableChange" :dataSource="dataSource" :columns="columns" :loading="loading">
+				<a-table v-bind="props" @change="handleTableChange" :dataSource="dataSource" :columns="columns"
+								 :customRow="customRow" :loading="loading">
 					<span slot="customAuction" style="padding-left: 15px">操作</span>
-					<ReadStatus slot="readStatus" slot-scope="item" :dot="item.isRead">{{item.name}}</ReadStatus>
+					<ReadStatus slot="readStatus" slot-scope="item" :dot="item.isRead===0">{{item.name}}</ReadStatus>
 					<span slot="workingTime" slot-scope="item">{{item|single('expOption')}}</span>
 					<span slot="coo" slot-scope="item">{{item|multi('cooIntent')}}</span>
 					<span slot="address" slot-scope="item">{{areaAnalysis(item,false)|areas|fill}}</span>
@@ -54,10 +55,11 @@
 						{{areaAnalysis(item,false)|areas|fill}}
 					</Ellipsis>
 					<template slot="auction" slot-scope="item">
-						<template v-if="activeKey === 1">
+						<div v-if="activeKey === 1" class="frame-content-table_auction">
 							<a-button type="link" icon="file-text" @click="toLink(item)">详情</a-button>
+							<a-divider type="vertical" />
 							<a-button type="link" icon="audit" @click="toEffect(item)" v-if="auditStatus">印象添加</a-button>
-						</template>
+						</div>
 						<a-button type="link" :icon="normal.icon" @click="toLink(item,true)" v-else>{{normal.text}}</a-button>
 					</template>
 				</a-table>
@@ -131,6 +133,7 @@
 				disabledDate,
 				areaAnalysis,
 				auditStatus:roleConfig.managePermission === 1,
+				exportPermission:roleConfig.exportPermission === 1,
 				areaProps:{
 					allowClear: true,
 					changeOnSelect: true,
@@ -149,8 +152,33 @@
 		created(){
 			// console.log(this.$store.getters.getRole);
 			this.toQuery();
+			this.toQueryUnread();
 		},
 		methods:{
+			// table 行属性
+			customRow(item){
+				return {
+					on:{
+						click:()=>{
+							if(item.isRead === 0){
+								let logId = '';
+								if(this.activeKey === 3) logId = item.elementLogId;
+								if(this.activeKey === 2) logId = item.qualifyLogId;
+								beStorage.read({
+									"identity": item.identity,
+									logId,
+									"type": this.activeKey === 2 ? 2 : 1,
+								}).then(res=>{
+									if(res.code === 20000){
+										item.isRead = 1;
+										this.toCheckUnread();
+									}
+								})
+							}
+						},
+					},
+				}
+			},
 			toResetQuery(){
 				this.toResetCondition();
 				this.toQuery();
@@ -180,14 +208,14 @@
 				(e || window.event).preventDefault();
 				// this.toQuery(handleProcess(clearObject(this.query)));
 				this.toQuery(handleProcess(clearObject(this.query)));
-				// this.toCheckUnread();
+				this.toQueryUnread();
 			},
 			// tab切换点击
 			handleTabChange(val){
 				this.activeKey = val;
-				// this.toResetCondition();
+				this.toResetCondition();
 				this.toQuery();
-				// this.toQueryUnread();
+				this.toQueryUnread();
 			},
 			// 表格变化事件
 			handleTableChange(row,obs,col){
@@ -238,7 +266,19 @@
 					this.loading = false;
 				});
 			},
-
+			// 查询未读数据
+			toQueryUnread(){
+				beStorage.unreadInfo().then(res=>{
+					if(res.code === 20000){
+						const { elementUnRead,qualifyUnRead} = res.data;
+						this.tabPane = [
+							{ id:1, title:'全部已入库', dot: false, },
+							{ id:2, title:'资质修改申请', dot: qualifyUnRead === 0 },
+							{ id:3, title:'要素修改申请', dot: elementUnRead === 0, },
+						]
+					}
+				})
+			},
 			toExport() {
 				beStorage.export().then(({dis,data}) => {
 					if(dis){

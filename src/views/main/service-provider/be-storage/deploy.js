@@ -23,7 +23,6 @@ export const columns = ({ type = 1, sortOrder}) =>{
 			title: '服务商类型',
 			dataIndex: 'identity',
 			key: 'identity',
-			width:90,
 			customRender:(val)=> (val && (val === 1 ? '律师' : '机构')) || '-',
 		},
 		{

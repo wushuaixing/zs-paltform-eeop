@@ -32,7 +32,7 @@ export const beStorage = {
 	// 已入库服务商-->列表
 	list:params => request.post('/operator/serviceUserManage/storage/findAll',params),
 	// 修改资质未读、要素修改未读
-	unreadInfo:params => request.get('/operator/serviceUserManage/storage/findUnRead',params),
+	unreadInfo:params => request.post('/operator/serviceUserManage/storage/findUnRead',params),
 	// 已入库--点击标记已读
 	read:params => request.post('/operator/serviceUserManage/storage/read',params),
 	// 已入库——服务商画像详情
