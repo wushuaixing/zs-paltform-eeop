@@ -224,18 +224,17 @@
         :label-col="labelCol"
         ref="ruleForm"
         :wrapper-col="wrapperCol"
-        :rules="rules"
       >
-        <a-form-model-item label="报名截止日期" prop="signDeadline">
+        <a-form-model-item label="报名截止日期" >
           <a-date-picker
             class="editIpt"
             valueFormat="YYYY-MM-DD"
             v-model="editInfo.signDeadline"
             :disabled-date="disabledDate"
-            :disabled="editInfo.signDeadline >= $moment().format('YYYY-MM-DD')?false:true"
+            :disabled="detailInfo.deadline >= $moment().format('YYYY-MM-DD')?false:true"
           />
         </a-form-model-item>
-        <a-form-model-item label="方案提交截止日期" prop="submitDeadline" >
+        <a-form-model-item label="方案提交截止日期" >
           <a-date-picker
             class="editIpt"
             valueFormat="YYYY-MM-DD"
@@ -243,13 +242,13 @@
             :disabled-date="disabledDate"
           />
         </a-form-model-item>
-        <a-form-model-item label="期限上限" prop="dateLimit">
+        <a-form-model-item label="期限上限" >
           <div class="editIpt">
             <a-input-number class="numberIpt"  v-model="editInfo.dateLimit" :min="1"/>
             <span>个月</span>
           </div>
         </a-form-model-item>
-        <a-form-model-item label="目标回款金额下限" prop="aimedPriceBack">
+        <a-form-model-item label="目标回款金额下限" >
            <div class="editIpt">
              <a-input-number class="numberIpt" v-model="editInfo.aimedPriceBack" :min="1"  :precision="2"/>
              <span>万元</span>
@@ -421,39 +420,13 @@ export default {
         signDeadline: '',
         submitDeadline: ''
       },
-      rules:{
-        aimedPriceBack:[
-          {
-            required:true,
-            message:"请输入回款金额下限",
-          }
-        ],
-        dateLimit:[
-          {
-            required:true,
-            message:"请输入期限上限",
-          }
-        ],
-        signDeadline:[
-          {
-            required:true,
-            message:"请选择报名截止日期"
-          }
-        ],
-        submitDeadline:[
-          {
-            required:true,
-            message:"请选择方案提交截止日期"
-          }
-        ]
-      },
       params:{
         caseType: 1,
         debtor: "",
         endDate: "",
         id: this.$route.query.id,
         page: 1,
-        size: 2,//修改
+        size: 10,
         sortField: '',
         sortOrder: "",
         startDate: ""
@@ -502,7 +475,7 @@ export default {
           dataSource: [],
           pagination: {
             total: 0,
-            pageSize:2,//修改回来
+            pageSize:10,
             showQuickJumper: true,
             showTotal: (val) => `共${val}条信息`,
           },
@@ -513,7 +486,7 @@ export default {
           pagination: {
             total: 0,
             current:1,
-            pageSize:2,//修改回来
+            pageSize:10,
             showQuickJumper: true,
             showTotal: (val) => `共${val}条信息`,
           },
@@ -575,7 +548,7 @@ export default {
     //有效方案&未通过系统筛选切换
     changType(){
       this.params.page = 1;//改回来
-      this.params.size = 2;//改回来
+      this.params.size = 10;//改回来
       this.params.sortField = "";
       this.params.sortOrder = "";
       this.tableSource.submitPlanTable.pagination.current = 1;
