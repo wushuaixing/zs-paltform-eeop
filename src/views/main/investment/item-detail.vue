@@ -453,7 +453,7 @@ export default {
         endDate: "",
         id: this.$route.query.id,
         page: 1,
-        size: 1,//修改
+        size: 2,//修改
         sortField: '',
         sortOrder: "",
         startDate: ""
@@ -502,7 +502,7 @@ export default {
           dataSource: [],
           pagination: {
             total: 0,
-            pageSize:1,//修改回来
+            pageSize:2,//修改回来
             showQuickJumper: true,
             showTotal: (val) => `共${val}条信息`,
           },
@@ -512,7 +512,7 @@ export default {
           dataSource: [],
           pagination: {
             total: 0,
-            pageSize:1,//修改回来
+            pageSize:2,//修改回来
             showQuickJumper: true,
             showTotal: (val) => `共${val}条信息`,
           },
