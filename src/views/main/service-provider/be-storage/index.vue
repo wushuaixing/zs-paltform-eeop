@@ -39,7 +39,7 @@
 						<a-badge :dot="i.dot" class="dot-badge" slot="tab">{{i.title}}</a-badge>
 					</a-tab-pane>
 				</a-tabs>
-				<div class="export-template" v-if="activeKey===1">
+				<div class="export-template" v-if="activeKey===1 && exportPermission">
 					<a-button icon="export" @click="toExport">名单一键导出</a-button>
 				</div>
 			</div>
@@ -131,6 +131,7 @@
 				disabledDate,
 				areaAnalysis,
 				auditStatus:roleConfig.managePermission === 1,
+				exportPermission:roleConfig.exportPermission === 1,
 				areaProps:{
 					allowClear: true,
 					changeOnSelect: true,
