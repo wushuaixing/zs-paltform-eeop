@@ -118,10 +118,10 @@
           </div>
           <a-row type="flex">
             <a-col :span="8">
-              业务部门计划清收目标：<span>{{detailInfo.businessDepartmentTarget |show_}}万元</span>
+              业务部门计划清收目标：<span>{{detailInfo.businessDepartmentTarget |show_}} 万元</span>
             </a-col>
             <a-col :span="8">
-              业务部门计划清收时间：<span>{{detailInfo.businessDepartmentRecoveryTime |show_}}</span>
+              业务部门计划清收时间：<span>{{detailInfo.businessDepartmentRecoveryTime |show_}} 年</span>
             </a-col>
           </a-row>
           <div class="creditor-condition">
@@ -722,6 +722,13 @@ export default {
   components: {
     Breadcrumb,
     FileList
+  },
+  watch:{
+    visible:function (){
+      if(this.visible === false){
+        this.$refs.ruleForm.resetFields();
+      }
+    }
   },
   created() {
     let id = this.$route.query.id
