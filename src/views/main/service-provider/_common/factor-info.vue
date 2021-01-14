@@ -4,7 +4,7 @@
 		<!--律师详情展示-->
 		<div class="info-item" data-label="我的要素认证信息-律师" v-if="isLawyer">
 			<div class="info-item_auction">
-				<a-button @click="scrollIntoView('item_category_lawyer')" icon="solution" >律师信息</a-button>
+				<a-button icon="solution" >律师信息</a-button>
 				<a-button @click="scrollIntoView('item_category_office')" icon="bank">律所信息</a-button>
 			</div>
 			<div class="info-item_category" id="item_category_lawyer" data-lable="律师信息">
