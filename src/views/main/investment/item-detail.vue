@@ -231,7 +231,7 @@
             valueFormat="YYYY-MM-DD"
             v-model="editInfo.signDeadline"
             :disabled-date="disabledDate"
-            :disabled="detailInfo.deadline >= $moment().format('YYYY-MM-DD')?false:true"
+            :disabled="detailInfo.deadline === '' ? detailInfo.deadline >= $moment().format('YYYY-MM-DD')?false:true : false"
           />
         </a-form-model-item>
         <a-form-model-item label="方案提交截止日期" >
