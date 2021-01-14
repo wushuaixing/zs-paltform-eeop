@@ -244,13 +244,13 @@
         </a-form-model-item>
         <a-form-model-item label="期限上限" >
           <div class="editIpt">
-            <a-input-number class="numberIpt"  v-model="editInfo.dateLimit" :min="1"/>
+            <a-input-number class="numberIpt"  v-model="editInfo.dateLimit" :min="0"/>
             <span>个月</span>
           </div>
         </a-form-model-item>
         <a-form-model-item label="目标回款金额下限" >
            <div class="editIpt">
-             <a-input-number class="numberIpt" v-model="editInfo.aimedPriceBack" :min="1"  :precision="2"/>
+             <a-input-number class="numberIpt" v-model="editInfo.aimedPriceBack" :min="0"  :precision="2"/>
              <span>万元</span>
            </div>
         </a-form-model-item>
