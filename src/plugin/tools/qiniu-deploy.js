@@ -1,7 +1,7 @@
 import { getUploadToken, getDownLoadToken } from "@/plugin/api/base";
 import { message } from "ant-design-vue";
 
-const action = 'http://upload.qiniup.com/';
+const action = 'https://upload.qiniup.com/';
 
 let uploadToken = '';
 
@@ -33,7 +33,7 @@ const preview = file =>{
 		console.log(file);
 		if(file.viewUrl) return window.open(file.viewUrl);
 		const fileKey = response.hash ? response.hash : file.hash;
-		getDownLoadToken(fileKey).then(res=>{
+		getDownLoadToken(encodeURIComponent(fileKey)).then(res=>{
 			if(res.code === 20000) {
 				file.viewUrl = res.data;
 				window.open(file.viewUrl);

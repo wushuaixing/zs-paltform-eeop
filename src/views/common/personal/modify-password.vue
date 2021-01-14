@@ -52,8 +52,8 @@
             />
           </a-form-model-item>
         </a-form-model>
-        <button slot="footer" class="save-btn" @click="doSave">保存</button>
         <button slot="footer" class="cancel-btn" @click="cancel">取消</button>
+        <button slot="footer" class="save-btn" @click="doSave">保存</button>
       </a-modal>
     </div>
   </div>

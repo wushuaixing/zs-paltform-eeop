@@ -1,62 +1,54 @@
 <template>
-	<div class="wrapper">
+	<div class="frame-wrapper">
 		<Breadcrumb :source="navData" icon="environment" />
 		<div class="frame-wrapper-content">
 			<div class="frame-query">
 				<a-form-model layout="inline" @submit="handleSubmit" @submit.native.prevent>
-					<a-form-model-item>
-						<a-input v-model="query.userName" placeholder="请输入联络人姓名" class="custom-prefix-6"
-										 style="width: 320px">
-							<div class="query-item-prefix" slot="prefix" >联络人姓名</div>
-						</a-input>
-					</a-form-model-item>
-					<a-form-model-item v-if="status(1245)">
-						<a-input v-model="query.officeName" placeholder="请输入机构名称/挂靠律所名称" class="custom-prefix-11"
-										 style="width: 400px">
-							<div class="query-item-prefix" slot="prefix">机构名称/挂靠律所</div>
-						</a-input>
-					</a-form-model-item>
-					<a-form-model-item label="服务商类型：" v-if="status(1245)">
-						<a-select v-model="query.identity" placeholder="请选择服务商身份类型" style="width: 200px" allowClear>
-							<a-select-option :value="1">律师</a-select-option>
-							<a-select-option :value="2">机构</a-select-option>
-						</a-select>
-					</a-form-model-item>
-					<a-form-model-item label="提交日期：" v-if="status(12)">
-						<a-form-model-item>
-							<a-date-picker v-model="field.startTime" style="width: 100%" placeholder="搜索范围起始日期"
-														 :disabled-date="val=>disabledDate(val,field.endTime,'start')"></a-date-picker>
-						</a-form-model-item>
-						<span :style="{ display: 'inline-block',marginLeft:'-8px',width:'20px'}">至</span>
-						<a-form-model-item>
-							<a-date-picker v-model="field.endTime" style="width: 100%" placeholder="搜索范围截止日期"
-														 :disabled-date="val=>disabledDate(field.startTime,val)"></a-date-picker>
-						</a-form-model-item>
-					</a-form-model-item>
-					<a-form-model-item label="注册日期：" style="margin-bottom:0;" v-if="status(3)">
-						<a-form-model-item>
-							<a-date-picker v-model="field.startTime" style="width: 100%" placeholder="搜索范围起始日期"
-														 :disabled-date="val=>disabledDate(val,field.endTime,'start')"></a-date-picker>
-						</a-form-model-item>
-						<span :style="{ display: 'inline-block',marginLeft:'-8px',width:'20px'}">至</span>
-						<a-form-model-item>
-							<a-date-picker v-model="field.endTime" style="width: 100%" placeholder="搜索范围截止日期"
-														 :disabled-date="val=>disabledDate(field.startTime,val)"></a-date-picker>
-						</a-form-model-item>
-					</a-form-model-item>
-
-					<a-form-model-item style="visibility: hidden">
-						<a-space>
-							<a-button style="width: 80px">重置</a-button>
-							<a-button type="primary" style="width: 80px">查询</a-button>
-						</a-space>
-					</a-form-model-item>
 					<a-form-model-item style="float: right;margin-right: 0;">
 						<a-space>
-							<a-button style="width: 80px" @click="toResetQuery">重置</a-button>
-							<a-button type="primary" html-type="submit" style="width: 80px">查询</a-button>
+							<a-button style="width: 60px" @click="toResetQuery">重置</a-button>
+							<a-button type="primary" html-type="submit" style="width: 60px">查询</a-button>
 						</a-space>
 					</a-form-model-item>
+					<div style="padding-right: 150px">
+						<a-form-model-item label="联络人姓名">
+							<a-input v-model="query.userName" placeholder="请输入联络人姓名" style="width: 200px"></a-input>
+						</a-form-model-item>
+						<a-form-model-item label="机构名称/挂靠律所" v-if="status(1245)">
+							<a-input v-model="query.officeName" placeholder="请输入机构名称/挂靠律所名称" style="width: 270px">
+							</a-input>
+						</a-form-model-item>
+						<a-form-model-item label="服务商类型：" v-if="status(1245)">
+							<a-select v-model="query.identity" placeholder="请选择身份类型" style="width: 150px" allowClear>
+								<a-select-option :value="1">律师</a-select-option>
+								<a-select-option :value="2">机构</a-select-option>
+							</a-select>
+						</a-form-model-item>
+						<a-form-model-item label="提交日期：" v-if="status(12)">
+							<a-form-model-item>
+								<a-date-picker v-model="field.startTime" style="width: 100%" placeholder="搜索范围起始日期"
+															 :disabled-date="val=>disabledDate(val,field.endTime,'start')"></a-date-picker>
+							</a-form-model-item>
+							<span :style="{ display: 'inline-block',marginLeft:'-8px',width:'20px'}">至</span>
+							<a-form-model-item>
+								<a-date-picker v-model="field.endTime" style="width: 100%" placeholder="搜索范围截止日期"
+															 :disabled-date="val=>disabledDate(field.startTime,val)"></a-date-picker>
+							</a-form-model-item>
+						</a-form-model-item>
+						<a-form-model-item label="注册日期：" style="margin-bottom:0;" v-if="status(3)">
+							<a-form-model-item>
+								<a-date-picker v-model="field.startTime" style="width: 100%" placeholder="搜索范围起始日期"
+															 :disabled-date="val=>disabledDate(val,field.endTime,'start')"></a-date-picker>
+							</a-form-model-item>
+							<span :style="{ display: 'inline-block',marginLeft:'-8px',width:'20px'}">至</span>
+							<a-form-model-item>
+								<a-date-picker v-model="field.endTime" style="width: 100%" placeholder="搜索范围截止日期"
+															 :disabled-date="val=>disabledDate(field.startTime,val)"></a-date-picker>
+							</a-form-model-item>
+						</a-form-model-item>
+					</div>
+
+
 				</a-form-model>
 				<a-tabs @change="handleTabChange" :activeKey="activeKey" :animated="false">
 					<a-tab-pane v-for="i in tabPane" :key="i.id">
@@ -193,20 +185,9 @@
 				return rule.toString() ? new RegExp(activeKey).test(rule) : false;
 			},
 			toResetQuery(){
-				this.query = {
-					...this.query,
-					userName:"",
-					officeName:"",
-					startTime:'',
-					endTime:'',
-					identity:undefined,
-				};
-				this.field = {
-					startTime:'',
-					endTime:'',
-				};
-				this.sortOrder = false;
-				this.sortField = '';
+				this.toResetCondition();
+				this.toQuery();
+				this.toQueryUnread();
 			},
 			// 初始化条件
 			toResetCondition(){
@@ -217,6 +198,7 @@
 					startTime:'',
 					endTime:'',
 					identity:undefined,
+					isReadAll:"",
 				};
 				this.field = {
 					startTime:'',
@@ -330,7 +312,7 @@
 				const res = !(this.activeKey === 1 && this.auditStatus);
 				return {
 					icon: res ? 'file-text' : 'audit',
-					text: res ? '查询详情' : '审核'
+					text: res ? '查看详情' : '审核'
 				};
 			},
 			columns(){

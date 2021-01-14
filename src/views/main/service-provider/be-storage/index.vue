@@ -3,70 +3,63 @@
 		<Breadcrumb :source="navData" icon="environment" />
 		<div class="frame-wrapper-content">
 			<div class="frame-query frame-query-position">
-				<a-form-model layout="inline" @submit="handleSubmit" @submit.native.prevent>
-					<a-form-model-item>
-						<a-input v-model="query.name" placeholder="请输入联络人姓名" class="custom-prefix-6"
-										 style="width: 320px">
-							<div class="query-item-prefix" slot="prefix" >联络人姓名</div>
-						</a-input>
-					</a-form-model-item>
-					<a-form-model-item>
-						<a-input v-model="query.orgOfficeName" placeholder="请输入机构名称/挂靠律所名称" class="custom-prefix-11"
-										 style="width: 400px">
-							<div class="query-item-prefix" slot="prefix">机构名称/挂靠律所</div>
-						</a-input>
-					</a-form-model-item>
-					<a-form-model-item label="服务商类型：">
-						<a-select v-model="query.identity" placeholder="请选择身份类型" style="width: 150px" allowClear>
-							<a-select-option :value="1">律师</a-select-option>
-							<a-select-option :value="2">机构</a-select-option>
-						</a-select>
-					</a-form-model-item>
-					<a-form-model-item label="擅长业务区域："  v-if="activeKey===1">
-						<a-cascader v-model="query.areaGoodCases" v-bind="areaProps" style="width: 230px" />
-					</a-form-model-item>
-					<a-form-model-item label="合作意向：" v-if="activeKey===1">
-						<a-select v-model="query.cooperationIntention" placeholder="请选择合作意向" style="width: 150px" allowClear >
-							<a-select-option v-for="i in cooIntent" :key="i.id" :value="i.value">{{i.label}}</a-select-option>
-						</a-select>
-					</a-form-model-item>
-					<a-form-model-item style="visibility: hidden">
-						<a-space>
-							<a-button style="width: 80px">重置</a-button>
-							<a-button type="primary" style="width: 80px">查询</a-button>
-						</a-space>
-					</a-form-model-item>
+				<a-form-model layout="inline" @submit="handleSubmit" @submit.native.prevent >
 					<a-form-model-item style="float: right;margin-right: 0;">
 						<a-space>
-							<a-button style="width: 80px" @click="toResetQuery">重置</a-button>
-							<a-button type="primary" html-type="submit" style="width: 80px">查询</a-button>
+							<a-button style="width: 60px" @click="toResetQuery">重置</a-button>
+							<a-button type="primary" html-type="submit" style="width: 60px">查询</a-button>
 						</a-space>
 					</a-form-model-item>
+					<div style="padding-right: 150px">
+						<a-form-model-item label="联络人姓名">
+							<a-input v-model="query.name" placeholder="请输入联络人姓名" style="width: 200px"></a-input>
+						</a-form-model-item>
+						<a-form-model-item label="机构名称/挂靠律所">
+							<a-input v-model="query.orgOfficeName" placeholder="请输入机构名称/挂靠律所名称" style="width: 270px">
+							</a-input>
+						</a-form-model-item>
+						<a-form-model-item label="服务商类型：">
+							<a-select v-model="query.identity" placeholder="请选择身份类型" style="width: 150px" allowClear>
+								<a-select-option :value="1">律师</a-select-option>
+								<a-select-option :value="2">机构</a-select-option>
+							</a-select>
+						</a-form-model-item>
+						<a-form-model-item label="擅长业务区域："  v-if="activeKey===1">
+							<a-cascader v-model="query.areaGoodCases" v-bind="areaProps" style="width: 230px" />
+						</a-form-model-item>
+						<a-form-model-item label="合作意向：" v-if="activeKey===1">
+							<a-select v-model="query.cooperationIntention" placeholder="请选择合作意向" style="width: 150px" allowClear >
+								<a-select-option v-for="i in cooIntent" :key="i.id" :value="i.value">{{i.label}}</a-select-option>
+							</a-select>
+						</a-form-model-item>
+					</div>
 				</a-form-model>
 				<a-tabs @change="handleTabChange" :activeKey="activeKey">
 					<a-tab-pane v-for="i in tabPane" :key="i.id">
 						<a-badge :dot="i.dot" class="dot-badge" slot="tab">{{i.title}}</a-badge>
 					</a-tab-pane>
 				</a-tabs>
-				<div class="export-template" v-if="activeKey===1">
+				<div class="export-template" v-if="activeKey===1 && exportPermission">
 					<a-button icon="export" @click="toExport">名单一键导出</a-button>
 				</div>
 			</div>
 			<div class="frame-content">
-				<a-table v-bind="props" @change="handleTableChange" :dataSource="dataSource" :columns="columns" :loading="loading">
+				<a-table v-bind="props" @change="handleTableChange" :dataSource="dataSource" :columns="columns"
+								 :customRow="customRow" :loading="loading">
 					<span slot="customAuction" style="padding-left: 15px">操作</span>
-					<ReadStatus slot="readStatus" slot-scope="item" :dot="item.isRead">
-						{{item.name}}
-						<!--<a-tag color="orange">重新提交</a-tag>-->
-					</ReadStatus>
+					<ReadStatus slot="readStatus" slot-scope="item" :dot="item.isRead===0">{{item.name}}</ReadStatus>
 					<span slot="workingTime" slot-scope="item">{{item|single('expOption')}}</span>
 					<span slot="coo" slot-scope="item">{{item|multi('cooIntent')}}</span>
 					<span slot="address" slot-scope="item">{{areaAnalysis(item,false)|areas|fill}}</span>
+					<Ellipsis slot="address" slot-scope="item" :width="160" :title="areaAnalysis(item,false)|areas|fill">
+						{{areaAnalysis(item,false)|areas|fill}}
+					</Ellipsis>
 					<template slot="auction" slot-scope="item">
-						<template v-if="activeKey === 1">
+						<div v-if="activeKey === 1" class="frame-content-table_auction">
 							<a-button type="link" icon="file-text" @click="toLink(item)">详情</a-button>
+							<a-divider type="vertical" />
 							<a-button type="link" icon="audit" @click="toEffect(item)" v-if="auditStatus">印象添加</a-button>
-						</template>
+						</div>
 						<a-button type="link" :icon="normal.icon" @click="toLink(item,true)" v-else>{{normal.text}}</a-button>
 					</template>
 				</a-table>
@@ -140,6 +133,7 @@
 				disabledDate,
 				areaAnalysis,
 				auditStatus:roleConfig.managePermission === 1,
+				exportPermission:roleConfig.exportPermission === 1,
 				areaProps:{
 					allowClear: true,
 					changeOnSelect: true,
@@ -156,21 +150,39 @@
 			EffectModal
 		},
 		created(){
-			console.log(this.$store.getters.getRole);
-
+			// console.log(this.$store.getters.getRole);
 			this.toQuery();
+			this.toQueryUnread();
 		},
 		methods:{
+			// table 行属性
+			customRow(item){
+				return {
+					on:{
+						click:()=>{
+							if(item.isRead === 0){
+								let logId = '';
+								if(this.activeKey === 3) logId = item.elementLogId;
+								if(this.activeKey === 2) logId = item.qualifyLogId;
+								beStorage.read({
+									"identity": item.identity,
+									logId,
+									"type": this.activeKey === 2 ? 2 : 1,
+								}).then(res=>{
+									if(res.code === 20000){
+										item.isRead = 1;
+										this.toCheckUnread();
+									}
+								})
+							}
+						},
+					},
+				}
+			},
 			toResetQuery(){
-				this.query = {
-					...this.query,
-					name:undefined,
-					orgOfficeName:undefined,
-					identity:undefined,
-					areaGoodCases:undefined,
-					goodCases:undefined,
-					cooperationIntention:undefined,
-				};
+				this.toResetCondition();
+				this.toQuery();
+				this.toQueryUnread();
 			},
 			// 初始化条件
 			toResetCondition(){
@@ -196,14 +208,14 @@
 				(e || window.event).preventDefault();
 				// this.toQuery(handleProcess(clearObject(this.query)));
 				this.toQuery(handleProcess(clearObject(this.query)));
-				// this.toCheckUnread();
+				this.toQueryUnread();
 			},
 			// tab切换点击
 			handleTabChange(val){
 				this.activeKey = val;
-				// this.toResetCondition();
+				this.toResetCondition();
 				this.toQuery();
-				// this.toQueryUnread();
+				this.toQueryUnread();
 			},
 			// 表格变化事件
 			handleTableChange(row,obs,col){
@@ -254,7 +266,19 @@
 					this.loading = false;
 				});
 			},
-
+			// 查询未读数据
+			toQueryUnread(){
+				beStorage.unreadInfo().then(res=>{
+					if(res.code === 20000){
+						const { elementUnRead,qualifyUnRead} = res.data;
+						this.tabPane = [
+							{ id:1, title:'全部已入库', dot: false, },
+							{ id:2, title:'资质修改申请', dot: qualifyUnRead === 0 },
+							{ id:3, title:'要素修改申请', dot: elementUnRead === 0, },
+						]
+					}
+				})
+			},
 			toExport() {
 				beStorage.export().then(({dis,data}) => {
 					if(dis){

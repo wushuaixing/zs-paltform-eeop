@@ -18,6 +18,10 @@
 				<div class="info-item_list-title">其他补充说明</div>
 				<div class="info-item_list-content">{{dataSource.otherDescription||'-'}}</div>
 			</div>
+			<div class="info-item_list">
+				<div class="info-item_list-title">推荐人</div>
+				<div class="info-item_list-content">{{dataSource.referrer||'-'}}</div>
+			</div>
 			<div class="info-item_subtitle">合作印象</div>
 			<div class="info-item_timeLine" v-if="cooList.length">
 				<a-timeline>
