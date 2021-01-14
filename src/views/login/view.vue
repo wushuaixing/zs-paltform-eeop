@@ -82,6 +82,9 @@
           </a-form-model>
         </div>
       </div>
+			<div class="register-record">
+				浙公网安备 33010202000630号  Copyright © 2014 浙江省浙商资产管理有限公司版权所有 浙ICP备14030345号-1
+			</div>
     </div>
   </div>
 </template>
@@ -233,6 +236,7 @@ export default {
   display: flex;
   .register {
     &-container {
+			position: relative;
       width: 100%;
       height: 560px;
       background: #1a1939 url("../../assets/img/background.jpg") center no-repeat;
@@ -266,6 +270,13 @@ export default {
       }
     }
   }
+	.register-record{
+		position: absolute;
+		bottom: -40px;
+		width: 100%;
+		text-align: center;
+		font-size: 14px;
+	}
   .login {
     &-wrapper {
       width: 402px;
