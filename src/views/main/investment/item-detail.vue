@@ -44,7 +44,7 @@
             </a-col>
           </a-row>
           <div class="guarantee">
-            抵押物类型：
+            <span style="color:#666666">抵质押物清单：</span>
             <div>
               <p style="margin:0" v-for="(i, index) in detailInfo.amcProjectCollaterals" :key="index">
                 {{index+1}}. {{i.collateralType|collateralType}}、{{i|arease}}、{{i.collateralName}}
@@ -199,7 +199,7 @@
                 <div :class="exhibit === row.id ? 'plans' : 'plan'" >
                     <p v-for="(item,index) in scheduleManagements" :key="index">{{item.dateMonth}}个月内完成{{item.dateMatters}}</p>
                 </div>
-                <span style="color: #008CB0; margin-left: 60%" @click="bit(row)" v-if="scheduleManagements.length >= 4" >{{exhibit === row.id ? '收起' :'展开'}}</span>
+                <a style="color: #008CB0; margin-left: 60%" @click="bit(row)" v-if="scheduleManagements.length >= 4" >{{exhibit === row.id ? '收起' :'展开'}}</a>
               </template>
               <template slot="caseFileAddress" slot-scope="caseFileAddress">
                 <FileList :file-list="JSON.stringify([caseFileAddress])"></FileList>
@@ -590,7 +590,7 @@ export default {
     applyServeTableChange(pagination, filters, sorter){
       this.params.page = pagination.current;
       this.params.size = pagination.pageSize;
-      this.params.sortField = sorter.field;
+      this.params.sortField = sorter.order ?  sorter.field : "";
       this.params.sortOrder = sorter.order
         ? sorter.order === "ascend"
           ? "ASC"
@@ -605,6 +605,7 @@ export default {
       this.params.size = pagination.pageSize;
       this.params.sortField = sorter.field;
       this.sortOrder = sorter.order;
+      this.params.sortField = sorter.order ?  sorter.field : "";
       this.params.sortOrder = sorter.order
         ? sorter.order === "ascend"
           ? "ASC"
