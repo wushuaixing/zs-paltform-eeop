@@ -723,6 +723,13 @@ export default {
     Breadcrumb,
     FileList
   },
+  watch:{
+    visible:function (){
+      if(this.visible === false){
+        this.$refs.ruleForm.resetFields();
+      }
+    }
+  },
   created() {
     let id = this.$route.query.id
     this.getProjectDetail();

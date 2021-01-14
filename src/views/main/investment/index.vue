@@ -12,7 +12,7 @@
       <a-row class="search_box" type="flex" >
         <a-col :span="11">
           <span>债务人名称：</span>
-          <a-input  v-model="findAll.debtor"  style="width: 80%" placeholder="请输入债务人的名称" class="custom-prefix-6">
+          <a-input  v-model="findAll.debtor" style="width: 80%"   placeholder="请输入债务人的名称" class="custom-prefix-6">
           </a-input>
         </a-col>
         <a-col :span="10">
@@ -227,7 +227,7 @@ export default {
     beforeUpload(file) {
       this.fileList = [...this.fileList, file];
       const isLimit16M = file.size / 1024 / 1024 <= 16;
-      const  isSheet  = /\.(xlsx|xls)$/.test(file.name);
+      const isSheet  = /\.(xlsx|xls)$/.test(file.name);
       if(!isLimit16M) this.$message.error("文件大小不能超过16M,请重新上传");
       if(!isSheet) this.$message.error("请上传.xls/.xlsx文件");
       if(isSheet && isLimit16M){
