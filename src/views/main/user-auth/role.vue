@@ -206,6 +206,7 @@ export default {
   },
   methods: {
     getTableList() {
+      this.dataSource = [];
       this.loading = true;
       userAuthApi.listRole(clearProto(this.queryParams)).then((res) => {
         if (res.code === 20000) {
