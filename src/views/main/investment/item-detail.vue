@@ -426,7 +426,7 @@ export default {
         endDate: "",
         id: this.$route.query.id,
         page: 1,
-        size: 2,//修改
+        size: 10,
         sortField: '',
         sortOrder: "",
         startDate: ""
@@ -475,7 +475,7 @@ export default {
           dataSource: [],
           pagination: {
             total: 0,
-            pageSize:2,//修改回来
+            pageSize:10,
             showQuickJumper: true,
             showTotal: (val) => `共${val}条信息`,
           },
@@ -486,7 +486,7 @@ export default {
           pagination: {
             total: 0,
             current:1,
-            pageSize:2,//修改回来
+            pageSize:10,
             showQuickJumper: true,
             showTotal: (val) => `共${val}条信息`,
           },
@@ -548,7 +548,7 @@ export default {
     //有效方案&未通过系统筛选切换
     changType(){
       this.params.page = 1;//改回来
-      this.params.size = 2;//改回来
+      this.params.size = 10;//改回来
       this.params.sortField = "";
       this.params.sortOrder = "";
       this.tableSource.submitPlanTable.pagination.current = 1;
