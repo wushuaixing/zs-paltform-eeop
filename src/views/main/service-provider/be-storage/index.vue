@@ -46,7 +46,7 @@
 			<div class="frame-content">
 				<a-table v-bind="props" @change="handleTableChange" :dataSource="dataSource" :columns="columns" :loading="loading">
 					<span slot="customAuction" style="padding-left: 15px">操作</span>
-					<ReadStatus slot="readStatus" slot-scope="item" :dot="item.isRead">{{item.name}}</ReadStatus>
+					<ReadStatus slot="readStatus" slot-scope="item" :dot="item.isRead===0">{{item.name}}</ReadStatus>
 					<span slot="workingTime" slot-scope="item">{{item|single('expOption')}}</span>
 					<span slot="coo" slot-scope="item">{{item|multi('cooIntent')}}</span>
 					<span slot="address" slot-scope="item">{{areaAnalysis(item,false)|areas|fill}}</span>
@@ -151,6 +151,7 @@
 		created(){
 			// console.log(this.$store.getters.getRole);
 			this.toQuery();
+			this.toQueryUnread();
 		},
 		methods:{
 			toResetQuery(){
@@ -182,14 +183,14 @@
 				(e || window.event).preventDefault();
 				// this.toQuery(handleProcess(clearObject(this.query)));
 				this.toQuery(handleProcess(clearObject(this.query)));
-				// this.toCheckUnread();
+				this.toQueryUnread();
 			},
 			// tab切换点击
 			handleTabChange(val){
 				this.activeKey = val;
-				// this.toResetCondition();
+				this.toResetCondition();
 				this.toQuery();
-				// this.toQueryUnread();
+				this.toQueryUnread();
 			},
 			// 表格变化事件
 			handleTableChange(row,obs,col){
@@ -240,7 +241,19 @@
 					this.loading = false;
 				});
 			},
-
+			// 查询未读数据
+			toQueryUnread(){
+				beStorage.unreadInfo().then(res=>{
+					if(res.code === 20000){
+						const { elementUnRead,qualifyUnRead} = res.data;
+						this.tabPane = [
+							{ id:1, title:'全部已入库', dot: false, },
+							{ id:2, title:'资质修改申请', dot: qualifyUnRead === 0 },
+							{ id:3, title:'要素修改申请', dot: elementUnRead === 0, },
+						]
+					}
+				})
+			},
 			toExport() {
 				beStorage.export().then(({dis,data}) => {
 					if(dis){
