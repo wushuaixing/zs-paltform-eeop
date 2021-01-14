@@ -167,7 +167,7 @@
 								beStorage.read({
 									"identity": item.identity,
 									logId,
-									"type": this.activeKey === 2 ? 1 : 2,
+									"type": this.activeKey === 2 ? 2 : 1,
 								}).then(res=>{
 									if(res.code === 20000){
 										item.isRead = 1;
