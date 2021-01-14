@@ -178,7 +178,7 @@ export default {
         token: window.localStorage.token,
       },
       findAll:{
-        caseType: 1,
+        caseType: "",
         debtor: "",
         endDate: "",
         id: "",
@@ -286,6 +286,7 @@ export default {
       this.findAll.endDate = this.field.endTime = '';
       this.findAll.startDate = this.field.startTime = '';
       this.sortedInfo = null;
+      this.findAll.sortField = "";
       this.findAll.sortOrder = '';
       this.requestInquire()
     },
