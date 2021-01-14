@@ -30,6 +30,7 @@ export const columns = ({ type = 1, sortOrder}) =>{
 			dataIndex: 'orgOfficeName',
 			key: 'orgOfficeName',
 			width:'17%',
+            customRender:val=>val || '-',
 		},
 	];
 	const auction = {
