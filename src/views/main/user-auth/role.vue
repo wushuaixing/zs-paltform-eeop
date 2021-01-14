@@ -47,6 +47,7 @@
         v-model="modalVisible"
         :destroyOnClose="true"
         dialogClass="role-modal"
+        :confirm-loading="confirmLoading"
         :maskClosable="false"
         @ok="handleSubmit"
         @cancel="handleResetFields('form')"
@@ -144,6 +145,7 @@ export default {
       modalSign: 'add',
       modalVisible: false,
       loading: false,
+      confirmLoading:false,
       navData: [
         {id: 1, title: '内部权限管理', path: '/auth/role'},
         {id: 2, title: '角色管理', path: '/auth/role'},
@@ -174,7 +176,7 @@ export default {
         size: 'middle',
         showTotal: val => `共${val}条信息`,
       },
-      labelCol: {span: 5},
+      labelCol: {span: 7},
       wrapperCol: {span: 16},
       rules: {
         roleName: [
@@ -327,6 +329,7 @@ export default {
                 readScope
               } : ''
             };
+            this.confirmLoading = true;
             userAuthApi.saveRole(params).then((res) => {
               if (res.code === 20000) {
                 this.$message.success('保存成功');
@@ -338,7 +341,7 @@ export default {
               } else {
                 this.$message.warning(res.message);
               }
-            });
+            }).finally(()=> this.confirmLoading = false);
           } else {
             return false;
           }
