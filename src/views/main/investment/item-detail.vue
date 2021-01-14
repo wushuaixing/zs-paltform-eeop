@@ -139,7 +139,7 @@
         </div>
         <!--报名服务商列表-->
         <div>
-          <h3 class="title-table">报名服务商列表</h3>
+          <h3 class="title-table">报名服务商列表 {{tableSource.applyServeTable.dataSource.length}}</h3>
           <div class="table-block">
             <a-table v-bind="tableSource.applyServeTable" @change="applyServeTableChange" rowKey=id >
               <template slot="name" slot-scope="name,row">
@@ -275,55 +275,63 @@ const columns = [
   {
     title: "联络人",
     dataIndex: "name",
-    width: "6%",
+    width: "150px",
     scopedSlots: { customRender: "name" },
   },
   {
     title: "联系方式",
     dataIndex: "phone",
+    width: "200px",
     scopedSlots: { customRender: "phone" },
   },
   {
     title: "服务商类型",
     dataIndex: "identity",
+    width: "200px",
     scopedSlots: { customRender: "identity" },
   },
   {
     title: "机构名称/挂靠律所",
     dataIndex: "orgOfficeName",
-    width: "10%",
+    width: "200px",
     scopedSlots: { customRender: "orgOfficeName" },
   },
   {
     title: "从业不良时间",
     dataIndex: "workingTime",
+    width: "200px",
     scopedSlots: { customRender: "workingTime" },
   },
   {
     title: "擅长业务区域",
     dataIndex: "areasOfGoodCases",
+    width: 200,
     scopedSlots: { customRender: "areasOfGoodCases" },
   },
   {
     title: "擅长业类型",
     dataIndex: "goodCases",
+    width: 200,
     scopedSlots: { customRender: "goodCases" },
   },
   {
     title: "报名日期",
     dataIndex: "applyDate",
     sorter: true,
+    width: "200px",
     scopedSlots: { customRender: "applyDate" },
   },
   {
     title: "服务方案提交日期",
     dataIndex: "gmtModify",
     sorter: true,
+    width: "200px",
     scopedSlots: { customRender: "gmtModify" },
   },
   {
     title: "方案提交情况",
     dataIndex: "caseFileStatus",
+    width: "200px",
     scopedSlots: { customRender: "caseFileStatus" },
   },
 ];
@@ -445,7 +453,7 @@ export default {
         endDate: "",
         id: this.$route.query.id,
         page: 1,
-        size: 10,
+        size: 1,//修改
         sortField: '',
         sortOrder: "",
         startDate: ""
@@ -494,6 +502,7 @@ export default {
           dataSource: [],
           pagination: {
             total: 0,
+            pageSize:1,//修改回来
             showQuickJumper: true,
             showTotal: (val) => `共${val}条信息`,
           },
@@ -541,6 +550,7 @@ export default {
     //获取报名服务商列表
     getSignServiceList(){
       signService(this.params).then(res=>{
+        console.log(res)
         if(res.code === 20000){
           this.tableSource.applyServeTable.pagination.total = res.data.total;
           this.tableSource.applyServeTable.dataSource = res.data.list;
