@@ -42,9 +42,11 @@
           <template slot="security" slot-scope="text,row">{{row.security|guarantyType}}</template>
           <template slot="debtCaptial" slot-scope="text,row">{{row.debtCaptial|amountTh}}</template>
           <template slot="debtInterest" slot-scope="text,row">{{row.debtInterest|amountTh}}</template>
+          <template slot="deadline" slot-scope="text,row">{{row.deadline|show_}}</template>
           <template slot="action" slot-scope="text,row">
             <span class="table-view"  @click="viewDetails(row)">查看详情</span>
           </template>
+
         </a-table>
     </div>
     <!--弹框对话框文件上传-->
@@ -128,6 +130,7 @@ const columns = (sortedInfo) =>{
     title: '报名截止日期',
     dataIndex: 'deadline',
     sorter: true,//排序
+    scopedSlots: {customRender: 'deadline'},
     sortOrder: sortedInfo.columnKey === 'deadline' && sortedInfo.order
   },
   {
@@ -217,6 +220,13 @@ export default {
         this.findAll.endDate = endTime ? endTime.format('YYYY-MM-DD') : '';
       },
       deep:true
+    }
+  },
+  filters:{
+    //没有值展示'-'
+    show_(val){
+      if(!val)return '-';
+      return val;
     }
   },
   methods: {
