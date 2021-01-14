@@ -294,7 +294,7 @@
 						{ label:"投资偏好类型", field:"investmentPreferenceType",
 							m:_if, about:'hasInvestmentIntention', f:_multi, origin:"hisCoo"},
 						{ label:"标的金额范围", field:"startAmountOfSubject",m:_if, about:'hasInvestmentIntention',f:_range},
-						{ label:"投资区域", field:"investmentArea",m:_if, about:'hasInvestmentIntention',f:_area },
+						{ label:"投资区域", field:"investmentArea",m:_if, about:'hasInvestmentIntention',f:_areas },
 						{ label:"以往投资经历", field:"investmentExperience",m:_if, about:'hasInvestmentIntention' },
 					]
 				},
