@@ -265,7 +265,7 @@
 /*eslint-disable*/
 import {projectDetail,signService,serviceCaseSubmit,updateProjectInfo} from "@/plugin/api/investment-center";
 import {collateralTypeData} from "./source"
-import {getArea,areaAnalysis} from "@/plugin/tools"
+import {getArea,areaAnalysis,clearObject} from "@/plugin/tools"
 import Breadcrumb from "@/components/bread-crumb";
 import store from '@/plugin/store';
 import  FileList  from '@/components/file-list'
@@ -512,6 +512,7 @@ export default {
           dataSource: [],
           pagination: {
             total: 0,
+            current:1,
             pageSize:2,//修改回来
             showQuickJumper: true,
             showTotal: (val) => `共${val}条信息`,
@@ -550,7 +551,7 @@ export default {
     },
     //获取报名服务商列表
     getSignServiceList(){
-      signService(this.params).then(res=>{
+      signService(clearObject(this.params)).then(res=>{
         console.log(res)
         if(res.code === 20000){
           this.tableSource.applyServeTable.pagination.total = res.data.total;
@@ -562,7 +563,7 @@ export default {
     },
     //获取服务商提交方案列表
     getServiceCaseSubmitList(){
-      serviceCaseSubmit(this.params).then(res=>{
+      serviceCaseSubmit(clearObject(this.params)).then(res=>{
         if(res.code === 20000){
           this.tableSource.submitPlanTable.pagination.total = res.data.total;
           this.tableSource.submitPlanTable.dataSource = res.data.list;
@@ -573,6 +574,11 @@ export default {
     },
     //有效方案&未通过系统筛选切换
     changType(){
+      this.params.page = 1;//改回来
+      this.params.size = 2;//改回来
+      this.params.sortField = "";
+      this.params.sortOrder = "";
+      this.tableSource.submitPlanTable.pagination.current = 1;
       this.sortOrder = false;
       this.getServiceCaseSubmitList();
     },
@@ -594,8 +600,8 @@ export default {
     },
     //服务商提交方案列表分页,排序操作
     submitPlanTableChange(pagination, filters, sorter){
-      console.log(sorter)
       this.params.page = pagination.current;
+      this.tableSource.submitPlanTable.pagination.current = pagination.current;
       this.params.size = pagination.pageSize;
       this.params.sortField = sorter.field;
       this.sortOrder = sorter.order;
