@@ -231,7 +231,7 @@
             valueFormat="YYYY-MM-DD"
             v-model="editInfo.signDeadline"
             :disabled-date="disabledDate"
-            :disabled="detailInfo.deadline != '' ? detailInfo.deadline >= $moment().format('YYYY-MM-DD')?false:true : false"
+            :disabled="detailInfo.deadline === null ? false : detailInfo.deadline >= $moment().format('YYYY-MM-DD')?false:true"
           />
         </a-form-model-item>
         <a-form-model-item label="方案提交截止日期" >
@@ -244,7 +244,7 @@
         </a-form-model-item>
         <a-form-model-item label="期限上限" >
           <div class="editIpt">
-            <a-input-number class="numberIpt"  v-model="editInfo.dateLimit" :min="0"/>
+            <a-input-number class="numberIpt"  v-model="editInfo.dateLimit" :min="0" />
             <span>个月</span>
           </div>
         </a-form-model-item>
