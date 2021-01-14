@@ -224,18 +224,17 @@
         :label-col="labelCol"
         ref="ruleForm"
         :wrapper-col="wrapperCol"
-        :rules="rules"
       >
-        <a-form-model-item label="报名截止日期" prop="signDeadline">
+        <a-form-model-item label="报名截止日期" >
           <a-date-picker
             class="editIpt"
             valueFormat="YYYY-MM-DD"
             v-model="editInfo.signDeadline"
             :disabled-date="disabledDate"
-            :disabled="editInfo.signDeadline >= $moment().format('YYYY-MM-DD')?false:true"
+            :disabled="detailInfo.deadline >= $moment().format('YYYY-MM-DD')?false:true"
           />
         </a-form-model-item>
-        <a-form-model-item label="方案提交截止日期" prop="submitDeadline" >
+        <a-form-model-item label="方案提交截止日期" >
           <a-date-picker
             class="editIpt"
             valueFormat="YYYY-MM-DD"
@@ -243,13 +242,13 @@
             :disabled-date="disabledDate"
           />
         </a-form-model-item>
-        <a-form-model-item label="期限上限" prop="dateLimit">
+        <a-form-model-item label="期限上限" >
           <div class="editIpt">
             <a-input-number class="numberIpt"  v-model="editInfo.dateLimit" :min="1"/>
             <span>个月</span>
           </div>
         </a-form-model-item>
-        <a-form-model-item label="目标回款金额下限" prop="aimedPriceBack">
+        <a-form-model-item label="目标回款金额下限" >
            <div class="editIpt">
              <a-input-number class="numberIpt" v-model="editInfo.aimedPriceBack" :min="1"  :precision="2"/>
              <span>万元</span>
@@ -420,32 +419,6 @@ export default {
         id: this.$route.query.id,
         signDeadline: '',
         submitDeadline: ''
-      },
-      rules:{
-        aimedPriceBack:[
-          {
-            required:true,
-            message:"请输入回款金额下限",
-          }
-        ],
-        dateLimit:[
-          {
-            required:true,
-            message:"请输入期限上限",
-          }
-        ],
-        signDeadline:[
-          {
-            required:true,
-            message:"请选择报名截止日期"
-          }
-        ],
-        submitDeadline:[
-          {
-            required:true,
-            message:"请选择方案提交截止日期"
-          }
-        ]
       },
       params:{
         caseType: 1,
