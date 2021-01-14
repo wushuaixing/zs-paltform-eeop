@@ -512,10 +512,6 @@ export default {
     getProjectDetail(){
       projectDetail(this.params.id).then(res=>{
         if(res.code === 20000){
-          this.editInfo.aimedPriceBack = res.data.targetAmountLowerLimit;
-          this.editInfo.dateLimit = res.data.targetYearUpperLimit;
-          this.editInfo.signDeadline = res.data.deadline;
-          this.editInfo.submitDeadline = res.data.submitDeadline;
           this.detailInfo = res.data;
         }else{
           console.log('error...');
@@ -591,9 +587,10 @@ export default {
     },
     showModal(){
       this.visible = true;
+      const { targetYearUpperLimit:t } = this.detailInfo;
       this.editInfo.signDeadline = this.detailInfo.deadline;
       this.editInfo.submitDeadline = this.detailInfo.submitDeadline;
-      this.editInfo.dateLimit = this.detailInfo.targetYearUpperLimit;
+      this.editInfo.dateLimit = t === 0 ? null : t;
       this.editInfo.aimedPriceBack = this.detailInfo.targetAmountLowerLimit;
     },
     handleOk(){
