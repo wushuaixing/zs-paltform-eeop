@@ -139,7 +139,7 @@
         </div>
         <!--报名服务商列表-->
         <div>
-          <h3 class="title-table">报名服务商列表 {{tableSource.applyServeTable.dataSource.length}}</h3>
+          <h3 class="title-table">报名服务商列表 {{tableSource.applyServeTable.pagination.total}}</h3>
           <div class="table-block">
             <a-table v-bind="tableSource.applyServeTable" @change="applyServeTableChange" rowKey=id >
               <template slot="name" slot-scope="name,row">
@@ -512,6 +512,7 @@ export default {
           dataSource: [],
           pagination: {
             total: 0,
+            pageSize:1,//修改回来
             showQuickJumper: true,
             showTotal: (val) => `共${val}条信息`,
           },
