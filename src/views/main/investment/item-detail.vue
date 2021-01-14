@@ -118,10 +118,10 @@
           </div>
           <a-row type="flex">
             <a-col :span="8">
-              业务部门计划清收目标：<span>{{detailInfo.businessDepartmentTarget |show_}}万元</span>
+              业务部门计划清收目标：<span>{{detailInfo.businessDepartmentTarget |show_}} 万元</span>
             </a-col>
             <a-col :span="8">
-              业务部门计划清收时间：<span>{{detailInfo.businessDepartmentRecoveryTime |show_}}</span>
+              业务部门计划清收时间：<span>{{detailInfo.businessDepartmentRecoveryTime |show_}} 年</span>
             </a-col>
           </a-row>
           <div class="creditor-condition">
@@ -143,12 +143,12 @@
           <div class="table-block">
             <a-table v-bind="tableSource.applyServeTable" @change="applyServeTableChange" rowKey=id >
               <template slot="name" slot-scope="name,row">
-                <a-button type="link" @click="goAvatar(row.id)">{{ name|show_ }}</a-button>
+                <a  @click="goAvatar(row.id)">{{ name|show_ }}</a>
               </template>
               <template slot="phone" slot-scope="phone">{{ phone|show_ }}</template>
               <template slot="identity" slot-scope="identity">{{identity|identityType}}</template>
               <template slot="orgOfficeName" slot-scope="orgOfficeName,row">
-                <a-button v-if="orgOfficeName" type="link" @click="goAvatar(row.id)">{{orgOfficeName}}</a-button>
+                <a v-if="orgOfficeName"  @click="goAvatar(row.id)">{{orgOfficeName}}</a>
                 <div v-else>-</div>
               </template>
               <template slot="workingTime" slot-scope="workingTime">{{workingTime|workingTimeText}}</template>
@@ -179,12 +179,12 @@
             <a-table  v-bind="tableSource.submitPlanTable" @change="submitPlanTableChange" :columns="columns2" rowKey=id>
               <template slot="gmtCreate" slot-scope="gmtCreate">{{gmtCreate|show_}}</template>
               <template slot="name" slot-scope="name,row">
-                <a-button type="link" @click="goAvatar(row.id)">{{ name }}</a-button>
+                <a  @click="goAvatar(row.id)">{{ name }}</a>
               </template>
               <template slot="phone" slot-scope="phone">{{phone|show_}}</template>
               <template slot="identity" slot-scope="identity">{{identity|identityType}}</template>
               <template slot="orgOfficeName" slot-scope="orgOfficeName,row">
-                <a-button v-if="orgOfficeName" type="link" @click="goAvatar(row.id)">{{orgOfficeName}}</a-button>
+                <a v-if="orgOfficeName" type="link" @click="goAvatar(row.id)">{{orgOfficeName}}</a>
                 <div v-else>-</div>
               </template>
               <template slot="serviceTime" slot-scope="serviceTime,row">
@@ -197,7 +197,7 @@
               </template>
               <template slot="scheduleManagements" slot-scope="scheduleManagements,row">
                 <div :class="exhibit === row.id ? 'plans' : 'plan'" >
-                  <p v-for="(item,index) in scheduleManagements" :key="index">{{item.dateMonth}}个月内完成{{item.dateMatters}}</p>
+                    <p v-for="(item,index) in scheduleManagements" :key="index">{{item.dateMonth}}个月内完成{{item.dateMatters}}</p>
                 </div>
                 <span style="color: #008CB0; margin-left: 60%" @click="bit(row)" v-if="scheduleManagements.length >= 4" >{{exhibit === row.id ? '收起' :'展开'}}</span>
               </template>
@@ -275,63 +275,55 @@ const columns = [
   {
     title: "联络人",
     dataIndex: "name",
-    width: 200,
+    width: "6%",
     scopedSlots: { customRender: "name" },
   },
   {
     title: "联系方式",
     dataIndex: "phone",
-    width: 200,
     scopedSlots: { customRender: "phone" },
   },
   {
     title: "服务商类型",
     dataIndex: "identity",
-    width: 200,
     scopedSlots: { customRender: "identity" },
   },
   {
     title: "机构名称/挂靠律所",
     dataIndex: "orgOfficeName",
-    width: 200,
+    width: "10%",
     scopedSlots: { customRender: "orgOfficeName" },
   },
   {
     title: "从业不良时间",
     dataIndex: "workingTime",
-    width: 200,
     scopedSlots: { customRender: "workingTime" },
   },
   {
     title: "擅长业务区域",
     dataIndex: "areasOfGoodCases",
-    width: 200,
     scopedSlots: { customRender: "areasOfGoodCases" },
   },
   {
     title: "擅长业类型",
     dataIndex: "goodCases",
-    width: 200,
     scopedSlots: { customRender: "goodCases" },
   },
   {
     title: "报名日期",
     dataIndex: "applyDate",
     sorter: true,
-    width: 200,
     scopedSlots: { customRender: "applyDate" },
   },
   {
     title: "服务方案提交日期",
     dataIndex: "gmtModify",
     sorter: true,
-    width: 200,
     scopedSlots: { customRender: "gmtModify" },
   },
   {
     title: "方案提交情况",
     dataIndex: "caseFileStatus",
-    width: 200,
     scopedSlots: { customRender: "caseFileStatus" },
   },
 ];
@@ -574,6 +566,7 @@ export default {
       this.getServiceCaseSubmitList();
     },
     goAvatar(v){
+      console.log("跳转到画像页面",v);
       this.$router.push({path:'/provider/storage/detail', query: {id: v}})
     },
     //报名服务商列表分页,排序操作
@@ -590,6 +583,7 @@ export default {
     },
     //服务商提交方案列表分页,排序操作
     submitPlanTableChange(pagination, filters, sorter){
+      console.log(sorter)
       this.params.page = pagination.current;
       this.params.size = pagination.pageSize;
       this.params.sortField = sorter.field;
@@ -716,7 +710,6 @@ export default {
         5:'破产'
       };
       return isLawsuitObj[val]
-
     },
     arease:(params) => {
       return getArea(params.provinceCode,params.cityCode,params.areaCode);
@@ -729,6 +722,13 @@ export default {
   components: {
     Breadcrumb,
     FileList
+  },
+  watch:{
+    visible:function (){
+      if(this.visible === false){
+        this.$refs.ruleForm.resetFields();
+      }
+    }
   },
   created() {
     let id = this.$route.query.id

@@ -49,14 +49,16 @@ Vue.filter('unit', (val,unit = '')=>{
 Vue.filter('multi',(val,field,remark = '',)=>{
 	if(!field) return val;
 	if(!val) return val;
+	const _remark = remark ? `（${remark}）` : '';
 	const _data = source[field] || [];
 	const _label = val.split(',').map(i=>{
 		let result = '';
-		_data.forEach(item=>{ if(item.value.toString() === i) result = item.label; });
+		_data.forEach(item=>{ if(item.value.toString() === i) {
+			result =  i.toString() === '0' ? item.label + _remark : item.label
+		} });
 		return result
 	});
-	_label.push(remark);
-	return _label.filter(i=>i).join('、');
+	return _label.filter(i=>i).join('、')
 });
 
 Vue.filter('single',(val,field)=>{

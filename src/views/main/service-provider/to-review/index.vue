@@ -12,7 +12,7 @@
 					</a-form-model-item>
 					<div style="padding-right: 150px">
 						<a-form-model-item label="联络人姓名">
-							<a-input v-model="query.name" placeholder="请输入联络人姓名" style="width: 200px"></a-input>
+							<a-input v-model="query.userName" placeholder="请输入联络人姓名" style="width: 200px"></a-input>
 						</a-form-model-item>
 						<a-form-model-item label="机构名称/挂靠律所" v-if="status(1245)">
 							<a-input v-model="query.officeName" placeholder="请输入机构名称/挂靠律所名称" style="width: 270px">
@@ -185,20 +185,9 @@
 				return rule.toString() ? new RegExp(activeKey).test(rule) : false;
 			},
 			toResetQuery(){
-				this.query = {
-					...this.query,
-					userName:"",
-					officeName:"",
-					startTime:'',
-					endTime:'',
-					identity:undefined,
-				};
-				this.field = {
-					startTime:'',
-					endTime:'',
-				};
-				this.sortOrder = false;
-				this.sortField = '';
+				this.toResetCondition();
+				this.toQuery();
+				this.toQueryUnread();
 			},
 			// 初始化条件
 			toResetCondition(){
@@ -209,6 +198,7 @@
 					startTime:'',
 					endTime:'',
 					identity:undefined,
+					isReadAll:"",
 				};
 				this.field = {
 					startTime:'',

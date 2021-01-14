@@ -11,7 +11,7 @@ export const columns = ({ type = 1, sortOrder}) =>{
 			title: '联络人姓名',
 			key: 'name',
 			scopedSlots: { customRender: 'readStatus' },
-			width:200,
+			width:'14%',
 		},
 		{
 			title: '联系方式',
@@ -23,13 +23,14 @@ export const columns = ({ type = 1, sortOrder}) =>{
 			title: '服务商类型',
 			dataIndex: 'identity',
 			key: 'identity',
+			width:90,
 			customRender:(val)=> (val && (val === 1 ? '律师' : '机构')) || '-',
 		},
 		{
 			title: '机构名称/挂靠律师',
 			dataIndex: 'orgOfficeName',
 			key: 'orgOfficeName',
-			customRender:val=>val || '-',
+			width:'17%',
 		},
 	];
 	const auction = {
@@ -44,6 +45,7 @@ export const columns = ({ type = 1, sortOrder}) =>{
 				title: '擅长业务区域',
 				dataIndex: 'areasOfGoodCases',
 				key: 'address3',
+				width:'14%',
 				scopedSlots: { customRender: 'address' },
 			},
 			{
