@@ -231,7 +231,7 @@
             valueFormat="YYYY-MM-DD"
             v-model="editInfo.signDeadline"
             :disabled-date="disabledDate"
-            :disabled="detailInfo.deadline >= $moment().format('YYYY-MM-DD')?false:true"
+            :disabled="detailInfo.deadline != '' ? detailInfo.deadline >= $moment().format('YYYY-MM-DD')?false:true : false"
           />
         </a-form-model-item>
         <a-form-model-item label="方案提交截止日期" >
@@ -244,13 +244,13 @@
         </a-form-model-item>
         <a-form-model-item label="期限上限" >
           <div class="editIpt">
-            <a-input-number class="numberIpt"  v-model="editInfo.dateLimit" :min="1"/>
+            <a-input-number class="numberIpt"  v-model="editInfo.dateLimit" :min="0"/>
             <span>个月</span>
           </div>
         </a-form-model-item>
         <a-form-model-item label="目标回款金额下限" >
            <div class="editIpt">
-             <a-input-number class="numberIpt" v-model="editInfo.aimedPriceBack" :min="1"  :precision="2"/>
+             <a-input-number class="numberIpt" v-model="editInfo.aimedPriceBack" :min="0"  :precision="2"/>
              <span>万元</span>
            </div>
         </a-form-model-item>
@@ -548,7 +548,7 @@ export default {
     //有效方案&未通过系统筛选切换
     changType(){
       this.params.page = 1;//改回来
-      this.params.size = 10;//改回来
+      this.params.size = 10;
       this.params.sortField = "";
       this.params.sortOrder = "";
       this.tableSource.submitPlanTable.pagination.current = 1;
