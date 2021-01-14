@@ -48,6 +48,7 @@
           :maskClosable="false"
           @ok="handleSubmit"
           @cancel="handleResetFields('form')"
+          :confirm-loading="confirmLoading"
       >
         <div class="section-modal-wrapper">
           <a-form-model
@@ -84,6 +85,7 @@ export default {
       modalVisible: false,
       modalSign: 'add',
       loading: false,
+      confirmLoading:false,
       navData: [
         {id: 1, title: '内部权限管理', path: '/auth/role'},
         {id: 2, title: '部门管理', path: '/auth/section'},
@@ -218,6 +220,7 @@ export default {
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
           const params = clearProto(this.form);
+          this.confirmLoading = true;
           userAuthApi.addSection(params).then((res) => {
             if (res.code === 20000) {
               this.$message.success('保存成功');
@@ -229,7 +232,7 @@ export default {
             } else {
               this.$message.warning(res.message);
             }
-          });
+          }).finally(()=> this.confirmLoading = false);
         } else {
           return false;
         }
