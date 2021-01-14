@@ -44,7 +44,8 @@
 				</div>
 			</div>
 			<div class="frame-content">
-				<a-table v-bind="props" @change="handleTableChange" :dataSource="dataSource" :columns="columns" :loading="loading">
+				<a-table v-bind="props" @change="handleTableChange" :dataSource="dataSource" :columns="columns"
+								 :customRow="customRow" :loading="loading">
 					<span slot="customAuction" style="padding-left: 15px">操作</span>
 					<ReadStatus slot="readStatus" slot-scope="item" :dot="item.isRead===0">{{item.name}}</ReadStatus>
 					<span slot="workingTime" slot-scope="item">{{item|single('expOption')}}</span>
@@ -154,6 +155,30 @@
 			this.toQueryUnread();
 		},
 		methods:{
+			// table 行属性
+			customRow(item){
+				return {
+					on:{
+						click:()=>{
+							if(item.isRead === 0){
+								let logId = '';
+								if(this.activeKey === 3) logId = item.elementLogId;
+								if(this.activeKey === 2) logId = item.qualifyLogId;
+								beStorage.read({
+									"identity": item.identity,
+									logId,
+									"type": this.activeKey === 2 ? 1 : 2,
+								}).then(res=>{
+									if(res.code === 20000){
+										item.isRead = 1;
+										this.toCheckUnread();
+									}
+								})
+							}
+						},
+					},
+				}
+			},
 			toResetQuery(){
 				this.toResetCondition();
 				this.toQuery();
