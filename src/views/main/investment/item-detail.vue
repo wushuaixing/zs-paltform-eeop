@@ -44,7 +44,7 @@
             </a-col>
           </a-row>
           <div class="guarantee">
-            <span style="color:#666666">抵质押物清单：</span>
+            <span style="color:#666666">抵质押物清单：{{detailInfo.amcProjectCollaterals == "" ? '-' : ''}}</span>
             <div>
               <p style="margin:0" v-for="(i, index) in detailInfo.amcProjectCollaterals" :key="index">
                 {{index+1}}. {{i.collateralType|collateralType}}、{{i|arease}}、{{i.collateralName}}
@@ -105,7 +105,7 @@
             </a-col>
           </a-row>
           <div class="creditor-condition">
-            已请收情况：<span>{{ detailInfo.alreadyCollectionStatus|show_ }}</span>
+            已清收情况：<span>{{ detailInfo.alreadyCollectionStatus|show_ }}</span>
           </div>
           <div class="creditor-condition">
             司法进展情况：<span>{{ detailInfo.judicialProcess |show_}}</span>
