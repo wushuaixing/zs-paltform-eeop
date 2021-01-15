@@ -262,13 +262,10 @@ export default {
         processData: false,
         data: formData,
       }).then((val)=>{
-          const res =  val.data
+          const res =  val.data;
           this.fileList = [];
           this.uploading = false;
-          if(res.code ===  60001){
-            this.$message.error(res.message);
-            return
-          }
+          if(res.code ===  60001) return this.$message.error(res.message,5);
           if(res.code === 20000){
               this.visible = false;
               this.$message.success('上传成功');
@@ -279,7 +276,7 @@ export default {
     // 请求封装
     requestInquire(){
       projectFind(clearObject(this.findAll)).then((res)=>{
-        if(res.code !== 20000 ) return this.$message.error('请求失败')
+        if(res.code !== 20000 ) return this.$message.error('请求失败');
         this.tableSource.dataSource = res.data.list;
         this.tableSource.pagination.total = res.data.total;
       })
@@ -316,11 +313,11 @@ export default {
     },
     showModal() {
       this.visible = true;
-      this.showUploadList = true
+      this.showUploadList = true;
       this.fileList = []
     },
     handleOk(e) {
-      console.log(e)
+      console.log(e);
       this.visible = false;
     },
   }
