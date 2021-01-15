@@ -600,9 +600,11 @@ export default {
             if(res.code === 20000) {
               this.$message.success("修改成功")
               this.visible = false;
-              this.getProjectDetail()
-              this.getServiceCaseSubmitList()
-              this.getSignServiceList()
+              this.getProjectDetail();
+              this.getServiceCaseSubmitList();
+              this.getSignServiceList();
+              this.getCount(1);
+              this.getCount(2);
             }else{
               this.$message.error("修改失败")
             }
@@ -612,6 +614,22 @@ export default {
         }
       })
     },
+    getCount(caseType){
+      serviceCaseSubmit({caseType,id:this.$route.query.id,page:1,size:10}).then(res=>{
+        if(res.code === 20000){
+          if(caseType === 1){
+            this.planCount.validCount = res.data.total;
+            this.tableSource.submitPlanTable.pagination.total = res.data.total;
+            this.tableSource.submitPlanTable.dataSource = res.data.list;
+          }
+          if(caseType === 2){
+            this.planCount.invalidCount = res.data.total;
+          }
+        }else{
+          this.$message.error("获取服务商提交方案列表失败,请重新加载")
+        }
+      });
+    }
   },
   filters:{
     //没有值展示'-'
@@ -629,7 +647,7 @@ export default {
     workingTimeText(val){
       if(val === null) return '-';
       let workingTimeObj = {
-        0:'无',
+        0:'暂未有实际项目落地',
         1:'一年以内',
         2:'1-3年',
         3:'3年以上'
@@ -719,25 +737,26 @@ export default {
     }
   },
   created() {
-    let id = this.$route.query.id
     this.getProjectDetail();
     this.getSignServiceList();
-    serviceCaseSubmit({caseType:1,id,page:1,size:10}).then(res=>{
-      if(res.code === 20000){
-        this.planCount.validCount = res.data.total;
-        this.tableSource.submitPlanTable.pagination.total = res.data.total;
-        this.tableSource.submitPlanTable.dataSource = res.data.list;
-      }else{
-        this.$message.error("获取服务商提交方案列表失败,请重新加载")
-      }
-    });
-    serviceCaseSubmit({caseType:2,id,page:1,size:10}).then(res=>{
-      if(res.code = 20000){
-        this.planCount.invalidCount = res.data.total;
-      }else{
-        return false;
-      }
-    });
+    this.getCount(1);
+    this.getCount(2);
+    // serviceCaseSubmit({caseType:1,id:this.$route.query.id,page:1,size:10}).then(res=>{
+    //   if(res.code === 20000){
+    //     this.planCount.validCount = res.data.total;
+    //     this.tableSource.submitPlanTable.pagination.total = res.data.total;
+    //     this.tableSource.submitPlanTable.dataSource = res.data.list;
+    //   }else{
+    //     this.$message.error("获取服务商提交方案列表失败,请重新加载")
+    //   }
+    // });
+    // serviceCaseSubmit({caseType:2,id,page:1,size:10}).then(res=>{
+    //   if(res.code = 20000){
+    //     this.planCount.invalidCount = res.data.total;
+    //   }else{
+    //     return false;
+    //   }
+    // });
     //权限控制
     const {config} = store.getters.getInfo;
     this.projectManage = config.projectManage
