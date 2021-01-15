@@ -308,7 +308,7 @@ const columns = [
     scopedSlots: { customRender: "areasOfGoodCases" },
   },
   {
-    title: "擅长业类型",
+    title: "擅长业务类型",
     dataIndex: "goodCases",
     width: 200,
     scopedSlots: { customRender: "goodCases" },
