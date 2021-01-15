@@ -64,7 +64,7 @@
           <a-form-model-item label="角色名称" prop="roleName">
             <a-input
                 v-model="form.roleName"
-                placeholder="请输入姓名"
+                placeholder="请输入角色名称"
             />
           </a-form-model-item>
           <div class="part-title">角色权限配置</div>
