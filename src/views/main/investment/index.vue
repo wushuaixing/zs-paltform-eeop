@@ -50,7 +50,7 @@
     </div>
     <!--弹框对话框文件上传-->
     <div>
-      <a-modal :centered="true" v-model="visible" title="发布新项目" @ok="handleOk">
+      <a-modal :centered="true" v-model="visible"  title="发布新项目" @ok="handleOk">
         <template  slot="footer">
           <div style="text-align: center">
             <a-button @click="handleOk">取消</a-button>
@@ -97,20 +97,22 @@ import reqest from 'axios';
 const columns = (sortedInfo) =>{
   return  [
   {
-    title: '债务人名字',
+    title: '债务人名称',
     dataIndex: 'debtor',
     key: 'name',
   },
   {
-    title: '债权人(万元)',
+    title: '债权本金(万元)',
     dataIndex: 'debtCaptial',
     key: 'debtCaptial',
+    align:'right',
     scopedSlots: {customRender: 'debtCaptial'},
   },
   {
     title: '债权利息(万元)',
     dataIndex: 'debtInterest',
     key: 'debtInterest',
+    align:'right',
     scopedSlots: {customRender: 'debtInterest'},
   },
   {
