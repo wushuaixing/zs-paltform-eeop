@@ -40,6 +40,13 @@ Vue.filter('is', (val)=>{
 	return '';
 });
 
+//性别【0：男，1：女】的判断
+Vue.filter('sex', (val)=>{
+    if(val === '1') return '女';
+    if(val === '0') return '男';
+    return '未知';
+});
+
 // 单位展示信息
 Vue.filter('unit', (val,unit = '')=>{
 	if(!Number(val)) return "";
