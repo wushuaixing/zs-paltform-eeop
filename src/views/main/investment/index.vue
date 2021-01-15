@@ -46,7 +46,6 @@
           <template slot="action" slot-scope="text,row">
             <span class="table-view"  @click="viewDetails(row)">查看详情</span>
           </template>
-
         </a-table>
     </div>
     <!--弹框对话框文件上传-->
