@@ -12,7 +12,7 @@
       <div class="frame-query">
         <a-form-model layout="inline">
           <a-form-model-item label="部门名称">
-            <a-input v-model="queryParams.departmentName" placeholder="请输入部门姓名" class="custom-prefix-6"/>
+            <a-input v-model="queryParams.departmentName" placeholder="请输入部门名称" class="custom-prefix-6"/>
           </a-form-model-item>
           <a-form-model-item class="reset">
             <a-button @click="handleQuery('reset')">重置</a-button>
