@@ -46,12 +46,11 @@
           <template slot="action" slot-scope="text,row">
             <span class="table-view"  @click="viewDetails(row)">查看详情</span>
           </template>
-
         </a-table>
     </div>
     <!--弹框对话框文件上传-->
     <div>
-      <a-modal :centered="true" v-model="visible" title="发布新项目" @ok="handleOk">
+      <a-modal :centered="true" v-model="visible"  title="发布新项目" @ok="handleOk">
         <template  slot="footer">
           <div style="text-align: center">
             <a-button @click="handleOk">取消</a-button>
@@ -75,7 +74,7 @@
             </a-upload>
             <a style="margin:0 18px;display:block"  v-else>{{fileName}}&nbsp;<a-icon type="close" @click="offFil"></a-icon></a>
          </div>
-          <a class="download" href="https://zsamc-public.zsamc.com/%E6%9C%8D%E5%8A%A1%E6%8B%9B%E5%95%86%E9%A1%B9%E7%9B%AE%E5%AF%BC%E5%85%A5%E6%A8%A1%E6%9D%BF20210111.xlsx">导入模板下载</a>
+          <a class="download" href="https://zsamc-public.zsamc.com/%E6%9C%8D%E5%8A%A1%E6%8B%9B%E5%95%86%E9%A1%B9%E7%9B%AE%E5%AF%BC%E5%85%A5%E6%A8%A1%E6%9D%BF.xlsx">导入模板下载</a>
         </div>
         <div class="caution">
           <span>*支持导入单笔及多笔招商服务项目；</span><br>
@@ -98,20 +97,22 @@ import reqest from 'axios';
 const columns = (sortedInfo) =>{
   return  [
   {
-    title: '债务人名字',
+    title: '债务人名称',
     dataIndex: 'debtor',
     key: 'name',
   },
   {
-    title: '债权人(万元)',
+    title: '债权本金(万元)',
     dataIndex: 'debtCaptial',
     key: 'debtCaptial',
+    align:'right',
     scopedSlots: {customRender: 'debtCaptial'},
   },
   {
     title: '债权利息(万元)',
     dataIndex: 'debtInterest',
     key: 'debtInterest',
+    align:'right',
     scopedSlots: {customRender: 'debtInterest'},
   },
   {
@@ -261,13 +262,10 @@ export default {
         processData: false,
         data: formData,
       }).then((val)=>{
-          const res =  val.data
+          const res =  val.data;
           this.fileList = [];
           this.uploading = false;
-          if(res.code ===  60001){
-            this.$message.error(res.message);
-            return
-          }
+          if(res.code ===  60001) return this.$message.error(res.message,5);
           if(res.code === 20000){
               this.visible = false;
               this.$message.success('上传成功');
@@ -278,7 +276,7 @@ export default {
     // 请求封装
     requestInquire(){
       projectFind(clearObject(this.findAll)).then((res)=>{
-        if(res.code !== 20000 ) return this.$message.error('请求失败')
+        if(res.code !== 20000 ) return this.$message.error('请求失败');
         this.tableSource.dataSource = res.data.list;
         this.tableSource.pagination.total = res.data.total;
       })
@@ -315,11 +313,11 @@ export default {
     },
     showModal() {
       this.visible = true;
-      this.showUploadList = true
+      this.showUploadList = true;
       this.fileList = []
     },
     handleOk(e) {
-      console.log(e)
+      console.log(e);
       this.visible = false;
     },
   }
