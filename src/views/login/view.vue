@@ -19,7 +19,6 @@
             :rules="rules"
             ref="ruleForm"
             class="login-form-wrapper"
-            autoComplete="off"
           >
             <div style="height: 196px">
               <a-form-model-item prop="username">
@@ -28,7 +27,8 @@
                   placeholder="请输入您的工号"
                   v-bind="styleProps"
                   :maxLength="8"
-                >
+									autocapitalize="off"
+								>
                   <a-icon slot="prefix" type="user" style="color: #bfbfbf" />
                 </a-input>
               </a-form-model-item>
@@ -39,7 +39,7 @@
                   v-bind="styleProps"
                   @pressEnter="handleSubmit"
                   placeholder="请输入登录密码"
-                  autoComplete="new-password"
+									autocapitalize="off"
                 >
                   <a-icon slot="prefix" type="lock" style="color: #bfbfbf" />
                 </a-input>
@@ -59,10 +59,7 @@
                   />
                   <template slot="suffix" @click="toGetImageCode">
                     <a-spin :spinning="imgCode.loading">
-                      <div
-                        style="height: 34px; overflow: hidden; width: 110px"
-                        @click="toGetImageCode"
-                      >
+                      <div style="height: 34px; overflow: hidden; width: 110px" @click="toGetImageCode">
                         <img
                           :src="imgCode.url"
                           alt=""
@@ -77,7 +74,8 @@
                   </template>
                 </a-input>
               </a-form-model-item>
-              <a-button class="login-btn" type="primary" block @click="handleSubmit" size="large">登 录</a-button>
+              <a-button class="login-btn" type="primary" block @click="handleSubmit" size="large" :loading="loading"
+							>登 录</a-button>
             </div>
           </a-form-model>
         </div>
@@ -112,6 +110,7 @@ export default {
         password: "",
         pictureCode: "",
       },
+			loading:false,
       imgCode: {
         status: false,
         loading: false,
@@ -168,10 +167,10 @@ export default {
       // api.login(encryptInfo(this.params)).then(res=>{
       //   console.log(res)
       // })
+			this.loading = true;
       api
         .accountStatus(this.params.username)
         .then((res) => {
-          console.log(res);
           if (res.code === 20000) {
             const { needPicCode } = res.data;
             const { status } = this.imgCode;
@@ -180,24 +179,27 @@ export default {
                 return api.login(encryptInfo(this.params));
               } else {
                 this.imgCode.status = true;
-                this.toGetImageCode();
+	              this.loading = false;
+	              this.toGetImageCode();
               }
             } else {
               return api.login(encryptInfo(this.params));
             }
+          }else{
+	          this.loading = false;
           }
         })
         .then((res) => {
-          console.log(res);
           if (res.code === 20000) {
 
 	          this.$store.dispatch("login", res.data);
 	          ruleProcess(this,res.data);
 	          this.$router.push("/");
           } else{
-            this.params.pictureCode = "";
+	          this.params.pictureCode = "";
             if(this.imgCode.status) this.toGetImageCode();
-            if (res.data && res.data.count >= 5) return this.$message.error(`账号或密码错误,您还可以尝试${10 - res.data.count}次`);
+	          this.loading = false;
+	          if (res.data && res.data.count >= 5) return this.$message.error(`账号或密码错误,您还可以尝试${10 - res.data.count}次`);
             if (res.code === 30001) return this.$message.error("账号或密码错误");
             if (res.code === 30006) return this.$warning({
               title:"账号冻结提示",
@@ -215,12 +217,7 @@ export default {
     // 点击登录操作
     handleSubmit() {
       this.form.validate((valid) => {
-        if (valid) {
-          this.toLogin();
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
+        if (valid) this.toLogin();
       });
     },
   },

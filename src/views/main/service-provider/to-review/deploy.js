@@ -125,9 +125,13 @@ export const columns = ({ type = 1, sortOrder}) =>{
 			...baseColumns,
 			{
 				title: '未通过项',
-				dataIndex: 'address',
 				key: 'address 3',
-				customRender:val=>val || '-',
+				customRender:({isCertification,isConfirmElements})=> {
+					const _ary = [];
+					isCertification === 0 ? _ary.push('资质认证') : '';
+					isConfirmElements === 0 ? _ary.push('要素认证') : '';
+					return _ary.join('、')
+				},
 			},
 			{
 				title: '审核日期',

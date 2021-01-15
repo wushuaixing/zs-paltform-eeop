@@ -38,7 +38,7 @@
 				</div>
 			</a-affix>
 		</div>
-		<a-modal v-model="interview.visible" title="面谈印象" v-bind="modal">
+		<a-modal v-model="interview.visible" title="面谈印象" v-bind="modal" dialogClass="audit-modal">
 			<div style="padding-right: 100px">
 				<a-form-model :model="interview.form" :label-col="{ span:8}" :wrapper-col="{ span: 16}">
 					<a-form-model-item label="擅长业务补充说明">
@@ -64,12 +64,12 @@
 				</a-form-model>
 			</div>
 			<div slot="footer" style="text-align: center">
+        <a-button @click="toIntCancel">取消</a-button>
 				<a-button type="primary" :loading="interview.loading" @click="toIntSubmit">提交</a-button>
-				<a-button @click="toIntCancel">取消</a-button>
 			</div>
 		</a-modal>
 		<a-modal v-model="audit.visible" :title="audit.status ===1 ?'审核结果':'审核结果提交成功'" v-bind="modal"
-		:width="audit.status === 1?'800px':'600px'">
+		:width="audit.status === 1?'800px':'600px'"  dialogClass="audit-modal">
 			<div style="padding:0 40px" v-if="audit.status ===1">
 				<a-form-model :model="audit.form" :label-col="{ span:8}" :wrapper-col="{ span: 16}">
 					<div class="text-dangerous">*资质信息与要素信息均审核通过后，该服务商将进入已入库名单，并获得已入库服务商权限。</div>
@@ -109,8 +109,8 @@
 			</div>
 			<div slot="footer" style="text-align: center">
 				<template v-if="audit.status ===1">
+          <a-button @click="toAuditCancel">取消</a-button>
 					<a-button type="primary" :loading="audit.loading" @click="toAuditSubmit">提交</a-button>
-					<a-button @click="toAuditCancel">取消</a-button>
 				</template>
 				<router-link to="/provider/review"  v-else>
 					<a-button type="primary">返回审核列表</a-button>
@@ -187,7 +187,8 @@
 					width:'800px',
 					centered:true,
 					maskClosable:true,
-					keyboard:false
+					keyboard:false,
+
 				}
 			};
 		},
@@ -360,4 +361,15 @@
 		}
 	}
 
+</style>
+
+<style lang="scss">
+.audit-modal{
+  .ant-modal-header{
+    .ant-modal-title{
+      font-size: 18px;
+      font-weight: bolder;
+    }
+  }
+}
 </style>

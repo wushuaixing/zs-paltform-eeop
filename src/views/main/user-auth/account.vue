@@ -247,6 +247,7 @@ export default {
   methods: {
     getTableList() {
       this.loading = true;
+      this.dataSource = [];
       userAuthApi.listUser(clearProto(this.queryParams)).then((res) => {
         if (res.code === 20000) {
           const data = res.data;
