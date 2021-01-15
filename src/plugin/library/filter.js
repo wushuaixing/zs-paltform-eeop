@@ -36,6 +36,7 @@ Vue.filter('timeFilter', (val)=>{
 Vue.filter('is', (val)=>{
 	if(val === '1') return '是';
 	if(val === '2') return '否';
+	if(val === '0') return '否';
 	return '';
 });
 

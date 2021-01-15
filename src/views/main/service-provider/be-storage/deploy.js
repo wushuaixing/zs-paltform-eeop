@@ -11,7 +11,7 @@ export const columns = ({ type = 1, sortOrder}) =>{
 			title: '联络人姓名',
 			key: 'name',
 			scopedSlots: { customRender: 'readStatus' },
-			width:'14%',
+			width:'12%',
 		},
 		{
 			title: '联系方式',

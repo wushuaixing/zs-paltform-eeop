@@ -1,5 +1,5 @@
 <template>
-	<a-modal v-model="visible" title="印象添加" v-bind="modal">
+	<a-modal v-model="visible" title="印象添加" v-bind="modal" class="effect-modal">
 		<div style="padding-right: 50px">
 			<a-form-model :label-col="{span:5}" :wrapper-col="{span: 19}">
 				<a-form-model-item label="合作印象" required>
@@ -8,8 +8,8 @@
 			</a-form-model>
 		</div>
 		<div slot="footer" style="text-align: center">
-			<a-button type="primary" :loading="loading" @click="toSubmit">提交</a-button>
 			<a-button @click="toCancel">取消</a-button>
+      <a-button type="primary" :loading="loading" @click="toSubmit">提交</a-button>
 		</div>
 	</a-modal>
 </template>
@@ -68,6 +68,13 @@
 	}
 </script>
 
-<style scoped>
-
+<style lang="scss">
+  .effect-modal{
+    .ant-modal-header{
+      .ant-modal-title{
+        font-size: 16px;
+        font-weight: bolder;
+      }
+    }
+  }
 </style>
