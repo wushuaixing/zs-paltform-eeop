@@ -174,7 +174,7 @@
 				{ label:"是否存在分所", field:"hasOtherOffice",f:_is},
 				{ label:"分所展业地域", field:"otherOfficeWorkAddress",m:_if, about:'hasOtherOffice',f:_areas},
 				{ label:"分所的人员情况", field:"otherOfficeStaffInfo",m:_if, about:'hasOtherOffice'},
-				{ label:"律所请收团对人数", field:"totalTeamSize",f:_unit, unit:'人'},
+				{ label:"律所清收团队人数", field:"totalTeamSize",f:_unit, unit:'人'},
 				{ label:"本人在律所但任职务", field:"roleInLawOffice",f:_multi, origin:"lawDuty"},
 				{ label:"律所简介", field:"lawOfficeInformation"},
 				{ label:"律所资质", field:"lawOfficeQualify"},
