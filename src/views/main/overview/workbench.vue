@@ -184,7 +184,7 @@ $leftWidth: 550px;
   }
     .data-display {
       display: flex;
-      justify-content: start;
+      justify-content: flex-start;
       // align-items: center;
       width: 100%;
       height: 262px;
