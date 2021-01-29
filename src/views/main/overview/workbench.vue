@@ -34,7 +34,7 @@
         </div>
       </div>
       <div class="item-wrapper">
-        <div class="item-title item-format ">代办事项</div>
+        <div class="item-title item-format ">待办事项</div>
         <div class="progress">
           <img src="../../../assets/img/toDoList.png" alt="代办事项">
         </div>
