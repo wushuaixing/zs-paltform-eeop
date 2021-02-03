@@ -34,18 +34,18 @@
         </div>
       </div>
       <div class="item-wrapper">
+        <div class="item-title item-format ">待办事项</div>
         <div class="progress">
-          <img src="../../../assets/image/no-modules.png" alt="项目建设中">
+          <img src="../../../assets/img/toDoList.png" alt="待办事项">
         </div>
-        <!-- <div class="item-project item-format">项目招商情况</div> -->
       </div>
     </div>
     <div class="workbench-item workbench-right">
       <div class="item-wrapper">
+        <div class="item-title item-format ">我的日程</div>
         <div class="unItem">
-          <img src="../../../assets/image/no-modules.png" alt="项目建设中">
+          <a-calendar/>
         </div>
-        <!-- <div class="item-title item-format"></div> -->
       </div>
     </div>
   </div>
@@ -65,11 +65,6 @@ export default {
       // 后台图表的数据
       echarts: {},
     };
-  },
-  computed: {
-    // isShowEcharts(){
-    //   return Object.values(this.echarts).some(i=>i!==0)
-    // }
   },
   methods: {
     //echarts饼图项目招商
@@ -116,13 +111,9 @@ export default {
      myChart.setOption(option,true);
     },
   },
-  created () {
-  },
   mounted() {
     this.initECharts()
   },
-  watch: {
-  }
 }
 </script>
 

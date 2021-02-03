@@ -600,11 +600,20 @@ export default {
             if(res.code === 20000) {
               this.$message.success("修改成功")
               this.visible = false;
-              this.getProjectDetail();
-              this.getServiceCaseSubmitList();
-              this.getSignServiceList();
-              this.getCount(1);
-              this.getCount(2);
+              // this.getProjectDetail();
+              // this.getServiceCaseSubmitList();
+              // this.getSignServiceList();
+              // this.getCount(1);
+              // this.getCount(2);
+              projectDetail(this.params.id).then((response)=>{
+                if(response.code === 20000){
+                  this.detailInfo = response.data;
+                  this.getServiceCaseSubmitList();
+                  this.getSignServiceList();
+                  this.getCount(1);
+                  this.getCount(2);
+                }
+              });
             }else{
               this.$message.error("修改失败")
             }
