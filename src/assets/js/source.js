@@ -84,6 +84,7 @@ export const hisFour = [
 	{ id: 2, label: '长城', value: '2' },
 	{ id: 3, label: '华融', value: '3' },
 	{ id: 4, label: '信达', value: '4' },
+	{ id: 5, label: '银河', value: '5' },
 	{ id: 0, label: '地方持牌AMC', value: '0' },
 ];
 
