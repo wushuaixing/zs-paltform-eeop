@@ -58,8 +58,6 @@ import echarts from "echarts";
 export default {
   name: "Workbench",
   nameComment: "工作台",
-  components: {
-  },
   data() {
     return {
       // 后台图表的数据
@@ -68,47 +66,52 @@ export default {
   },
   methods: {
     //echarts饼图项目招商
-    async initECharts () {
+    initECharts () {
       let myChart = echarts.init(document.getElementById("main"));
-      const res = await getEchartsInvestMent();
-      if (res.code !== 20000) return this.$message.error('获取图表数据失败');
-      console.log(res);
-      this.echarts = res.data;
-      let option = {
-      color: ['#0EA5FF', '#9200FF','#67CE57','#F7CE22','#FF5F80'],
-        tooltip: {
-          trigger: 'item',
-        },
-        series: [
-          {
-            type: 'pie',
-            radius: ['40%', '70%'],
-            // avoidLabelOverlap: false,
-            label: {
+      getEchartsInvestMent().then((res)=>{
+        if(res.code === 20000){
+          this.echarts = res.data;
+          return res.data;
+        }else {
+          this.$message.error('获取图表数据失败');
+        }
+      }).then((data={})=>{
+        const { onlyRegUserNum,confirmQuaUserNum,submitEleUserNum,storageUserNum,notPassAuditUserNum }=data;
+        let option = {
+          color: ['#0EA5FF', '#9200FF','#67CE57','#F7CE22','#FF5F80'],
+          tooltip: {
+            trigger: 'item',
+          },
+          series: [
+            {
+              type: 'pie',
+              radius: ['40%', '70%'],
+              label: {
                 show: false,
                 position: 'center',
-            },
-            emphasis: {
+              },
+              emphasis: {
                 label: {
-                    show: true,
-                    fontSize: '16',
-                    fontWeight: 'bold'
+                  show: true,
+                  fontSize: '16',
+                  fontWeight: 'bold'
                 }
-            },
-            labelLine: {
+              },
+              labelLine: {
                 show: false
-            },
-            data: [
-              { value: this.echarts.onlyRegUserNum, name: '仅注册'},
-              { value: this.echarts.confirmQuaUserNum, name: '仅提交资质'},
-              { value: this.echarts.submitEleUserNum, name:'待审核'},
-              { value: this.echarts.storageUserNum, name: '已入库'},
-              { value: this.echarts.notPassAuditUserNum, name: '审核未通过'}
-            ]
-          }
-        ]
-      };
-     myChart.setOption(option,true);
+              },
+              data: [
+                { value: onlyRegUserNum, name: '仅注册'},
+                { value: confirmQuaUserNum, name: '仅提交资质'},
+                { value: submitEleUserNum, name:'待审核'},
+                { value: storageUserNum, name: '已入库'},
+                { value: notPassAuditUserNum, name: '审核未通过'}
+              ]
+            }
+          ]
+        };
+        myChart.setOption(option,true);
+      });
     },
   },
   mounted() {
